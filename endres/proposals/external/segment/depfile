@@ -1,0 +1,7 @@
+disjoint-set.o: disjoint-set.cpp disjoint-set.h
+image.o: image.cpp image.h
+misc.o: misc.cpp misc.h
+pnmfile.o: pnmfile.cpp pnmfile.h image.h misc.h
+segment-image.o: segment-image.cpp segment-image.h segment-graph.h \
+  disjoint-set.h
+segment.o: segment.cpp segment-image.h segment-graph.h disjoint-set.h

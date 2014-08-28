@@ -1,0 +1,23 @@
+%%% README
+%%% by Derek Hoiem, March 2, 2010
+
+Matlab code for pixel classification using multiple segmentation algorithm
+described in 
+
+  D. Hoiem, A.A. Efros, and M. Hebert, "Recovering Surface Layout from 
+  an Image", IJCV, Vol. 75, No. 1, October 2007.
+
+This code is intended to be used with the GeometricContext src code, 
+which has also been released.  The code is intended to make it easier
+to train new classifiers, given images and their pixel labels.
+
+Important functions:
+  msTrain.m: Training script
+  msTestImage.m: Assign label confidences to an image
+  msCreateSuperpixels.m: Create the "imsegs" structure from an image
+  msPg2confidenceImages.m: Convert superpixel confidences to pixel confidences
+  msLabelMap2Sp.m: Convert pixel labels to superpixel labels
+
+
+
+
