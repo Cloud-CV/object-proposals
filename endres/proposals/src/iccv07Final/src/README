@@ -1,0 +1,61 @@
+
+%%%%%%%%%%%%%%%%%%%%
+README for code from
+
+D. Hoiem, A.N. Stein, M. Hebert, A.A. Efros, 
+"Recovering Occlusion Boundaries from an Image", ICCV 2007.
+
+%%%%%%%%%%%%%%%%%%%%
+
+Please note that this code is only loosely supported.  
+For non-commercial use only, without any warranty or guarantee of 
+functionality whatsoever.
+
+To Run in Matlab (only way to run):
+1) Set matlab paths to include: 
+     all subdirectories of src, data
+     lightspeed toolbox (from Tom Minka)
+     Berkeley Segmentation Dataset /src/lib/matlab (BSDS from Berkeley)
+     Geometric Context src (ijcv2007 version) if possible
+2) Load double format RGB image: im
+3) [bndinfo, pbim, gconf] = im2boundariesTopLevel(im);
+4) Display result:
+     displayOcclusionResult(im, bndinfo, [], [], [], 1);
+     see iccvWriteContourDepthResults for more examples
+   
+
+
+Notes:
+1. This code is only loosely supported.  Please only contact me with questions
+   or complaints if you are really serious about using the code and really
+   cannot figure it out.
+2. Geometric context src code is only available within CMU, due to external 
+   licensing.  However, others can download the executable from my web page
+   and use the confidence images from that.
+3. May need to download or recompile segment program by 
+   Felzenszwalb and Huttenlocher (this is only used for Geometric Context)
+4. Edit im2boundariesTopLevel to fit your needs (e.g., if you 
+   already have Pb or geometric context computed, edit to access those)
+5. This does not include training code.  I am willing to distribute that
+   upon request, but you may get hit with a mess of source code.
+
+
+
+Derek Hoiem
+July 22, 2007     
+(c) Carnegie Mellon University, 2007
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

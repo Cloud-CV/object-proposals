@@ -1,0 +1,51 @@
+This is the supporting code for "Category Independent Object Proposals" by Ian Endres and Derek Hoiem, University of Illinois at Urbana-Champaign, ECCV 2010
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LICENSE:
+
+Copyright (C) 2010 Ian Endres, University of Illinois at Urbana-Champaign
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful but
+WITHOUT WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PUPROSE.  See the GNU General Public License
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+Details of GPL License available in GNU_GPL_License.txt at base of this
+source tree.
+
+This software is only available for non-commercial use.  Contact Ian
+Endres (iendres2@uiuc.edu) with questions regarding commercial licensing.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+For 64-bit linux machines, this code should be ready to run, with all of the appropriate files already compiled.
+Update 9/21/2010: I have also compiled it for 32-bit linux.
+
+Both are compiled and tested using: Matlab Version 7.9.0.529 (R2009b)
+
+64-bit Windows binaries have also been included and tested on Windows 7 with Matlab Version 7.9.0.529 (R2009b)
+Note that these were compiled using Visual Studio 2008, and requires that the run-time libraries to be installed.
+
+Simply call:
+addpath(genpath('proposals'))
+
+[proposals superpixels] = generate_proposals('proposals/car.jpg'); % This should take several minutes to compute
+
+% Proposals is the ranked list of object proposals, from highest rank(1) to lowest rank (length of list)
+% Each proposal is represented by the list of superpixels belonging to that region
+% The "superpixels" variable gives the pixel map of the superpixel labels
+% You can display a proposal using:
+imagesc(ismember(superpixels, proposals{1}));
+
+% Further information, such as the actual occlusion boundary and geometric context output
+% can be found in the third output: computed_data
+[proposals superpixels computed_data] = generate_proposals('proposals/car.jpg');
+

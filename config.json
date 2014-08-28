@@ -1,0 +1,59 @@
+{
+	
+	"edgeBoxes":{
+		"filePath": "some/path",
+		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+		"outputLocation":	 "/workspace/result_eb/",
+		"modelPath" : "/workspace/objectProposals/edgeBoxes/releaseV3/models/forest/modelBsds.mat",
+		"opts" : {
+			"alpha": 0.65, 
+			"beta": 0.75,
+			"minScore": 0.01, 
+			"maxBoxes": 1e4
+				}
+	},
+
+	"bing" : {
+
+		},
+
+	"cpmc" : {
+
+		},
+	"endres" : {
+
+		},
+	"mcg" : {
+			"boostpath" : "/opt/local/include/",
+			"pascal2012path" : "/full/path",
+			"bsds500path" : "/full/path",
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"mode" : "accurate",
+				"database": "pascal2012"
+			}
+
+		},
+	"objectness" : {
+
+		},
+
+	"rahtu" : {
+
+		},
+
+	"randomPrim": {
+
+	},
+
+	"rantalankila" : {
+
+		},
+
+	"selectiveSearch" : {
+
+		}
+}
+
+

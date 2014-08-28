@@ -1,0 +1,35 @@
+README for
+
+Implementation of 
+  T. Heskes, K. Albers, and B. Kappen. "Approximate inference and constrained 
+  optimization." UAI, 2003.
+with max annealing approximation of 
+  A.L. Yuille. "CCCP algorithms to minimize Bethe and Kikuchi free energies: 
+  convergent alternatives to belief propagation." Neural Computation, 14(7), 
+  2002.
+
+%%%%%%%%%%%%%%%%%%
+
+May be used and redistributed freely, but no warranty is implied.
+
+This code computes the marginals or soft-max of the node variables, given a
+factor graph. 
+
+This algorithm works quite well for loopy graphs with very strong 
+(near-infinite) potentials, which will typically prevent loopy BP from 
+converging.  In my ICCV 2007 paper, I found this method to give good results in
+about 10-15 seconds, where I had left the BNT implementation of loopy BP 
+running for many hours without convergence.
+
+See the example script for how to set factors, etc.  One note is that factors
+are written as probabilities (not potentials), so 
+P(x1,x2,x3)= 1/Z prod_i f_i(x1,x2,x3)
+
+Different nodes may have different numbers of states.
+
+%%%%%%%%%%%%%%%%%%
+
+
+Derek Hoiem
+July 22, 2007
+

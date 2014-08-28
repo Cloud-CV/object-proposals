@@ -1,0 +1,3 @@
+LIBRARY	"SegInMat"
+EXPORTS
+   mexFunction @1
