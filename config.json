@@ -1,0 +1,45 @@
+{
+	
+	"edgeBoxes":{
+		"filePath": "some/path",
+		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages",
+		"outputLocation":	 "/workspace/result_eb",
+		"modelPath" : "/workspace/objectProposals/releaseV3/models/forest/modelBsds",
+		"opts" : {
+			"alpha": 0.65, 
+			"beta": 0.75,
+			"minScore": 0.01, 
+			"maxBoxes": 1e4
+				}
+	},
+
+	"bing" : {
+
+		},
+
+	"cpmc" : {
+
+		},
+
+	"mcg" : {
+
+		},
+
+	"rahtu" : {
+
+		},
+
+	"randomPrim": {
+
+	},
+
+	"rantalankila" : {
+
+		},
+
+	"selectiveSearch" : {
+
+		}
+}
+
+
