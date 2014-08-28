@@ -3,9 +3,11 @@
 % add current directory as the parent directory
 parDir = pwd;
 
-% add jsonlib to path
+% add jsonlib to path and load the config file
 addpath([parDir '/jsonlab_1.0beta/jsonlab']);
 fprintf('Added json encoder/decoder to the path');
+configjson = loadjson([parDir, '/config.json']);
+
 
 % compilation of edge boxes
 mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp

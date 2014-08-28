@@ -2,9 +2,9 @@
 	
 	"edgeBoxes":{
 		"filePath": "some/path",
-		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages",
-		"outputLocation":	 "/workspace/result_eb",
-		"modelPath" : "/workspace/objectProposals/releaseV3/models/forest/modelBsds",
+		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+		"outputLocation":	 "/workspace/result_eb/",
+		"modelPath" : "/workspace/objectProposals/edgeBoxes/releaseV3/models/forest/modelBsds.mat",
 		"opts" : {
 			"alpha": 0.65, 
 			"beta": 0.75,
