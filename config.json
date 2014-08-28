@@ -24,7 +24,7 @@
 
 		},
 	"mcg" : {
-			"boostpath" : "/full/path/to/boost",
+			"boostpath" : "/opt/local/include/",
 			"pascal2012path" : "/full/path",
 			"bsds500path" : "/full/path",
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",

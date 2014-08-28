@@ -23,7 +23,7 @@ fprintf('Compilation of Edge Boxes finished\n ');
 %% building MCG and installation
 mcg_path = [pwd '/mcg/MCG-Full'];
 addpath(mcg_path);
-
+addpath([pwd '/mcg/API'])
 %set root_dir for mcg
 configjson.mcg.root_dir = mcg_root_dir(mcg_path);
 
