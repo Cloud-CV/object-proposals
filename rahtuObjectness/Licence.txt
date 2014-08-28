@@ -1,0 +1,58 @@
+The software in this package, except for scoreSamplingMex.c (and its compiled versions) and computeSSscore.m, is distributed under the MIT licence described below. scoreSamplingMex.c and computeSSscore.m contain parts of software package from Calvin Group, Computer Vision Laboratory, ETH Zurich, http://www.vision.ee.ethz.ch and they will be distributed under Calvin Group's licence. 
+
+================================================================
+Licence concerning the software execpt for, scoreSamplingMex.c (and its compiled versions) and computeSSscore.m.
+
+Copyright (C) 2011 by Esa Rahtu, Juho Kannala, and Matthew Blaschko
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
+================================================================
+Licence concerning scoreSamplingMex.c (and its compiled versions) and computeSSscore.m
+
+Copyright (c) 2010-2011
+
+Calvin Group
+Computer Vision Laboratory
+ETH Zurich
+http://www.vision.ee.ethz.ch
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software for research purposes including
+the rights to use, copy, modify, merge and distribute the Software
+subject to the following restrictions:
+
+This permission notice shall be included in all copies or substantial
+portions of the Software, along with authorship credit to B. Alexe, T.
+Deselaers, and V. Ferrari.
+
+The Software cannot be sold nor used within any commercial application
+without prior permission by the authors. Use is granted only for
+strictly non-profit purposes.
+
+The software is provided "as is", without warranty of any kind,
+express or implied, including but not limited to the warranties of
+merchantability, fitness for a particular purpose and noninfringement.
+In no event shall the authors or copyright holders be liable for any
+claim, damages or other liability, whether in an action of contract,
+tort or otherwise, arising from, out of or in connection with the
+software or the use or other dealings in the software.
+================================================================
