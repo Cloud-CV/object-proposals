@@ -21,7 +21,8 @@
 
 		},
 	"endres" : {
-
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/"
 		},
 	"mcg" : {
 			"boostpath" : "/opt/local/include/",

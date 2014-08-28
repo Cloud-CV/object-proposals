@@ -34,5 +34,20 @@ mcg_install(configjson.mcg.root_dir);
 %set databse root directory
 configjson.mcg.db_root_dir = database_root_dir(configjson.mcg)
 
+%% building Endres 
+endres_path = [pwd '/endres/proposals']
+addpath(genpath(endres_path));
+
+%% building rantalankila
+addpath(genpath([pwd '/dependencies']))
+addpath(genpath([pwd '/rantalankilaSegments']))
+configjson.rantalankila.rantalankilapath =   [pwd '/rantalankilaSegments']
+confgjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ]
+
+%% building rahtu
+
+addpath(genpath([pwd '/rahtuObjectness']))
+configjson.rahtuPath = [pwd '/rahtuObjectness']
+compileObjectnessMex(configjson.rahtuPath)
 
 %Validation Code
