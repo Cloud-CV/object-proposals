@@ -10,7 +10,7 @@ fprintf('Added json encoder/decoder to the path');
 configjson = loadjson([parDir, '/config.json']);
 
 
-% compilation of edge boxes
+%% compilation of edge boxes
 mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
 mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp
 mex edgeBoxes/releaseV3/private/spDetectMex.cpp
@@ -20,12 +20,19 @@ addpath(genpath([parDir '/edgeBoxes']));
 
 fprintf('Compilation of Edge Boxes finished\n ');
 
-%building MCG and installation
+%% building MCG and installation
 mcg_path = [pwd '/mcg/MCG-Full'];
 addpath(mcg_path);
+
+%set root_dir for mcg
 configjson.mcg.root_dir = mcg_root_dir(mcg_path);
-mcg_build(configjson.mcg.root_dir);
+
+%build and install
+mcg_build(configjson.mcg.root_dir, configjson.mcg.boostpath);
 mcg_install(configjson.mcg.root_dir);
+
+%set databse root directory
+configjson.mcg.db_root_dir = database_root_dir(configjson.mcg)
 
 
 %Validation Code

@@ -20,11 +20,23 @@
 	"cpmc" : {
 
 		},
+	"endres" : {
 
+		},
 	"mcg" : {
-			"database": "pascal2012",
+			"boostpath" : "/full/path/to/boost",
 			"pascal2012path" : "/full/path",
-			"bsds500path" : "/full/path"
+			"bsds500path" : "/full/path",
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"mode" : "accurate",
+				"database": "pascal2012"
+			}
+
+		},
+	"objectness" : {
+
 		},
 
 	"rahtu" : {

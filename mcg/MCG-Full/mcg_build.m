@@ -18,7 +18,7 @@
 % Dependencies needed to build: Boost C++ libraries (http://www.boost.org)
 %
 % ------------------------------------------------------------------------
-function mcg_build(root_dir)
+function mcg_build(root_dir, boostpath)
 % Check that 'root_dir' has been set
 if ~exist(root_dir,'dir')
     error('Error building MCG, try updating the value of root_dir in the file "root_dir.m"')
@@ -26,11 +26,15 @@ end
 
 %% Include the generic paths and files to compile
 include{1} = fullfile(root_dir, 'src', 'aux');  % To get matlab_multiarray.hpp
-if (strcmp(computer(),'PCWIN64') || strcmp(computer(),'PCWIN32'))
-    include{2} = 'C:\Program Files\boost_1_55_0';  % Boost libraries (change it if necessary)
-else
-    include{2} = '/opt/local/include/';  % Boost libraries (change it if necessary)
-end
+
+
+% if (strcmp(computer(),'PCWIN64') || strcmp(computer(),'PCWIN32'))
+%     include{2} = 'C:\Program Files\boost_1_55_0';  % Boost libraries (change it if necessary)
+% else
+%     include{2} = '/opt/local/include/';  % Boost libraries (change it if necessary)
+% end
+
+include{2} = boostpath;
 include{3} = fullfile(root_dir, 'src', 'external','piotr_toolbox'); % To build Piotr toolbox
 
 include_str = '';
