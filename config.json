@@ -22,7 +22,9 @@
 		},
 
 	"mcg" : {
-
+			"database": "pascal2012",
+			"pascal2012path" : "/full/path",
+			"bsds500path" : "/full/path"
 		},
 
 	"rahtu" : {

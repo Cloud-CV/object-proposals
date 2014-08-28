@@ -3,6 +3,7 @@
 % add current directory as the parent directory
 parDir = pwd;
 
+
 % add jsonlib to path and load the config file
 addpath([parDir '/jsonlab_1.0beta/jsonlab']);
 fprintf('Added json encoder/decoder to the path');
@@ -19,6 +20,12 @@ addpath(genpath([parDir '/edgeBoxes']));
 
 fprintf('Compilation of Edge Boxes finished\n ');
 
+%building MCG and installation
+mcg_path = [pwd '/mcg/MCG-Full'];
+addpath(mcg_path);
+configjson.mcg.root_dir = mcg_root_dir(mcg_path);
+mcg_build(configjson.mcg.root_dir);
+mcg_install(configjson.mcg.root_dir);
 
 
 %Validation Code
