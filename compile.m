@@ -6,7 +6,7 @@
 
 % add jsonlib to path and load the config file
 	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
-	fprintf('Added json encoder/decoder to the path');
+	fprintf('Added json encoder/decoder to the path\n');
 	configjson = loadjson([parDir, '/config.json']);
 
 
@@ -52,8 +52,9 @@
 %% building randomizedPrims
     fprintf('Compilation of Randomized Prims started\n ');
 	addpath(genpath([pwd, '/randomizedPrims']));
-	configjson.rp.rpPath = [pwd, '/randomizedPrims/rp-master'];
-	setupRandomizedPrim(configjson.rp.rpPath);
+	configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master'];
+	setupRandomizedPrim(configjson.randomPrim.rpPath);
+    addpath([rpPath, '/cmex']);
     fprintf('Compilation of Randomized Prims finished\n ');
 
 %Validation Code

@@ -1,0 +1,9 @@
+function calcRP( configjson )
+%CALCRP Summary of this function goes here
+%   Detailed explanation goes here
+    rpconfig = configjson.randomPrim
+    params=LoadConfigFile(fullfile(rpconfig.rppath, 'config/rp.mat'));
+    
+
+end
+
