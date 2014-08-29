@@ -40,11 +40,13 @@
 	addpath(genpath(endres_path));
 
 %% building rantalankila
+    fprintf('Compilation of Rantalankila Segments started\n ');
 	addpath(genpath([pwd '/dependencies']));
 	addpath(genpath([pwd '/rantalankilaSegments']));
-	configjson.rantalankila.rantalankilapath =   [pwd '/rantalankilaSegments'];
-	confgjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
-
+	configjson.rantalankila.rapath =   [pwd '/rantalankilaSegments'];
+	configjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
+    fprintf('Compilation of Rantalankila Segments finished\n ');
+    
 %% building rahtu
     fprintf('Compilation of Rahtu started\n ');
 	addpath(genpath([pwd '/rahtu']));
