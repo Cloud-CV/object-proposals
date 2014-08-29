@@ -7,6 +7,7 @@
 % add jsonlib to path and load the config file
 	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
 	fprintf('Added json encoder/decoder to the path\n');
+    global configjson
 	configjson = loadjson([parDir, '/config.json']);
 
 
@@ -45,16 +46,17 @@
 	confgjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
 
 %% building rahtu
-	addpath(genpath([pwd '/rahtuObjectness']));
-	configjson.rahtu.rahtuPath = [pwd '/rahtuObjectness'];
-	compileObjectnessMex(configjson.rahtuPath);
-
+    fprintf('Compilation of Rahtu started\n ');
+	addpath(genpath([pwd '/rahtu']));
+	configjson.rahtu.rahtuPath = [pwd '/rahtu/rahtuObjectness'];
+	compileObjectnessMex(configjson.rahtu.rahtuPath);
+    fprintf('Compilation of Rahtu finished\n ');
 %% building randomizedPrims
     fprintf('Compilation of Randomized Prims started\n ');
 	addpath(genpath([pwd, '/randomizedPrims']));
 	configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master'];
 	setupRandomizedPrim(configjson.randomPrim.rpPath);
-    addpath([rpPath, '/cmex']);
+    addpath([configjson.randomPrim.rpPath, '/cmex']);
     fprintf('Compilation of Randomized Prims finished\n ');
 
 %Validation Code
