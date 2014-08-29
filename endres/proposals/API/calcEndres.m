@@ -19,10 +19,10 @@ for i=1:length(images)
 		im=repmat(im,[1,1,3]);
 	end
 	fprintf('Calculating Endres for %s\n', imname);
-	rankedProposals = generate_proposals(image);
+	rankedProposals = generate_proposals(im);
    
 	saveFile=[imname '.mat'];
-	save([ebconfig.outputLocation saveFile], 'rankedProposals');
+	save([endresconfig.outputLocation saveFile], 'rankedProposals');
 end
 
 end
