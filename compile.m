@@ -1,53 +1,59 @@
 % Compile All  object proposals
 
 % add current directory as the parent directory
-parDir = pwd;
+	parDir = pwd;
 
 
 % add jsonlib to path and load the config file
-addpath([parDir '/jsonlab_1.0beta/jsonlab']);
-fprintf('Added json encoder/decoder to the path');
-configjson = loadjson([parDir, '/config.json']);
+	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
+	fprintf('Added json encoder/decoder to the path');
+	configjson = loadjson([parDir, '/config.json']);
 
 
 %% compilation of edge boxes
-mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
-mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp
-mex edgeBoxes/releaseV3/private/spDetectMex.cpp
-mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp
+	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
+	mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp
+	mex edgeBoxes/releaseV3/private/spDetectMex.cpp
+	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp
 
-addpath(genpath([parDir '/edgeBoxes']));
+	addpath(genpath([parDir '/edgeBoxes']));
 
-fprintf('Compilation of Edge Boxes finished\n ');
+	fprintf('Compilation of Edge Boxes finished\n ');
 
 %% building MCG and installation
-mcg_path = [pwd '/mcg/MCG-Full'];
-addpath(mcg_path);
-addpath([pwd '/mcg/API'])
-%set root_dir for mcg
-configjson.mcg.root_dir = mcg_root_dir(mcg_path);
+	mcg_path = [pwd '/mcg/MCG-Full'];
+	addpath(mcg_path);
+	addpath([pwd '/mcg/API'])
+	%set root_dir for mcg
+	configjson.mcg.root_dir = mcg_root_dir(mcg_path);
 
-%build and install
-mcg_build(configjson.mcg.root_dir, configjson.mcg.boostpath);
-mcg_install(configjson.mcg.root_dir);
+	%build and install
+	mcg_build(configjson.mcg.root_dir, configjson.mcg.boostpath);
+	mcg_install(configjson.mcg.root_dir);
 
-%set databse root directory
-configjson.mcg.db_root_dir = database_root_dir(configjson.mcg)
+	%set databse root directory
+	configjson.mcg.db_root_dir = database_root_dir(configjson.mcg);
 
 %% building Endres 
-endres_path = [pwd '/endres/proposals']
-addpath(genpath(endres_path));
+	endres_path = [pwd '/endres/proposals'];
+	addpath(genpath(endres_path));
 
 %% building rantalankila
-addpath(genpath([pwd '/dependencies']))
-addpath(genpath([pwd '/rantalankilaSegments']))
-configjson.rantalankila.rantalankilapath =   [pwd '/rantalankilaSegments']
-confgjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ]
+	addpath(genpath([pwd '/dependencies']));
+	addpath(genpath([pwd '/rantalankilaSegments']));
+	configjson.rantalankila.rantalankilapath =   [pwd '/rantalankilaSegments'];
+	confgjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
 
 %% building rahtu
+	addpath(genpath([pwd '/rahtuObjectness']));
+	configjson.rahtu.rahtuPath = [pwd '/rahtuObjectness'];
+	compileObjectnessMex(configjson.rahtuPath);
 
-addpath(genpath([pwd '/rahtuObjectness']))
-configjson.rahtuPath = [pwd '/rahtuObjectness']
-compileObjectnessMex(configjson.rahtuPath)
+%% building randomizedPrims
+    fprintf('Compilation of Randomized Prims started\n ');
+	addpath(genpath([pwd, '/randomizedPrims']));
+	configjson.rp.rpPath = [pwd, '/randomizedPrims/rp-master'];
+	setupRandomizedPrim(configjson.rp.rpPath);
+    fprintf('Compilation of Randomized Prims finished\n ');
 
 %Validation Code

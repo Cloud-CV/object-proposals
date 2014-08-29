@@ -1,0 +1,23 @@
+This folder contains the XML Toolbox for Matlab.
+Version: Release 3.1.2
+
+Function\Version 1.0 1.1 2.0 2.1 2.2 3.0 3.1 3.1.2
+----------------------------------------------------
+ xml_format       x   x   x   x   x   x   x    x
+ xml_format_att   -   -   -   -   -   x   -    -  
+ xml_formatany    -   -   -   -   -   -   x    x
+ xml_parse        x   x   x   x   x   x   x    x
+ xml_parse_att    -   -   -   -   -   x   -    -  
+ xml_parseany     -   -   -   -   -   -   x    x
+ xml_help         x   x   x   x   x   x   x    x
+ xml_load         x   x   x   x   x   x   x    x
+ xml_save         x   x   x   x   x   x   x    x
+ tests/xml_tests  -   x   x   x   x   x   x    x
+ matlab.xsd       x   x   -   -   -   -   -    -  
+ strsplit         -   x   x   x   x   x   x    x
+ unblank          -   -   -   -   x   x   x    x
+--------------------------------------------------
+Developer version:
+ xml_test_[func]  -   -   -   -   -   -   x    x
+ tests/@struct/   -   -   -   -   -   x   x    x
+ tests/@cell/     -   -   -   -   -   x   x    x

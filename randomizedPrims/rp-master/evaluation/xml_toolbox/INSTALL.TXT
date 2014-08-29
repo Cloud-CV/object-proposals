@@ -1,0 +1,61 @@
+--------------------------------------------------------------------
+XML Toolbox for Matlab
+http://www.geodise.org
+Author: Marc Molinari <m.molinari@soton.ac.uk>
+$Revision: 1.1 $ $Date: 2005/04/15 17:12:14 $
+--------------------------------------------------------------------
+
+The XML Toolbox for Matlab provides easy-to-use XML functionality 
+to the Matlab environment. It has been tested with Matlab versions 
+6.5 (R13) and 7 (R14). It can be used standalone and does not 
+require Java.
+
+---------------------------
+ Installation Instructions
+---------------------------
+
+Unzip the files from the XMLToolbox.zip file. This creates a 
+subfolder named "xml_toolbox".
+
+This new directory containing .m and .p files should be added 
+to the Matlab search path. This can be done by either of...
+
+(1) If using the Matlab desktop, navigate to the 'Set Path' dialog 
+ ('File' > 'Set Path'). Click the 'Add Folder' button and browse 
+ to the directory containing the XML Toolbox, select 'OK' to 
+ confirm. You may wish to click the 'Save' button to preserve 
+ the configuration between sessions. Click 'Close' to dismiss 
+ the dialog.
+
+(2) If you are using Matlab via the Unix terminal you can instead 
+ use the 'addpath' and 'savepath' functions at the Matlab command 
+ line. 
+     >> addpath /home/USER/GeodiseLab/XMLToolbox
+
+(3) System administrators configuring a multi-user Matlab installation 
+ may find it preferable to edit $MATLABROOT/toolbox/local/pathdef.m 
+ to make changes to the Matlab search path available to all users.
+
+To confirm that the Matlab search path has been successfully 
+configured type the following (without the >>) and press Return:
+    >> str = which('xml_help')
+The variable str should contain the path of the XML Toolbox.
+
+---------------------------
+ Test the Installation
+---------------------------
+
+To test the installation, type "xml_help" at the Matlab prompt. 
+This should display a short description of the functions in the 
+XML Toolbox. Each function is easy to use and contains its own 
+help (available with ">> help xml_xxxx"). 
+Try now to execute the following at the Matlab command prompt:  
+
+>> xml_help
+>> xml_format( 'Hello World!' ) 
+>>  
+>> str = xml_format(17.29) 
+>> a = xml_parse(str) 
+
+As an alternative test and example, try the xml_tests script in the 
+tests subdirectory.
