@@ -1,5 +1,4 @@
 {
-	
 	"edgeBoxes":{
 		"filePath": "some/path",
 		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
@@ -21,7 +20,8 @@
 
 		},
 	"endres" : {
-
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/"
 		},
 	"mcg" : {
 			"boostpath" : "/opt/local/include/",
@@ -40,15 +40,20 @@
 		},
 
 	"rahtu" : {
-
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/"
+			
 		},
 
 	"randomPrim": {
-
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/"
 	},
 
 	"rantalankila" : {
-
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/"
+			
 		},
 
 	"selectiveSearch" : {
