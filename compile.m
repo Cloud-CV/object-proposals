@@ -60,5 +60,9 @@
 	setupRandomizedPrim(configjson.randomPrim.rpPath);
     addpath([configjson.randomPrim.rpPath, '/cmex']);
     fprintf('Compilation of Randomized Prims finished\n ');
-
+%% building objectness
+    fprintf('Compiling Objectness \n');
+    addpath(genpath([pwd, '/objectness-release-v2.2']));
+    configjson.objectness.objectnesspath = [pwd, '/objectness-release-v2.2'];
+    fprintf('Compiling Objectness finished \n');
 %Validation Code

@@ -43,7 +43,7 @@ for i=1:length(images)
 		im=repmat(im,[1,1,3]);
 	end
 	fprintf('Calculating MCG for %s\n', imname);
-	[candidates, scores] = im2mcg(mcgconfig.root_dir,im, mcgconfig.opts.mode);
+	[candidates, scores] = im2mcg(mcgconfig.root_dir, im, mcgconfig.opts.mode);
 
 	saveFile=[imname '.mat'];
 	save([mcgconfig.outputLocation saveFile], 'candidates', 'scores');
