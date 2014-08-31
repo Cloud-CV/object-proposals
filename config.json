@@ -36,7 +36,9 @@
 
 		},
 	"objectness" : {
-
+		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+		"outputLocation":	 "/workspace/result_eb/"
+		
 		},
 
 	"rahtu" : {
