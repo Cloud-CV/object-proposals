@@ -20,9 +20,9 @@ for i=1:4952
 	if(~size(image,3)==3)
 		image=repmat(image,[1 1 3]);
 	end
-    %candidates stores bounding boxes too..
+        %andidates stores bounding boxes too..
 	[candidates,scores]= im2mcg(image,'accurate');
-    proposalFileName=strrep(imName,imageExt,'.mat');
-    save([outputLoc proposalFileName],'candidates','scores');
+        proposalFileName=strrep(imName,imageExt,'.mat');
+        save([outputLoc proposalFileName],'candidates','scores');
 end
 
