@@ -9,7 +9,7 @@
 	fprintf('Added json encoder/decoder to the path\n');
     global configjson
 	configjson = loadjson([parDir, '/config.json']);
-
+    addpath(fullfile(pwd, 'utils'));
 
 %% compilation of edge boxes
 	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
@@ -37,6 +37,7 @@
 
 %% building Endres 
 	endres_path = [pwd '/endres/proposals'];
+    configjson.endres.endrespath = endres_path;
 	addpath(genpath(endres_path));
 
 %% building rantalankila

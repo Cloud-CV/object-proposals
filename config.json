@@ -1,10 +1,10 @@
 {
 	"edgeBoxes":{
-		"filePath": "some/path",
 		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 		"outputLocation":	 "/workspace/result_eb/",
 		"modelPath" : "/workspace/objectProposals/edgeBoxes/releaseV3/models/forest/modelBsds.mat",
 		"opts" : {
+			"numProposals" : 10000,
 			"alpha": 0.65, 
 			"beta": 0.75,
 			"minScore": 0.01, 
@@ -13,15 +13,25 @@
 	},
 
 	"bing" : {
-
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/",
+			
+			"opts" : {
+				"numProposals" : 10000
+			}
 		},
 
 	"cpmc" : {
-
+			"opts" : {
+				"numProposals" : 10000
+			}
 		},
 	"endres" : {
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
-			"outputLocation":	 "/workspace/result_eb/"
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"numProposals" : 10000
+			}
 		},
 	"mcg" : {
 			"boostpath" : "/opt/local/include/",
@@ -30,36 +40,50 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
+				"numProposals" : 10000,
 				"mode" : "accurate",
 				"database": "pascal2012"
 			}
 
 		},
 	"objectness" : {
-		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
-		"outputLocation":	 "/workspace/result_eb/"
-		
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"numProposals" : 10000
+			}	
 		},
 
 	"rahtu" : {
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
-			"outputLocation":	 "/workspace/result_eb/"
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"numProposals" : 10000
+			}
 			
 		},
 
 	"randomPrim": {
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
-			"outputLocation":	 "/workspace/result_eb/"
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"numProposals" : 10000
+			}
 	},
 
 	"rantalankila" : {
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
-			"outputLocation":	 "/workspace/result_eb/"
+			"outputLocation":	 "/workspace/result_eb/",
+			"opts" : {
+				"numProposals" : 10000
+			}
 			
 		},
 
 	"selectiveSearch" : {
-
+			"opts" : {
+				"numProposals" : 10000
+			}
 		}
 }
 
