@@ -4,12 +4,21 @@
 		"outputLocation":	 "/workspace/result_eb/",
 		"modelPath" : "/workspace/objectProposals/edgeBoxes/releaseV3/models/forest/modelBsds.mat",
 		"opts" : {
-			"numProposals" : 10000,
+			"numProposals" : 10000
+				},
+		"params" : {
 			"alpha": 0.65, 
 			"beta": 0.75,
 			"minScore": 0.01, 
-			"maxBoxes": 1e4
-				}
+			"maxBoxes": 1e4,
+			"edgeMinMag": 0.1,
+			"edgeMergeThr": 0.5,
+			"clusterMinMag": 0.5,
+			"maxAspectRatio": 3,
+			"minBoxArea": 1000,
+			"gamma": 2,
+			"kappa": 1.5
+		}
 	},
 
 	"bing" : {
@@ -39,8 +48,10 @@
 			"bsds500path" : "/full/path",
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
-			"opts" : {
-				"numProposals" : 10000,
+			"opts": {
+				"numProposals" : 10000		
+			},
+			"params" : {
 				"mode" : "accurate",
 				"database": "pascal2012"
 			}

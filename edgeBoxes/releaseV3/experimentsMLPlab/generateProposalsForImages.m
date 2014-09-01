@@ -40,12 +40,13 @@ for i=1:length(images)
                 	fprintf('Only %d proposals were generated for image: %s\n',size(bbs,1),imageName);
         	end
 	end
- 	%edges boxes produces baoxes as" [x y w, h],
+ 	%edges boxes produces baoxes as "[x y w, h]"
 	%we convert to [x y x+w y+h]==[xmin ymin xmax ymax]
         boxes=bbs(:,1:4);
 	boxes=[boxes(:,1) boxes(:,2) boxes(:,1)+ boxes(:,3) boxes(:,2)+boxes(:,4)];
 	proposals.boxes= boxes;
 	proposalFileName=strrep(imageName,imageExt,'.mat');
+
 	save([saveLoc proposalFileName], 'proposals');
 end
 
