@@ -1,5 +1,8 @@
-function config=createConfig()
+function config = setEdgeBoxesDefaultParams()
+%SETDEFAULTPARAMS Summary of this function goes here
+%   Detailed explanation goes here
 
+%%Loading Default Parameters here
 %(1) main parameters 
 %   .name           - [] target filename (if specified return is 1)
 %   .alpha          - [.65] step size of sliding window search
@@ -12,6 +15,8 @@ config.params.alpha=[0.65];
 config.params.beta=[0.75];
 config.params.minScore=[0.01];
 config.params.maxBoxes=[1e4];
+
+
 
 %(2)  additional parameters, safe to ignore and leave at default vals
 
@@ -31,8 +36,5 @@ config.params.minBoxArea= [1000] ;
 config.params.gamma=[2];
 config.params.kappa=[1.5];
 
-config.opts.numProposals=10000;
-config.opts.imageExt='.jpg';
+end
 
-config.path.imageLoc='/home/gneelima/work/data/datasets/PASCAL2007/testImages/';
-config.path.outputLoc='/home/gneelima/work/data/output/objectProposals/edgeBoxes/';

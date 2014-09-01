@@ -9,16 +9,16 @@
 	fprintf('Added json encoder/decoder to the path\n');
     global configjson
 	configjson = loadjson([parDir, '/config.json']);
-
+    addpath(fullfile(pwd, 'utils'));
 
 %% compilation of edge boxes
-	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
-	mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp
-	mex edgeBoxes/releaseV3/private/spDetectMex.cpp
-	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp
+	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp -outdir edgeBoxes/releaseV3/private/ 
+	mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp -outdir edgeBoxes/releaseV3/private/ 
+	mex edgeBoxes/releaseV3/private/spDetectMex.cpp -outdir edgeBoxes/releaseV3/private/
+	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp -outdir edgeBoxes/releaseV3/private/
 
 	addpath(genpath([parDir '/edgeBoxes']));
-
+	configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
 	fprintf('Compilation of Edge Boxes finished\n ');
 
 %% building MCG and installation
@@ -37,6 +37,7 @@
 
 %% building Endres 
 	endres_path = [pwd '/endres/proposals'];
+    configjson.endres.endrespath = endres_path;
 	addpath(genpath(endres_path));
 
 %% building rantalankila

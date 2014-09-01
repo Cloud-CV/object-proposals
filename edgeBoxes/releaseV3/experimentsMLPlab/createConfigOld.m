@@ -1,5 +1,13 @@
 function config=createConfig()
 
+config.path.inputLoc='/home/gneelima/work/data/input/objectProposals/edgeBoxes/';
+config.path.outputLoc='/home/gneelima/work/data/output/objectProposals/edgeBoxes/boxes/';
+config.path.imageLoc='/home/gneelima/work/data/datasets/ILSVRC13/val/images/';
+
+
+config.list.imageList='val2.txt';
+
+
 %(1) main parameters 
 %   .name           - [] target filename (if specified return is 1)
 %   .alpha          - [.65] step size of sliding window search
@@ -31,8 +39,4 @@ config.params.minBoxArea= [1000] ;
 config.params.gamma=[2];
 config.params.kappa=[1.5];
 
-config.opts.numProposals=10000;
-config.opts.imageExt='.jpg';
 
-config.path.imageLoc='/home/gneelima/work/data/datasets/PASCAL2007/testImages/';
-config.path.outputLoc='/home/gneelima/work/data/output/objectProposals/edgeBoxes/';
