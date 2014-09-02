@@ -21,8 +21,18 @@ function calcRahtu( configjson )
         
         fprintf('Running Randomized Prims for %s\n', imname);
         [boxes,scores]=mvg_runObjectDetection(im);
+
+        numProposals=config.opts.numProposals;
+        if(size(boxes,1)>=numProposals)
+            boxes=boxes(1:numProposals,:);
+                        labels=labels(1:numProposals);
+        else
+            fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
+        end
+        proposals.boxes=boxes;
+        proposals.scores = scores;
         saveFile=[imname '.mat'];
-        save([rahtuconfig.outputLocation saveFile], 'boxes', 'scores');
+        save([rahtuconfig.outputLocation saveFile], 'proposals');
     end
 
 end
