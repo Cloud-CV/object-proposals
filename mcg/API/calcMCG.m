@@ -45,8 +45,34 @@ for i=1:length(images)
 	fprintf('Calculating MCG for %s\n', imname);
 	[candidates, scores] = im2mcg(mcgconfig.root_dir, im, mcgconfig.opts.mode);
 
+	boxes=zeros(length(candidates.labels),4);
+	
+	for j=1:length(candidates.labels)
+		boxes(j,:)=mask2box(ismember(candidates.superpixels,candidates.labels{j}));
+	end
+	
+	labels=candidates.labels; 
+	
+	if(isfield(mcgconfig.opts,'numProposals'))
+    	numProposals=mcgconfig.opts.numProposals;
+
+    	if(size(boxes,1)>=numProposals)
+	    	boxes=boxes(1:numProposals,:);
+        	labels=labels(1:numProposals);
+    	else
+	    	fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
+    	end
+	end
+
+
+	boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
+	
+	proposals.boxes=boxes;
+	proposals.regions.labels=labels;
+	proposals.regions.superpixels=candidates.superpixels;
+	
 	saveFile=[imname '.mat'];
-	save([mcgconfig.outputLocation saveFile], 'candidates', 'scores');
+	save([mcgconfig.outputLocation saveFile], 'proposals');
 end
 
 end
