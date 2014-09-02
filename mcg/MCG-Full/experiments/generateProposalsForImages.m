@@ -30,14 +30,14 @@ for i=1:length(images)
 	end
 	labels=candidates.labels; 
 	if(isfield(config.opts,'numProposals'))
-	        numProposals=config.opts.numProposals;
+        numProposals=config.opts.numProposals;
 
-        	if(size(boxes,1)>=numProposals)
-                	boxes=boxes(1:numProposals,:);
-                	labels=labels(1:numProposals);
-        	else
-                	fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
-        	end
+    	if(size(boxes,1)>=numProposals)
+            	boxes=boxes(1:numProposals,:);
+            	labels=labels(1:numProposals);
+    	else
+            	fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
+    	end
 	end
 	boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
 	proposals.boxes=boxes;
