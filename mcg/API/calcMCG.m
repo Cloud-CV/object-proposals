@@ -68,6 +68,7 @@ for i=1:length(images)
 	boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
 	
 	proposals.boxes=boxes;
+	proposals.scores = scores;
 	proposals.regions.labels=labels;
 	proposals.regions.superpixels=candidates.superpixels;
 	
