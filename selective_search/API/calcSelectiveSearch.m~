@@ -18,16 +18,15 @@ function calcSelectiveSearch( configjson )
     colorTypes=ssconfig.params.colorTypes;
     simFunctionHandles=ssconfig.params.simFunctionHandles;
     ks=ssconfig.params.ks;
-    im_width=ssconfig.params.imWidth;
+    im_width=config.params.imWidth;
     sigma=ssconfig.params.sigma;
-    minBoxWidth =ssconfig.params.minBoxWidth;
+    minBoxWidth =ssconfig.parmas.minBoxWidth;
     
+    numProposals=ssconfig.opts.numProposals;
+
     for i=1:length(images)
         imname = char(images(i));
-        
-        fprintf('Calculating Selective Search Object Proposals for %s\n', imname);
-        
-        impath = fullfile(ssconfig.imageLocation, imname);
+        impath = fullfile(raconfig.imageLocation, imname);
         im=imread(impath);
         
         if ~isfield(ssconfig.params, 'imWidth')
@@ -79,13 +78,9 @@ function calcSelectiveSearch( configjson )
                 fprintf('Only %d proposals were generated for image: %s\n',size(boxes,1),imname);
             end
         end 
-        
         % reset boxes to xmin ymin xmax ymnx
         boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
         proposals.boxes=boxes;
-        
-        saveFile=[imname '.mat'];
-        save([ssconfig.outputLocation saveFile], 'proposals');
 
     end
     

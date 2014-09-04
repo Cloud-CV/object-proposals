@@ -71,9 +71,9 @@
 	mex 'selective_search/Dependencies/anigaussm/anigauss_mex.c' 'selective_search/Dependencies/anigaussm/anigauss.c' -output anigauss -outdir 'selective_search'
 	mex 'selective_search/Dependencies/mexCountWordsIndex.cpp' -outdir 'selective_search'
 	mex 'selective_search/Dependencies/FelzenSegment/mexFelzenSegmentIndex.cpp' -output mexFelzenSegmentIndex -outdir 'selective_search'
-	addpath(genpath(fullfile(pwd,'selective_search/Dependencies')));
-	configjson.selective_search.colorTypes = {'Hsv', 'Lab', 'RGI', 'H', 'Intensity'};
-	configjson.selective_search.simFunctionHandles = {@SSSimColourTextureSizeFillOrig, ...
+	addpath(genpath(fullfile(pwd,'selective_search')));
+	configjson.selective_search.params.colorTypes = {'Hsv', 'Lab', 'RGI', 'H', 'Intensity'};
+	configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSizeFillOrig, ...
                       @SSSimTextureSizeFill};
 
 %Validation Code
