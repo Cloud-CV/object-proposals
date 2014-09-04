@@ -41,6 +41,7 @@ function calcEndres(config)
 
 		boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
 		proposals.boxes=boxes;
+		proposals.scores = [size(boxes,1):-1:1]`;
 		proposals.regions.ranked_regions=ranked_regions;
 		proposals.regions.superpixels=superpixels;
 		proposals.regions.image_data=image_data;

@@ -66,4 +66,14 @@
     addpath(genpath([pwd, '/objectness-release-v2.2']));
     configjson.objectness.objectnesspath = [pwd, '/objectness-release-v2.2'];
     fprintf('Compiling Objectness finished \n');
+%% building selective_search
+	fprintf('Compiling Selective Search \n');
+	mex 'selective_search/Dependencies/anigaussm/anigauss_mex.c' 'selective_search/Dependencies/anigaussm/anigauss.c' -output anigauss -outdir 'selective_search'
+	mex 'selective_search/Dependencies/mexCountWordsIndex.cpp' -outdir 'selective_search'
+	mex 'selective_search/Dependencies/FelzenSegment/mexFelzenSegmentIndex.cpp' -output mexFelzenSegmentIndex -outdir 'selective_search'
+	addpath(genpath(fullfile(pwd,'selective_search')));
+	configjson.selective_search.params.colorTypes = {'Hsv', 'Lab', 'RGI', 'H', 'Intensity'};
+	configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSizeFillOrig, ...
+                      @SSSimTextureSizeFill};
+
 %Validation Code

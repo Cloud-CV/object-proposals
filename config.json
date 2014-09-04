@@ -91,9 +91,20 @@
 			
 		},
 
-	"selectiveSearch" : {
+	"selective_search" : {
+			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000
+			},
+			"params": {
+				"ks" :[50, 100],
+				"sigma":0.8,
+				"minBoxWidth":20,
+				"imWidth":500,
+				"mode":"fast",
+				"numProposals":10000,
+				"colorTypes": ["Hsv", "Lab", "RGI", "H", "Intensity"]
 			}
 		}
 }

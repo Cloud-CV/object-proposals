@@ -67,7 +67,7 @@ for i=1:length(images)
         boxes=bbs(:,1:4);
 	boxes=[boxes(:,1) boxes(:,2) boxes(:,1)+ boxes(:,3) boxes(:,2)+boxes(:,4)];
 	proposals.boxes= boxes;
-	
+	proposals.scores = boxes(:,5);
 	saveFile=[imname '.mat'];
 	save([ebconfig.outputLocation saveFile], 'proposals');
 end
