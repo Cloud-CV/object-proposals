@@ -18,7 +18,7 @@
 % into the same folder, discarding the "val", "test", "train" folders
 % ------------------------------------------------------------------------
 function db_root_dir = database_root_dir(mcgconfig)
-	database = mcgconfig.opts.database;
+	database = mcgconfig.params.database;
 	pascal2012path = mcgconfig.pascal2012path;
 	bsds500path = mcgconfig.bsds500path;
 	if strcmp(database,'pascal2012')
