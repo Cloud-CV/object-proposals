@@ -44,7 +44,7 @@ images = [images{:}];
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = strcat(ebconfig.imageLocation, imname);
+    impath = fullfile(ebconfig.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
@@ -64,10 +64,10 @@ for i=1:length(images)
 	end
  	%edges boxes produces baoxes as "[x y w, h]"
 	%we convert to [x y x+w y+h]==[xmin ymin xmax ymax]
-        boxes=bbs(:,1:4);
+    boxes=bbs(:,1:4);
 	boxes=[boxes(:,1) boxes(:,2) boxes(:,1)+ boxes(:,3) boxes(:,2)+boxes(:,4)];
 	proposals.boxes= boxes;
-	proposals.scores = boxes(:,5);
+	proposals.scores = bbs(:,5);
 	saveFile=[imname '.mat'];
 	save([ebconfig.outputLocation saveFile], 'proposals');
 end

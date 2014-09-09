@@ -11,7 +11,7 @@ function calcEndres(config)
 
 	for i=1:length(images)
 	    imname = char(images(i));
-	    impath = strcat(endresconfig.imageLocation, imname);
+	    impath = fullfile(endresconfig.imageLocation, imname);
 	    whos impath
 		im=imread(impath);
 	    
@@ -41,7 +41,7 @@ function calcEndres(config)
 
 		boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
 		proposals.boxes=boxes;
-		proposals.scores = [size(boxes,1):-1:1]`;
+		proposals.scores = [size(boxes,1):-1:1];
 		proposals.regions.ranked_regions=ranked_regions;
 		proposals.regions.superpixels=superpixels;
 		proposals.regions.image_data=image_data;

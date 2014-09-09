@@ -29,7 +29,7 @@ function calcRahtu( configjson )
                 boxes=boxes(1:numProposals,:);
                             labels=labels(1:numProposals);
             else
-                fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
+                fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imname);
             end
         end
             

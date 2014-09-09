@@ -34,7 +34,7 @@ images = [images{:}]; %This make so much more sense.
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = strcat(objectnessconfig.imageLocation, imname);
+    impath = fullfile(objectnessconfig.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
@@ -42,10 +42,22 @@ for i=1:length(images)
 		im=repmat(im,[1,1,3]);
 	end
 	fprintf('Calculating Objectness for %s\n', imname);
-	boxes = runObjectness(im,10, params, objectnessconfig.objectnesspath);
+	bbs = runObjectness(im,10, params, objectnessconfig.objectnesspath);
 
+	if(isfield((objectnessconfig.opts),'numProposals'))
+		numProposals=objectnessconfig.opts.numProposals;
+	        if(size(bbs,1)>=numProposals)
+        	        bbs=bbs(1:numProposals);
+        	else
+                	fprintf('Only %d proposals were generated for image: %s\n',size(bbs,1),imname);
+        	end
+	end
+
+	boxes=bbs(:,1:4);
+	proposals.boxes= boxes;
+	
 	saveFile=[imname '.mat'];
-	save([objectnessconfig.outputLocation saveFile], 'boxes');
+	save([objectnessconfig.outputLocation saveFile], 'proposals');
 end
 
 end

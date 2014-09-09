@@ -1,10 +1,13 @@
 {
+
 	"edgeBoxes":{
-		"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+		"imageLocation": "/workspace/test_images",
 		"outputLocation":	 "/workspace/result_eb/",
-		"modelPath" : "/workspace/objectProposals/edgeBoxes/releaseV3/models/forest/modelBsds.mat",
+		
 		"opts" : {
-			"numProposals" : 10000
+			"numProposals" : 10000,
+			"isbaseline" : false,
+			"order": "descend"
 				},
 		"params" : {
 			"alpha": 0.65, 
@@ -22,34 +25,44 @@
 	},
 
 	"bing" : {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				"isbaseline" : false,
+				"order": "descend"
 			}
 		},
 
 	"cpmc" : {
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				
+				"isbaseline" : false,
+				"order": "descend"
 			}
 		},
 	"endres" : {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				"isbaseline" : false,
+				"order": "none"
 			}
 		},
 	"mcg" : {
 			"boostpath" : "/opt/local/include/",
 			"pascal2012path" : "/full/path",
 			"bsds500path" : "/full/path",
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts": {
-				"numProposals" : 10000		
+				"numProposals" : 10000,
+
+				"isbaseline" : false,
+				"order": "descend"		
 			},
 			"params" : {
 				"mode" : "accurate",
@@ -58,44 +71,55 @@
 
 		},
 	"objectness" : {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				"isbaseline" : false,
+				"order": "descend"
 			}	
 		},
 
 	"rahtu" : {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+
+				"isbaseline" : false,
+				"order": "none"
 			}
 			
 		},
 
 	"randomPrim": {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+			"isbaseline" : false,
+			"order": "none"
 			}
 	},
 
 	"rantalankila" : {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+			"isbaseline" : false,
+			"order": "none"
 			}
 			
 		},
 
 	"selective_search" : {
-			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
+			"imageLocation": "/workspace/test_images",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+			"isbaseline" : false,
+			"order": "ascend"
 			},
 			"params": {
 				"ks" :[50, 100],

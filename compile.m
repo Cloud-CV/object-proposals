@@ -1,14 +1,19 @@
 % Compile All  object proposals
-
+    global configjson
+    
 % add current directory as the parent directory
 	parDir = pwd;
-
-
+    
+% adding evaluation metrics into path
+    addpath([parDir '/evaluation-metrics']);
+    
 % add jsonlib to path and load the config file
 	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
 	fprintf('Added json encoder/decoder to the path\n');
-    global configjson
-	configjson = loadjson([parDir, '/config.json']);
+    
+    configjson = loadjson([parDir, '/config.json'])
+    configjson.parDir = pwd;
+    
     addpath(fullfile(pwd, 'utils'));
 
 %% compilation of edge boxes
@@ -18,6 +23,7 @@
 	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp -outdir edgeBoxes/releaseV3/private/
 
 	addpath(genpath([parDir '/edgeBoxes']));
+    configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat']
 	configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
 	fprintf('Compilation of Edge Boxes finished\n ');
 
