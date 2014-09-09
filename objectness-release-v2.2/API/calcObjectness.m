@@ -44,8 +44,20 @@ for i=1:length(images)
 	fprintf('Calculating Objectness for %s\n', imname);
 	boxes = runObjectness(im,10, params, objectnessconfig.objectnesspath);
 
+	if(isfield((config.opts),'numProposals'))
+		numProposals=config.opts.numProposals;
+	        if(size(bbs,1)>=numProposals)
+        	        bbs=bbs(1:numProposals);
+        	else
+                	fprintf('Only %d proposals were generated for image: %s\n',size(bbs,1),imageName);
+        	end
+	end
+
+	boxes=bbs(:,1:4);
+	proposals.boxes= boxes;
+	
 	saveFile=[imname '.mat'];
-	save([objectnessconfig.outputLocation saveFile], 'boxes');
+	save([objectnessconfig.outputLocation saveFile], 'proposals');
 end
 
 end
