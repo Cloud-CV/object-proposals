@@ -30,12 +30,13 @@ function calcRaSegments( configjson )
         boxes=zeros(length(region_parts),4);
         for i=1:length(region_parts)
                 mask=zeros(size(im));
+                size(im)
                 region=region_parts{i}
                 for j=1:length(region)
                         sp=region(i)
                         pixels=orig_sp{sp};
                         for k=1:length(pixels)
-                                mask(pixles(k,1),pixels(k,2))=1;
+                                mask(pixels(k,1),pixels(k,2))=1;
                         end
                 end
 
@@ -47,7 +48,7 @@ function calcRaSegments( configjson )
                 boxes=boxes(1:numProposals,:);
                             labels=labels(1:numProposals);
             else
-                fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
+                fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imname);
             end
         end
 

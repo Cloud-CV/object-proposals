@@ -1,4 +1,4 @@
-function plotMetric(configjson, methods)
+function plotMetric(configjson)
 
   % Plot the recall,auc abo of test set ground truth for all methods.
   %
@@ -9,7 +9,6 @@ function plotMetric(configjson, methods)
   parDir = configjson.parDir;
   testset = load(fullfile(parDir, 'evaluation_metric', 'data/gt_imagenet_13.mat'));
   methods = getMethods(configjson);
-  
   % compute_best_recall_candidates(testset, methods);
   %compute_abo_candidates(testset, methods);
   fh = figure;

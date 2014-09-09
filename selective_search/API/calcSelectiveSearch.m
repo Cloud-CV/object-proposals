@@ -86,7 +86,7 @@ function calcSelectiveSearch( configjson )
         
         saveFile=[imname '.mat'];
         save([ssconfig.outputLocation saveFile], 'proposals');
-
+        
     end
     
 end

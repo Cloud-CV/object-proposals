@@ -44,7 +44,7 @@ images = [images{:}];
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = strcat(ebconfig.imageLocation, imname);
+    impath = fullfile(ebconfig.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
