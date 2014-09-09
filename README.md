@@ -7,7 +7,7 @@ This is a library/API which can be used to generate bounding box/region proposal
 Usage:
 ======
 
-1. Open config.json. Set imageLocation, and outputLocation to locations of your choice for all the approaches you want to use.
+1. Open config.json. Set imageLocation, and outputLocation to locations of your choice for all the approaches you want to use. (All other config values have been set to default values)
 
 2. Run compile.m
 ( This compiles the approaches which require compiling and sets all the necessary paths)
