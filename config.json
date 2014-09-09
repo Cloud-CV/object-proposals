@@ -4,7 +4,9 @@
 		"outputLocation":	 "/workspace/result_eb/",
 		"modelPath" : "/workspace/objectProposals/edgeBoxes/releaseV3/models/forest/modelBsds.mat",
 		"opts" : {
-			"numProposals" : 10000
+			"numProposals" : 10000,
+			"isbaseline" : "False",
+			"order": ""
 				},
 		"params" : {
 			"alpha": 0.65, 
@@ -26,20 +28,27 @@
 			"outputLocation":	 "/workspace/result_eb/",
 			
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				"isbaseline" : "False",
+				"order": ""
 			}
 		},
 
 	"cpmc" : {
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				
+				"isbaseline" : "False",
+				"order": ""
 			}
 		},
 	"endres" : {
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				"isbaseline" : "False",
+				"order": ""
 			}
 		},
 	"mcg" : {
@@ -49,7 +58,10 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts": {
-				"numProposals" : 10000		
+				"numProposals" : 10000,
+
+				"isbaseline" : "False",
+				"order": ""		
 			},
 			"params" : {
 				"mode" : "accurate",
@@ -61,7 +73,9 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				"isbaseline" : "False",
+				"order": ""
 			}	
 		},
 
@@ -69,7 +83,10 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+				
+				"isbaseline" : "False",
+				"order": ""
 			}
 			
 		},
@@ -78,7 +95,9 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+			"isbaseline" : "False",
+			"order": ""
 			}
 	},
 
@@ -86,7 +105,9 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+			"isbaseline" : "False",
+			"order": ""
 			}
 			
 		},
@@ -95,7 +116,9 @@
 			"imageLocation": "/workspace/VOCdevkit/VOC2007/JPEGImages/",
 			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
-				"numProposals" : 10000
+				"numProposals" : 10000,
+			"isbaseline" : "False",
+			"order": ""
 			},
 			"params": {
 				"ks" :[50, 100],
