@@ -1,17 +1,17 @@
 function calcSelectiveSearch( configjson )
     ssconfig = configjson.selective_search;
     
-    if(~exist(ssconfig.imageLocation, 'dir'))
+    if(~exist(config.imageLocation, 'dir'))
         fprintf('Image Location does not exist. Please check path once again \n');
         return;
     end
     
-    if(~exist(ssconfig.outputLocation, 'dir'))
+    if(~exist(config.outputLocation, 'dir'))
         fprintf('Output Location does not exist. Please check path once again \n');
         return;
     end
     
-    images = dir(ssconfig.imageLocation);
+    images = dir(config.imageLocation);
     images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match');
     images = [images{:}];
     
@@ -27,7 +27,7 @@ function calcSelectiveSearch( configjson )
         
         fprintf('Calculating Selective Search Object Proposals for %s\n', imname);
         
-        impath = fullfile(ssconfig.imageLocation, imname);
+        impath = fullfile(config.imageLocation, imname);
         im=imread(impath);
         
         if ~isfield(ssconfig.params, 'imWidth')
@@ -85,7 +85,10 @@ function calcSelectiveSearch( configjson )
         proposals.boxes=boxes;
         
         saveFile=[imname '.mat'];
-        save([ssconfig.outputLocation saveFile], 'proposals');
+        if(~exist([config.outputLocation '/selectiveSearch'], 'dir'))
+            mkdir(config.outputLocation,'/selectiveSearch')
+        end
+        save([config.outputLocation '/selectiveSearch/' saveFile], 'proposals');
         
     end
     

@@ -7,8 +7,11 @@ function plotMetric(configjson)
   % yet found on disk) and then plot recall curves. The plots are saved to
   % figures/.
   parDir = configjson.parDir;
-  testset = load(fullfile(parDir, 'evaluation_metric', 'data/gt_imagenet_13.mat'));
+  testset = load(fullfile(parDir, 'evaluation-metrics', 'data/pascal_gt_data.mat'));
   methods = getMethods(configjson);
+  
+  compute_best_recall_candidates(testset, methods);
+  
   % compute_best_recall_candidates(testset, methods);
   %compute_abo_candidates(testset, methods);
   fh = figure;

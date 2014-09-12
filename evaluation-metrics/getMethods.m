@@ -1,12 +1,22 @@
 function methods = getMethods( configjson )
-    proposalNames = fieldnames(configjson)
-    
+    proposalNames = fieldnames(configjson);
+
     for i = 1:length(configjson)
-        methods(i).name = proposalNames(i);
-        methods(i).candidate_dir = ...
-        configjson(proposalNames(i)).outputLocation;
-        methods(i).isBaseline = configjson(proposalNames(i)).opts.isbaseline;
-        methods(i).order = configjson(proposalNames(i)).opts.order;    
+        
+        methods(i).name = char(proposalNames(i));
+        eval(sprintf('methods(i).candidate_dir = configjson.%s.outputLocation', char(proposalNames(i))));
+        eval(sprintf('methods(i).is_baseline = configjson.%s.opts.isbaseline', char(proposalNames(i))));
+        eval(sprintf('methods(i).order = configjson.%s.opts.order',char(proposalNames(i))));    
     end
+    
+  sort_keys = [num2cell([methods.is_baseline])', {methods.name}'];
+  for i = 1:numel(methods)
+    sort_keys{i,1} = sprintf('%d', sort_keys{i,1});
+  end
+  [~,idx] = sortrows(sort_keys);
+  for i = 1:numel(methods)
+    methods(idx(i)).sort_key = i;
+  end
+  
 end
 

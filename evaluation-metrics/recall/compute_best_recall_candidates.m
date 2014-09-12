@@ -28,7 +28,7 @@ function compute_best_recall_candidates(testset, methods)
       			assert(pos_range_end <= num_annotations);
 
      			fprintf('sampling candidates for image %d/%d\n', j, numel(testset.impos));
-      			img_id = [testset.impos(j).name] ;
+      			img_id = [testset.impos(j).im] ;
       			for i = 1:num_candidates_thresholds
         			[candidates, scores] = get_candidates(method, img_id, ...
           				candidates_thresholds(i));

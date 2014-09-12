@@ -5,13 +5,13 @@ function calcEndres(config)
 	endresconfig = config.endres;
 
 	%Load All images in a particular folder
-	images = dir(endresconfig.imageLocation);
+	images = dir(config.imageLocation);
 	images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match');
 	images = [images{:}];
 
 	for i=1:length(images)
 	    imname = char(images(i));
-	    impath = fullfile(endresconfig.imageLocation, imname);
+	    impath = fullfile(config.imageLocation, imname);
 	    whos impath
 		im=imread(impath);
 	    
@@ -47,7 +47,10 @@ function calcEndres(config)
 		proposals.regions.image_data=image_data;
 
 		saveFile=[imname '.mat'];
-		save([endresconfig.outputLocation saveFile], 'proposals');
+        if(~exist([config.outputLocation 'endres'], 'dir'))
+            mkdir(config.outputLocation,'/endres')
+        end
+        xsave([config.outputLocation '/endres/' saveFile], 'proposals');
 	end
 
 end

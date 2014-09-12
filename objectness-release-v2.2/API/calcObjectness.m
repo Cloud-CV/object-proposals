@@ -7,18 +7,18 @@ objectnessconfig = config.objectness;
 
 %Check if image location exists or not.
 
-if(~exist(objectnessconfig.imageLocation, 'dir'))
+if(~exist(config.imageLocation, 'dir'))
 	fprintf('Image Location does not exist. Please check path once again \n');
 	return;
 end
 
-if(~exist(objectnessconfig.outputLocation, 'dir'))
+if(~exist(config.outputLocation, 'dir'))
 	fprintf('Image Location does not exist. Please check path once again \n');
 	return;
 end
 
 try            
-    struct = load([objectnessconfig.objectnesspath '/Data/params.mat']);
+    struct = load([config.objectnesspath '/Data/params.mat']);
     params = struct.params;
     clear struct;
 catch
@@ -28,13 +28,13 @@ end
 
 
 %Load All images in a particular folder %This make so much more sense.
-images = dir(objectnessconfig.imageLocation); %This make so much more sense.
+images = dir(config.imageLocation); %This make so much more sense.
 images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match'); %This make so much more sense.
 images = [images{:}]; %This make so much more sense.
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = fullfile(objectnessconfig.imageLocation, imname);
+    impath = fullfile(config.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
@@ -57,7 +57,10 @@ for i=1:length(images)
 	proposals.boxes= boxes;
 	
 	saveFile=[imname '.mat'];
-	save([objectnessconfig.outputLocation saveFile], 'proposals');
+    if(~exist([config.outputLocation 'objectness'], 'dir'))
+        mkdir(config.outputLocation,'/objectness')
+    end
+	save([config.outputLocation '/objectness/' saveFile], 'proposals');
 end
 
 end

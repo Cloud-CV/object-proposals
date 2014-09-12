@@ -27,24 +27,24 @@ opts.maxBoxes = ebconfig.params.maxBoxes;
 
 %Check if image location exists or not.
 
-if(~exist(ebconfig.imageLocation, 'dir'))
+if(~exist(config.imageLocation, 'dir'))
 	fprintf('Image Location does not exist. Please check path once again \n');
 	return;
 end
 
-if(~exist(ebconfig.outputLocation, 'dir'))
-	fprintf('Image Location does not exist. Please check path once again \n');
+if(~exist(config.outputLocation, 'dir'))
+	fprintf('Output Location does not exist. Please check path once again \n');
 	return;
 end
 
 %Load All images in a particular folder
-images = dir(ebconfig.imageLocation);
+images = dir(config.imageLocation);
 images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match');
 images = [images{:}];
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = fullfile(ebconfig.imageLocation, imname);
+    impath = fullfile(config.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
@@ -69,7 +69,10 @@ for i=1:length(images)
 	proposals.boxes= boxes;
 	proposals.scores = bbs(:,5);
 	saveFile=[imname '.mat'];
-	save([ebconfig.outputLocation saveFile], 'proposals');
+    if(~exist([config.outputLocation 'edgeBoxes'], 'dir'))
+        mkdir(config.outputLocation,'/dgeBoxes')
+    end
+	save([config.outputLocation '/edgeBoxes/' saveFile], 'proposals');
 end
 
 end

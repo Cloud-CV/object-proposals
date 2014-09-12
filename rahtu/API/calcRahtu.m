@@ -1,18 +1,18 @@
-function calcRahtu( configjson )
-    rahtuconfig = configjson.rahtu;
+function calcRahtu( config )
+    rahtuconfig = config.rahtu;
     
-    if(~exist(rahtuconfig.imageLocation, 'dir'))
+    if(~exist(config.imageLocation, 'dir'))
         fprintf('Image Location does not exist. Please check path once again \n');
         return;
     end
     
-    images = dir(rahtuconfig.imageLocation);
+    images = dir(config.imageLocation);
     images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match');
     images = [images{:}];
     
     for i=1:length(images)
         imname = char(images(i));
-        impath = fullfile(rahtuconfig.imageLocation, imname);
+        impath = fullfile(config.imageLocation, imname);
         im=imread(impath);
 
         if(size(im, 3) == 1)
@@ -36,7 +36,10 @@ function calcRahtu( configjson )
         proposals.boxes=boxes;
         proposals.scores = scores;
         saveFile=[imname '.mat'];
-        save([rahtuconfig.outputLocation saveFile], 'proposals');
+        if(~exist([config.outputLocation '/rahtu'], 'dir'))
+            mkdir(config.outputLocation,'/rahtu')
+        end
+        save([config.outputLocation '/rahtu/' saveFile], 'proposals');
     end
 
 end
