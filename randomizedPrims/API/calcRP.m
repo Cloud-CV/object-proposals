@@ -35,7 +35,7 @@ function calcRP( config )
 
         proposals.boxes=boxes;
         saveFile=[imname '.mat'];
-        if(~exist([config.outputLocation 'randomPrim'], 'dir'))
+        if(~exist([config.outputLocation '/randomPrim'], 'dir'))
         	mkdir(config.outputLocation,'/randomPrim')
         end
         save([config.outputLocation '/randomPrim/' saveFile], 'proposals');

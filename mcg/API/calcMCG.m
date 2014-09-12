@@ -73,7 +73,7 @@ for i=1:length(images)
 	proposals.regions.superpixels=candidates.superpixels;
 	
 	saveFile=[imname '.mat'];
-    if(~exist([config.outputLocation 'mcg'], 'dir'))
+    if(~exist([config.outputLocation '/mcg'], 'dir'))
         mkdir(config.outputLocation,'/mcg')
     end
     save([config.outputLocation '/mcg/' saveFile], 'proposals');
