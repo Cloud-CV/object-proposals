@@ -1,9 +1,7 @@
 {
-
-	"edgeBoxes":{
-		"imageLocation": "/workspace/test_images",
-		"outputLocation":	 "/workspace/result_eb/",
-		
+	"imageLocation": "/workspace/test_images",
+	"outputLocation":	 "/workspace/result_eb/",	
+	"edgeBoxes":{	
 		"opts" : {
 			"numProposals" : 10000,
 			"isbaseline" : false,
@@ -25,9 +23,6 @@
 	},
 
 	"bing" : {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
-			
 			"opts" : {
 				"numProposals" : 10000,
 				"isbaseline" : false,
@@ -44,8 +39,6 @@
 			}
 		},
 	"endres" : {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000,
 				"isbaseline" : false,
@@ -54,10 +47,6 @@
 		},
 	"mcg" : {
 			"boostpath" : "/opt/local/include/",
-			"pascal2012path" : "/full/path",
-			"bsds500path" : "/full/path",
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts": {
 				"numProposals" : 10000,
 
@@ -71,8 +60,6 @@
 
 		},
 	"objectness" : {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000,
 				"isbaseline" : false,
@@ -81,11 +68,8 @@
 		},
 
 	"rahtu" : {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000,
-
 				"isbaseline" : false,
 				"order": "none"
 			}
@@ -93,8 +77,6 @@
 		},
 
 	"randomPrim": {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000,
 			"isbaseline" : false,
@@ -103,8 +85,6 @@
 	},
 
 	"rantalankila" : {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000,
 			"isbaseline" : false,
@@ -114,12 +94,10 @@
 		},
 
 	"selective_search" : {
-			"imageLocation": "/workspace/test_images",
-			"outputLocation":	 "/workspace/result_eb/",
 			"opts" : {
 				"numProposals" : 10000,
-			"isbaseline" : false,
-			"order": "ascend"
+				"isbaseline" : false,
+				"order": "ascend"
 			},
 			"params": {
 				"ks" :[50, 100],

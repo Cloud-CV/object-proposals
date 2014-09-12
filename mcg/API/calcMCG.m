@@ -18,24 +18,24 @@ mcgconfig = config.mcg;
 
 %Check if image location exists or not.
 
-if(~exist(mcgconfig.imageLocation, 'dir'))
+if(~exist(config.imageLocation, 'dir'))
 	fprintf('Image Location does not exist. Please check path once again \n');
 	return;
 end
 
-if(~exist(mcgconfig.outputLocation, 'dir'))
+if(~exist(config.outputLocation, 'dir'))
 	fprintf('Image Location does not exist. Please check path once again \n');
 	return;
 end
 
 %Load All images in a particular folder
-images = dir(mcgconfig.imageLocation);
+images = dir(config.imageLocation);
 images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match');
 images = [images{:}];
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = strcat(mcgconfig.imageLocation, imname);
+    impath = strcat(config.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
@@ -43,7 +43,7 @@ for i=1:length(images)
 		im=repmat(im,[1,1,3]);
 	end
 	fprintf('Calculating MCG for %s\n', imname);
-	[candidates, scores] = im2mcg(mcgconfig.root_dir, im, mcgconfig.opts.mode);
+	[candidates, scores] = im2mcg(config.root_dir, im, mcgconfig.opts.mode);
 
 	boxes=zeros(length(candidates.labels),4);
 	
@@ -60,7 +60,7 @@ for i=1:length(images)
 	    	boxes=boxes(1:numProposals,:);
         	labels=labels(1:numProposals);
     	else
-	    	fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imName);
+	    	fprintf('Only %d proposals were generated for image:%s\n',size(boxes,1),imname);
     	end
 	end
 
@@ -73,7 +73,10 @@ for i=1:length(images)
 	proposals.regions.superpixels=candidates.superpixels;
 	
 	saveFile=[imname '.mat'];
-	save([mcgconfig.outputLocation saveFile], 'proposals');
+    if(~exist([config.outputLocation 'mcg'], 'dir'))
+        mkdir(config.outputLocation,'/mcg')
+    end
+    save([config.outputLocation '/mcg/' saveFile], 'proposals');
 end
 
 end
