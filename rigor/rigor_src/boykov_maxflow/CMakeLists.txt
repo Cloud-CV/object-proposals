@@ -1,0 +1,51 @@
+# @authors:     Ahmad Humayun
+# @contact:     ahumayun@cc.gatech.edu
+# @affiliation: Georgia Institute of Technology
+# @date:        Fall 2013 - Summer 2014
+
+cmake_minimum_required(VERSION 2.8)
+
+PROJECT(BoykovKolmogorovMaxflow)
+# The version number.
+SET( ${PROJECT_NAME}_VERSION_MAJOR 3 )
+SET( ${PROJECT_NAME}_VERSION_MINOR 02 )
+
+# print the version no.
+MESSAGE(${PROJECT_NAME} " Version: " ${${PROJECT_NAME}_VERSION_MAJOR} "." ${${PROJECT_NAME}_VERSION_MINOR})
+
+IF(WIN32)
+	SET(BOOST_ROOT "C:/Boost")
+	SET (Boost_USE_STATIC_LIBS TRUE)
+ENDIF(WIN32)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+
+# find TBB libraries
+FIND_PACKAGE(TBB REQUIRED)
+
+INCLUDE_DIRECTORIES(${TBB_INCLUDE_DIRS})
+LINK_DIRECTORIES(${TBB_LIBRARY_DIRS})
+
+# find Boost libraries
+SET(BOOST_LIBS program_options filesystem system timer)
+FIND_PACKAGE(Boost COMPONENTS ${BOOST_LIBS} REQUIRED)
+
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+
+# add directory for examples
+GET_FILENAME_COMPONENT(EXAMPLES_CODE ${CMAKE_SOURCE_DIR}/examples ABSOLUTE)
+INCLUDE_DIRECTORIES(${EXAMPLES_CODE})
+
+# add directory for tests
+GET_FILENAME_COMPONENT(TESTS_CODE ${CMAKE_SOURCE_DIR}/tests ABSOLUTE)
+INCLUDE_DIRECTORIES(${TESTS_CODE})
+
+# set compilation
+FILE(GLOB PROGRAM_SRCS *.cpp ${EXAMPLES_CODE}/*.cpp ${TESTS_CODE}/*.cpp)
+FILE(GLOB REMOVE_SRCS bk_dynamicgraphs_mex.*)
+LIST(REMOVE_ITEM PROGRAM_SRCS ${REMOVE_SRCS})
+ADD_EXECUTABLE(${PROJECT_NAME} ${PROGRAM_SRCS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${Boost_LIBRARIES} ${TBB_LIBRARIES})

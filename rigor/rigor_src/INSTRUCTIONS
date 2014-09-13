@@ -1,0 +1,261 @@
+﻿This document is a copy of https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8
+Please see it for more frequent updates.
+
+
+-------------------------------------------------------------------------------
+RIGOR - Recycling Inference in Graph Cuts for generating Object Regions
+Ahmad Humayun,  Fuxin Li,  James M. Rehg
+http://cpl.cc.gatech.edu/projects/RIGOR/
+IEEE Computer Vision and Pattern Recognition (CVPR) 2014
+
+Contact a[Last name of first author]@cc.gatech.edu for any questions / comments
+-------------------------------------------------------------------------------
+
+License Agreement
+
+Copyright (c) 2014 Ahmad Humayun, Fuxin Li, James M. Rehg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+The code was written by A. Humayun and F. Li.
+Thanks to Arya Irani, who helped us configure the code for macs
+
+
+Software Requirements
+---------------------
+1. A Windows, or a Linux OS (I have tested it on Ubuntu 14.04, and Windows 8.1). For the most part Mac is also supported, but there are some errors in the edge detection result which I am trying to resolve (tested on Mavericks 10.9)..
+2. MATLAB (with the bioinformatics, image processing, and statistics toolboxes). I have tested it on R2013a and R2014a.
+3. A C++ compiler (compatible with the mex compiler). For windows you can install Windows SDK (if you don’t have Visual Studio). For linux and Mac, gcc should suffice.
+
+
+Setting up the Code
+-------------------
+1. Download the code to some directory, for instance ~/rigor_src
+2. Run MATLAB and change to ~/rigor_src folder.
+3. If using Mac, you need to link the mexopts packaged with the code to force mex to use gcc: 
+   a. ln -sf `pwd`/setup/mexopts_mavericks.sh ~/.matlab/R2012b/mexopts.sh
+4. Download and compile all external dependencies using ~/rigor_src/setup/download_algorithms.m:
+   a. cd ~/rigor_src
+   b. addpath setup;
+   c. download_algorithms
+   d. This will download and prepare all the required pieces of third-party code needed to run RIGOR. You need to accept all the accompanying license agreements to run the code.
+   e. If you get trouble removing some directories, most probably some mex code is in your path, and its recommended that you restart MATLAB before running this script.
+5. Make sure boost and tbb are installed on your system. More details here.
+6. Also make sure MATLAB has the following 3 toolboxes:
+   a. Bioinformatics toolbox
+   b. Image Processing toolbox
+   c. Statistics toolbox
+7. Now you need to run the ~/rigor_src/setup/make.m file to compile all mex code:
+   a. If on windows, point the tbb_dir and boost_dir variable on line 18 and 21 of make.m to where these libraries are on the system.
+   b. If on linux, point the boost_libs variable on line 32 of make.m to where boost libraries are.
+   c. No need to set any variables if on a mac.
+   d. cd ~/rigor_src
+   e. addpath setup;
+   f. make
+   g. If mex is unable to find -lboost_system-mt or -lboost_timer-mt, try replacing it with non multi-threaded versions of boost. This can be done by removing the two instances of ‘-mt’ on line 65 of ~/rigor_src/setup/make.m
+8. Make sure the code works by running ~/rigor_src/rigor_obj_segments.m:
+   a. cd ~/rigor_src
+   b. rigor_obj_segments('peppers.png', 'force_recompute',true);
+
+
+Computing object proposals by rigor_obj_segments
+------------------------------------------------
+(these instructions are also present in ~/rigor_src/rigor_obj_segments.m)
+The command is as follows: 
+     [masks, seg_obj, total_time] = rigor_obj_segments(img_filepath, varargin)
+
+In its simplest form, you can just give the file path to the image, and it will generate the set of masks
+     [masks] = rigor_obj_segments('peppers.png');
+
+
+@output:
+The output is written to disk, unless ('io', true) (see below). The path where the output is written is defined by seg_save_dirpath in internal_params.m. The file stores masks, and seg_obj. These variables are also directly returned by the function:
+
+1. masks: is a three dimensional logical matrix with the same width and height as the input image, and with the depth equal to the number of output object proposals. Hence, each slice gives a binary mask of one object proposal.
+
+2. seg_obj: is most of the variables stored in @Segmenter object, which includes the parameters used to generate the segments. It also stores meta_cut_segs_info, which gives information about the cuts/segments like what was the parametric lambda used for generating a cut. seg_obj also stores timings info for each graph type, and the number of segments at each stage for different graph types in num_segs.
+
+3. total_time: simply stores the total actual computation time. The time stored compensates for loading precomputed data from disk rather than being actually computed on spot - this time would be closer to if all processing was being done from scratch.
+
+
+@input params:
+1. img_filepath: is the filepath to the image that needs to be segmented. It can be of any type which as long as it can be read by an be imread.
+
+2. varargin: is the set of string/argument pairs to override default arguments. Some argument pairs:
+   a. ('params_func', <@params function>): if you don't want to use the default set of params specified in params_StructEdges.m, you can specify another function by giving the arguments: 
+     rigor_obj_segments('im.jpg', 'params_func',@params_SketchTokens);
+Here parameters in params_SketchTokens.m would be used instead of params_StructEdges.m. The script/function should be present in the main directory. Currently the options are: @params_GB (parameters tuned for running GB boundary detector [1]),  @params_SketchTokens (parameters tuned for running Sktech Tokens boundary detector [2]),  @params_StructEdges (parameters tuned for running Structured Edges boundary detector [3]), and @params_default (initial baseline set of all parameters used). Also see the note about parameters below.
+
+   b. ([M N] OR [M]): this single 2 value array or a single value (without any parameter identifying string) specifies the number of seeds to enumerate for each graph type. For instance:
+     rigor_obj_segments('im.jpg', 10);
+would generate around 10 seeds in the image, and
+     rigor_obj_segments('im.jpg', [7 3]);
+would generate 7x3=21 seeds, for each graph type.
+
+Also, you can change any individual parameter specified inside the params_*.m files by first giving the string identifier (like 'graph_pairwise_sigma') followed by a value (like: {10, 7}). Some examples on how to change common parameters follow:
+
+   c. ('data_save_dirpath', '/save/path'): specifies where all the data is saved including the results and the boundary detectors output.
+
+   d. ('pmc_maxflow_method', METHOD_STRING): to change the graph-cut method used. Possible options for METHOD_STRING are 'hochbaum' (Pseudo-flow [4]), 'nodynamic' (vanilla Boykov-Kolmogorov [5]), 'kohli' (Kohli-Torr dynamic graph method [6]), and finally 'multiseed' (our method). For additional options with 'nodynamic', 'kohli', and 'multiseed', see comments in GraphProcessor.multiseed_param_min_st_cut().
+
+   e. ('pmc_num_lambdas', N): to change the number of lambdas used for parametric min-cut.
+
+   f. ('force_recompute', true): Recomputes the segments even if they are computed and saved to file before.
+
+   g. ('io', true): Runs an IO only version, where nothing is written to disk. Although results might be loaded from disk if they are already present.
+
+You can directly pass a whole structure to set a bunch of different settings. This might be more convenient in some settings where giving each parameter in the function call might become too cumbersome. There are three set of parameters (you can see them in params_default.m and internal_params.m):
+
+   h. ('segm_params', params_struct): sets the Segmenter related params. So for instance you can do something like this:
+     params_struct.pmc_num_lambdas = 30;
+    params_struct.pmc_maxflow_method = 'kohli';
+    rigor_obj_segments('im.jpg', 'segm_params',params_struct);
+which passes two parameters in the structure.
+
+   i. ('filepath_params', params_struct): sets filepath related params. So for instance you can set parameters like this:
+     params_struct.data_save_dirpath = '/my/special/dir';
+    params_struct.extern_src_dir = '/external/src';
+    rigor_obj_segments('im.jpg', 'filepath_params',params_struct);
+
+   j. ('other_params', params_struct): sets miscellaneous parameters. For examples you set them like this:
+     params_struct.debug = true;
+    params_struct.force_recompute = false;
+    params_struct.io = true;
+    rigor_obj_segments('im.jpg', 'other_params',params_struct);
+
+Note, you can use any provide parameters by any combination of ways as given above. For instance you can say:
+     other_struct.io = true;
+     segm_struct.graph_filter_segs = {true, false};
+     segm_struct.graph_unary_exp_scale = {NaN, 0.05};
+     fp_struct.data_save_dirpath = '/my/special/dir';
+     rigor_obj_segments('im.jpg', 100, ...
+                                     'params_func',@params_SketchTokens, ...
+                                     'other_params',other_struct, ...
+                                     'segm_params',segm_struct, ...
+                                     'filepath_params',fp_struct, ...
+                                     'graph_pairwise_sigma', {5, 5});
+Here, we used all different techniques to tell the script that you want 100 seeds with different parameters set by structures and by being directly passed to the function as a string id/parameter pair.
+
+Parameter settings: Different parameter settings are defined in different files. To get a detailed explanation of all the important parameters have a look at params_default.m. Any parameter you, or the params file you give, doesn't define, it is defaulted to the value given in params_default.m. There are some additional internal parameters defined in internal_params.m. If you don't pass any parameters file as specified above, it defaults to params_StructEdges.m. It defines a set of parameters and then calls params_default.m at end, from which it gets all the undefined parameters. If you specify the option 'params_func', it will substitute params_StructEdges.m for defining the parameters. You can also write your own parameters file: just follow the format given in one of the params_*.m files and then call params_default.m at the end.
+
+[1] M. Leordeanu, et al. Efficient closed-form solution to generalized boundary detection. In ECCV, 2012.
+[2] J. Lim, et al. Sketch tokens: A learned mid-level representation for contour and object detection. In CVPR, 2013.
+[3] P. Dollar and C. Zitnick. Structured forests for fast edge detection. In ICCV,2013.
+[4] D. S. Hochbaum. The pseudoflow algorithm: A new algorithm for the maximum-flow problem. Operations research, 2008.
+[5] Y. Boykov and V. Kolmogorov. An experimental comparison of min-cut/max-flow algorithms for energy minimization in vision. PAMI, 2004.
+[6] P. Kohli and P. H. Torr. Dynamic graph cuts for efficient inference in markov random fields. PAMI, 2007.
+
+
+Computing scores against GT using utils/compute_print_results
+-------------------------------------------------------------
+You can use ~/rigor_src/utils/compute_print_results.m to compute accuracy scores for the segment proposals generated against some GT. This function computes the overlap for each segment to all GTs. Then prints the results and stores them. The results are stored at the path defined by scores_dirpath defined in internal_params.m. The file stores some collated scores including overlap, and covering (collated_scores). It also stores the number of segments generated by parametric min-cut, and the number remaining after filtration (init_num_segs and final_num_segs). Also overlaps of all segments against the GT is stored (Q). The function finally displays the results in a pretty table :)
+
+The command is as follows:
+     compute_print_results(masks, seg_obj, gt_fldr)
+
+For instance, if you are working with PASCAL VOC (e.g. stored at ~/pascalvoc12), you can do the following:
+     [masks, seg_obj, total_time] = rigor_obj_segments('~/pascalvoc12/JPEGImages/2007_000033.jpg');
+     compute_print_results(masks, seg_obj, '~/pascalvoc12/SegmentationObject');
+
+You can also run compute_print_results.m by loading the data saved to disk by rigor_obj_segments.m, and supplying masks, and seg_obj to the function.
+
+
+Computing object proposals for a batch of images using tests/rigor_batch_run
+----------------------------------------------------------------------------
+You can use ~/rigor_src/tests/rigor_batch_run.m to automatically run ~/rigor_src/rigor_obj_segments.m with the same parameter settings. In one call to rigor_batch_run.m, you can either compute segments for all the files specified, or just for a subset of them (useful when parallelizing processing on a cluster). You can also use the function for analyzing timing of each run of rigor_obj_segments.m. The function works seamlessly for processing images from the PASCAL VOC dataset.
+
+The command is as follows: 
+     rigor_batch_run(SECTIONS, section_no, data_dir, gt_dir, batchlist_filepath, file_ext, ...
+                                timing_ims_dir, do_timing_analysis, varargin);
+ 
+For instance, if you wanted to process all the 1449 images of the PASCAL VOC 2012 validation set. I am supposing that the complete dataset is stored at ~/pascalvoc12: 
+     rigor_batch_run(1, 1, '~/pascalvoc12/JPEGImages', '~/pascalvoc12/SegmentationObject', ...
+                     '~/pascalvoc12/ImageSets/Segmentation/val.txt', '.jpg', '', false, ...
+   'force_recompute', true);
+This command would compute object proposals for all the validation images and stores them to disk. The last two parameters forces rigor_obj_segments.m to recompute all segments if some/all had been computed before and stored to disk. You can also ask for generating timing images in a folder, let’s say, ./outputims/ at the current direction:
+     rigor_batch_run(1, 1, '~/pascalvoc12/JPEGImages', '~/pascalvoc12/SegmentationObject', ...
+   '~/pascalvoc12/ImageSets/Segmentation/val.txt', '.jpg', 'outputims', true, ...
+   'force_recompute', true);
+
+
+@output:
+The main output is to disk. It generates multiple files, one for each input image, containing object proposals for it. If gt_dir is not empty, it also outputs one score file storing the performance compared to the GT. For more details see ~/rigor_src/rigor_obj_segments.m
+
+
+@input:
+     1. SECTIONS: number of sections to divide the image set into. This is useful for dividing computation over different machines. See section_no for more info.
+
+     2. section_no: this number should be in the range [1, SECTIONS], and specifies which subset of images this function call has to compute. This is useful when dividing computation over different machines. If SECTIONS is set to 4, and section_no is 3, the function call would compute object proposals the 3rd quartile of images.
+
+     3. data_dir: the directory where the images are stored. The image filenames (without the extension) that need to be processed are in the contents of batchlist_filepath
+
+     4. gt_dir: the directory where GT images are stored. The corresponding GT is found by matching the filename, and replacing the extension with .png. If this path is provided, it generates the accuracy scores of all segments against the GT by calling compute_print_results.m. If gt_dir is an empty string '', the function call doesn’t produce any scores.
+
+     5. batchlist_filepath: Is the path to a simple text file, where each line specifies the image’s filename (without the extension) that needs to be processed.
+
+     6. file_ext: The extension which would be appended to all filenames. Note that you have to specify the dot with the extension.
+
+     7. timing_ims_dir: If do_timing_analysis is true, this is the directory where the timing analysis images are written to.
+
+     8. do_timing_analysis: Boolean deciding whether to do timing analysis by invoking timing_rigor_analysis.m or not.
+
+     9. varargin: are the parameters that are directly passed to each call of rigor_obj_segments.m
+
+
+Installing Dependencies
+-----------------------
+     1. Linux (tested on Ubuntu 14.04):
+         a. tar xf boost_1_55_0.tar.gz
+         b. cd boost_1_55_0/
+         c. ./bootstrap.sh
+         d. sudo checkinstall ./bjam threading=multi link=shared runtime-link=shared -j5 --layout=tagged --prefix=/usr/local install
+         e. sudo apt-get install libtbb-dev
+     2. Windows (using Visual Studio 2012):
+         a. Extract boost to new dir C:\boost\1.55.0\VC\11.0
+         b. Run the "Developer Command Prompt for VS2012"
+         c. cd C:\boost\1.55.0\VC\12.0
+         d. bootstrap.bat
+         e. b2 toolset=msvc-11.0 --build-type=complete address-model=64 stage
+         f. Download and extract tbb to some directory
+     3. Mac
+         a. Use Homebrew to install gcc48 boost tbb
+
+
+________________
+
+Boykov-Kolmogorov max-flow code is provided directly with this code, because we have heavily modified it to generate precomputation graphs for our multiple seeds problem. All rights are reserved with the original writers of the software.
+
+@ARTICLE{boykov_PAMI_2004_maxflow, 
+author={Boykov, Yuri and Kolmogorov, Vladimir}, 
+journal={Pattern Analysis and Machine Intelligence, IEEE Transactions on}, 
+title={An experimental comparison of min-cut/max- flow algorithms for energy minimization in vision}, 
+year={2004}, 
+volume={26}, 
+number={9}, 
+pages={1124-1137}, 
+doi={10.1109/TPAMI.2004.60}, 
+ISSN={0162-8828},
+}
+
+The license for this code is in boykov_maxflow/README.TXT
+
+
+We also package Hochbaum’s pseudo flow code, which has been modified by us to compute parametric min-cuts:
+
+@article{hochbaum_OR_2008_pseudoflow,
+author = {Hochbaum, Dorit S.}, 
+title = {The Pseudoflow Algorithm: A New Algorithm for the Maximum-Flow Problem},
+volume = {56}, 
+number = {4}, 
+pages = {992-1009}, 
+year = {2008}, 
+doi = {10.1287/opre.1080.0524}, 
+URL = {http://or.journal.informs.org/content/56/4/992.abstract}, 
+eprint = {http://or.journal.informs.org/content/56/4/992.full.pdf+html}, 
+journal = {Operations Research} 
+}
