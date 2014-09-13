@@ -10,7 +10,7 @@
 	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
 	fprintf('Added json encoder/decoder to the path\n');
     
-    configjson = loadjson([parDir, '/config.json'])
+    configjson = loadjson([parDir, '/config.json']);
     configjson.parDir = pwd;
     
     addpath(fullfile(pwd, 'utils'));
@@ -23,8 +23,8 @@ try
 	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp -outdir edgeBoxes/releaseV3/
 
 	addpath(genpath([parDir '/edgeBoxes']));
-    configjson.objectProposals.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat']
-	configjson.objectProposals.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
+    configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat'];
+	configjson..edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
     fprintf('Compilation of Edge Boxes finished\n ');
 catch
     fprintf('Compilation of Edge Boxes failed\n ');
