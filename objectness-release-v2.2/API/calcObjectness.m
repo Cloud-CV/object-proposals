@@ -57,7 +57,7 @@ for i=1:length(images)
 	proposals.boxes= boxes;
 	
 	saveFile=[imname '.mat'];
-    if(~exist([config.outputLocation 'objectness'], 'dir'))
+    if(~exist([config.outputLocation '/objectness'], 'dir'))
         mkdir(config.outputLocation,'/objectness')
     end
 	save([config.outputLocation '/objectness/' saveFile], 'proposals');

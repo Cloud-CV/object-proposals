@@ -1,5 +1,5 @@
-function calcSelectiveSearch( configjson )
-    ssconfig = configjson.selective_search;
+function calcSelectiveSearch( config)
+    ssconfig = config.selective_search;
     
     if(~exist(config.imageLocation, 'dir'))
         fprintf('Image Location does not exist. Please check path once again \n');
@@ -85,10 +85,10 @@ function calcSelectiveSearch( configjson )
         proposals.boxes=boxes;
         
         saveFile=[imname '.mat'];
-        if(~exist([config.outputLocation '/selectiveSearch'], 'dir'))
-            mkdir(config.outputLocation,'/selectiveSearch')
+        if(~exist([config.outputLocation '/selective_search'], 'dir'))
+            mkdir(config.outputLocation,'/selective_search')
         end
-        save([config.outputLocation '/selectiveSearch/' saveFile], 'proposals');
+        save([config.outputLocation '/selective_search/' saveFile], 'proposals');
         
     end
     

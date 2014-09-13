@@ -4,7 +4,7 @@ function methods = getMethods( configjson )
     for i = 1:length(configjson)
         
         methods(i).name = char(proposalNames(i));
-        eval(sprintf('methods(i).candidate_dir = configjson.%s.outputLocation', char(proposalNames(i))));
+        eval(sprintf('methods(i).candidate_dir = fullfile(configjson.outputLocation, %s)', char(proposalNames(i))));
         eval(sprintf('methods(i).is_baseline = configjson.%s.opts.isbaseline', char(proposalNames(i))));
         eval(sprintf('methods(i).order = configjson.%s.opts.order',char(proposalNames(i))));    
     end
