@@ -47,7 +47,7 @@ function calcEndres(config)
 		proposals.regions.image_data=image_data;
 
 		saveFile=[imname '.mat'];
-        if(~exist([config.outputLocation 'endres'], 'dir'))
+        if(~exist([config.outputLocation '/endres'], 'dir'))
             mkdir(config.outputLocation,'/endres')
         end
         xsave([config.outputLocation '/endres/' saveFile], 'proposals');

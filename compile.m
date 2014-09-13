@@ -25,7 +25,6 @@ try
 	addpath(genpath([parDir '/edgeBoxes']));
     configjson.objectProposals.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat']
 	configjson.objectProposals.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
-	addpath(genpath([parDir '/edgeBoxes/releaseV3/private']))
     fprintf('Compilation of Edge Boxes finished\n ');
 catch
     fprintf('Compilation of Edge Boxes failed\n ');

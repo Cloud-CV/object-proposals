@@ -69,7 +69,7 @@ for i=1:length(images)
 	proposals.boxes= boxes;
 	proposals.scores = bbs(:,5);
 	saveFile=[imname '.mat'];
-    if(~exist([config.outputLocation 'edgeBoxes'], 'dir'))
+    if(~exist([config.outputLocation '/edgeBoxes'], 'dir'))
         mkdir(config.outputLocation,'/dgeBoxes')
     end
 	save([config.outputLocation '/edgeBoxes/' saveFile], 'proposals');

@@ -19,7 +19,7 @@ function calcRahtu( config )
             im=repmat(im,[1,1,3]);
         end
         
-        fprintf('Running Randomized Prims for %s\n', imname);
+        fprintf('Running Rahtu for %s\n', imname);
         [boxes,scores]=mvg_runObjectDetection(im);
         
         if(isfield(rahtuconfig.opts,'numProposals'))
