@@ -50,7 +50,7 @@ function calcEndres(config)
         if(~exist([config.outputLocation '/endres'], 'dir'))
             mkdir(config.outputLocation,'/endres')
         end
-        xsave([config.outputLocation '/endres/' saveFile], 'proposals');
+        save([config.outputLocation '/endres/' saveFile], 'proposals');
 	end
 
 end
