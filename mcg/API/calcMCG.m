@@ -35,7 +35,7 @@ images = [images{:}];
 
 for i=1:length(images)
     imname = char(images(i));
-    impath = strcat(config.imageLocation, imname);
+    impath = fullfile(config.imageLocation, imname);
     whos impath
 	im=imread(impath);
     
