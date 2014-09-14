@@ -2,7 +2,7 @@ function methods = getMethods( configjson )
     proposalNames = fieldnames(configjson);
 
     for i = 1:length(configjson)
-        
+        if(strcmp(proposalNames(i), 'imageLocation')~=0 || strcmp(proposalNames(i), 'outputLocation')~=0)
         methods(i).name = char(proposalNames(i));
         eval(sprintf('methods(i).candidate_dir = fullfile(configjson.outputLocation, %s)', char(proposalNames(i))));
         eval(sprintf('methods(i).is_baseline = configjson.%s.opts.isbaseline', char(proposalNames(i))));

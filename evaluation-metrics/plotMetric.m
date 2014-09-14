@@ -6,7 +6,7 @@ function plotMetric(configjson)
   % compute a matching between ground truth and proposals (if the result is not
   % yet found on disk) and then plot recall curves. The plots are saved to
   % figures/.
-  parDir = configjson.parDir;
+  parDir = configjson.params.parDir;
   testset = load(fullfile(parDir, 'evaluation-metrics', 'data/pascal_gt_data.mat'));
   methods = getMethods(configjson);
   

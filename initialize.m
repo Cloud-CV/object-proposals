@@ -11,7 +11,7 @@
 	fprintf('Added json encoder/decoder to the path\n');
     
     configjson = loadjson([parDir, '/config.json'])
-    configjson.parDir = pwd;
+    configjson.params.parDir = pwd;
     
     addpath(fullfile(pwd, 'utils'));
     
