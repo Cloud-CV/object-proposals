@@ -1,25 +1,36 @@
-function plot_overlap_recall_curve(methods, num_candidates, fh, ...
+function plot_overlap_recall_curve(methods, num_candidates, ...
   names_in_plot, legend_location, use_long_labels)
   
   bestRecallFileName= 'best_recall_candidates.mat';
-
-  if nargin < 7
+   fh = figure;
+  if nargin < 5
     use_long_labels = false;
   end
-  [~,method_order] = sort([methods.sort_key]);
-  methods = methods(method_order);
+ 
+  %do the sorting dance
+ % sort_keys = [num2cell([methods.isBaseline])', {methods.name}'];
+ % for i = 1:numel(methods)
+ %   sort_keys{i,1} = sprintf('%d', sort_keys{i,1});
+ % end
+ % [~,idx] = sortrows(sort_keys);
+ % for i = 1:numel(methods)
+ %   methods(idx(i)).sort_key = i;
+ % end
+
+
+ 
+  %[~,method_order] = sort([methods.sort_key]);
+ % methods = methods(method_order);
   iou_file_locs ={methods.candidate_dir};
   
   labels = {methods.name};
   n = numel(iou_file_locs);
    
-  n
   for i=1:n
 
   methods(i).color=(randi(256,1,3)-1)./256;
 
   end
-  methods(1).color
   num_pos = zeros(n, 1);
   display_auc=zeros(n,1);
   display_num_candidates=zeros(n,1);
@@ -40,7 +51,7 @@ function plot_overlap_recall_curve(methods, num_candidates, fh, ...
     %}
     num_pos(i) = numel(overlaps);
     line_style = '-';
-    if methods(i).is_baseline
+    if methods(i).isBaseline
       line_style = '--';
     end
     plot(overlaps, recall, 'Color', methods(i).color, 'LineWidth', 1.5, 'LineStyle', line_style);
@@ -57,8 +68,8 @@ function plot_overlap_recall_curve(methods, num_candidates, fh, ...
      number_str = sprintf('%g (%g)', sorted_auc(i),sorted_num_candidates(i));
       if names_in_plot
       label=labels{i};
-      short_name=[label(1)  label(end-1) ]
-      labels{i} = sprintf('%s %s', short_name, number_str);
+     % short_name=[label(1)  label(end-1) ]
+      labels{i} = sprintf('%s %s', label, number_str)
       long_labels{i} = sprintf('%s %s', label, number_str);
     else
       labels{i} = number_str;
