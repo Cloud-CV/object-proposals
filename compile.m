@@ -11,16 +11,16 @@
 	fprintf('Added json encoder/decoder to the path\n');
     
     configjson = loadjson([parDir, '/config.json']);
-    configjson.parDir = pwd;
+    configjson.params.parDir = pwd;
     
     addpath(fullfile(pwd, 'utils'));
 
 %% compilation of edge boxes
 try
-	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp -outdir edgeBoxes/releaseV3/
-	mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp -outdir edgeBoxes/releaseV3/
-	mex edgeBoxes/releaseV3/private/spDetectMex.cpp -outdir edgeBoxes/releaseV3/
-	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp -outdir edgeBoxes/releaseV3/
+	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
+	mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp 
+	mex edgeBoxes/releaseV3/private/spDetectMex.cpp 
+	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp
 
 	addpath(genpath([parDir '/edgeBoxes']));
     configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat'];
