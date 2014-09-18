@@ -4,12 +4,12 @@ function plot_num_candidates_auc( methods, output_file_prefix)
   end
    bestRecallFileName= 'best_recall_candidates.mat';
    
-  [~,method_order] = sort([methods.sort_key]);
-  methods = methods(method_order)
+ % [~,method_order] = sort([methods.sort_key]);
+ % methods = methods(method_order)
 
   iou_file_locs={methods.candidate_dir};
-  labels = {methods.name};
- n=numel(iou_file_locs);
+  labels = {methods.name}
+ n=numel(iou_file_locs)
  for i=1:n
   	methods(i).color=(randi(256,1,3)-1)/256;
   end
@@ -27,10 +27,10 @@ function plot_num_candidates_auc( methods, output_file_prefix)
       y(exp_idx) = auc;
     end
     label=labels{i};
-    label=[label(1) label(end-1)];
+  %  label=[label(1) label(end-1)];
     labels{i}=label;
     line_style = '-';
-    if methods(i).is_baseline
+    if methods(i).isBaseline
       line_style = '--';
     end
     semilogx(x, y, 'Color', methods(i).color, 'LineWidth', 1.5, 'LineStyle', line_style);
@@ -66,9 +66,10 @@ function plot_num_candidates_auc( methods, output_file_prefix)
         y(exp_idx) = recall;
       end
       line_style = '-';
-      if methods(i).is_baseline
+      if methods(i).isBaseline
         line_style = '--';
       end
+	%labels{i} = sprintf('%s %s', label, number_str);
       semilogx(x, y, 'Color', methods(i).color, 'LineWidth', 1.5, 'LineStyle', line_style);
       hold on; grid on;
     end
