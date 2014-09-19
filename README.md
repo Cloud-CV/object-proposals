@@ -181,7 +181,6 @@ year = {2014}
 }
 
 8. Selective Search:  
-
 @ARTICLE{Uijlings13,
   author = {J.R.R. Uijlings and K.E.A. van de Sande and T. Gevers and A.W.M.
 	Smeulders},
