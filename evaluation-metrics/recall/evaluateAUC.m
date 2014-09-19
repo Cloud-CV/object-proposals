@@ -1,17 +1,24 @@
-function evaluateAUC( methods, output_file_prefix)
-  if nargin < 2
-    output_file_prefix = '';
+function evaluateAUC( methods, varargin)
+
+  if(length(varargin)>0)
+		output_file_prefix=varargin{1};
+  else
+        output_file_prefix = '';
   end
    bestRecallFileName= 'best_recall_candidates.mat';
    
- n=length(methods);
+ %n=length(methods);
+ proposalNames = fieldnames(methods)
+ n = length(proposalNames)
+ 
  for i=1:n
-  	methods(i).opts.color=(randi(256,1,3)-1)/256;
+  	methods.(char(proposalNames(i))).opts.color=(randi(256,1,3)-1)/256;
   end
  
   figure;
   for i = 1:n
-    data = load([methods(i).opts.outputLocation  bestRecallFileName]);
+      
+    data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
     num_experiments = numel(data.best_candidates);
     x = zeros(num_experiments, 1);
     y = zeros(num_experiments, 1);
@@ -21,13 +28,13 @@ function evaluateAUC( methods, output_file_prefix)
       x(exp_idx) = mean([experiment.image_statistics.num_candidates]);
       y(exp_idx) = auc;
     end
-    label=methods(i).opts.name;
+    label=methods.(char(proposalNames(i))).opts.name;
     labels{i}=label;
     line_style = '-';
-    if methods(i).opts.isBaseline
+    if methods.(char(proposalNames(i))).opts.isBaseline
       line_style = '--';
     end
-    semilogx(x, y, 'Color', methods(i).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
+    semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
     hold on; grid on;
   end
   xlim([10, 10000]);
@@ -49,7 +56,7 @@ function evaluateAUC( methods, output_file_prefix)
     threshold = thresholds(threshold_i);
     figure;
     for i = 1:n
-      data = load([methods(i).opts.outputLocation  bestRecallFileName]);
+      data = load([methods.(char(proposalNames(i))).opts.outputLocation  bestRecallFileName]);
       num_experiments = numel(data.best_candidates);
       x = zeros(num_experiments, 1);
       y = zeros(num_experiments, 1);
@@ -64,7 +71,7 @@ function evaluateAUC( methods, output_file_prefix)
         line_style = '--';
       end
 	%labels{i} = sprintf('%s %s', label, number_str);
-      semilogx(x, y, 'Color', methods(i).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
+      semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
       hold on; grid on;
     end
     xlim([10, 10000]);
