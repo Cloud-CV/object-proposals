@@ -27,6 +27,9 @@
 				"numProposals" : 10000,
 				"isbaseline" : false,
 				"order": "descend"
+			},
+			"params":{
+
 			}
 		},
 
@@ -36,6 +39,9 @@
 				
 				"isbaseline" : false,
 				"order": "descend"
+			},
+			"params":{
+
 			}
 		},
 	"endres" : {
@@ -43,6 +49,9 @@
 				"numProposals" : 10000,
 				"isbaseline" : false,
 				"order": "none"
+			},
+			"params":{
+
 			}
 		},
 	"mcg" : {
@@ -64,6 +73,9 @@
 				"numProposals" : 10000,
 				"isbaseline" : false,
 				"order": "descend"
+			},
+			"params":{
+
 			}	
 		},
 
@@ -72,8 +84,11 @@
 				"numProposals" : 10000,
 				"isbaseline" : false,
 				"order": "none"
+			},
+
+			"params":{
+
 			}
-			
 		},
 
 	"randomPrim": {
@@ -81,6 +96,9 @@
 				"numProposals" : 10000,
 			"isbaseline" : false,
 			"order": "none"
+			},
+			"params":{
+
 			}
 	},
 
@@ -89,6 +107,9 @@
 				"numProposals" : 10000,
 			"isbaseline" : false,
 			"order": "none"
+			},
+			"params":{
+
 			}
 			
 		},
