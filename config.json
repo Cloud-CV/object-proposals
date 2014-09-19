@@ -55,10 +55,9 @@
 			}
 		},
 	"mcg" : {
-			"boostpath" : "/opt/local/include/",
 			"opts": {
 				"numProposals" : 10000,
-
+				"boostpath" : "/opt/local/include/",
 				"isbaseline" : false,
 				"order": "descend"		
 			},

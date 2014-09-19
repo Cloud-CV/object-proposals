@@ -12,19 +12,17 @@ Usage:
 2. Run compile.m
 ( This compiles the approaches which require compiling and sets all the necessary paths)
 
-3. Pick from one of the below to generate proposals to using a specific approach. The function names are self explanatory.
-For example, if you want to generate proposals using Selective Search, run calcSelectiveSearch.
+3. If you have already compiled before, just run initialize.m  
 
-Function names:
-    
-* calcEdgeBoxes    
-*  calcEndres  
-*  calcMCG  
-*  calcObjectness  
-*  calcRahtu  
-*  calcRaSegments  
-*  calcRP  
-*  calcSelectiveSearch
+4. Once you have initialized, you can call runObjectProposals(name) where name is the object proposal you want to run. If you don't pass any argument, it will run all object proposals. For your reference, here are the possible names that can be passed to the function:  
+  * edgeBoxes  
+  * endres  
+  * mcg  
+  * objectness  
+  * rahtu  
+  * randomPrim  
+  * rantalankila  
+  * selective_search  
 
 File to note: config.json
 ==================
@@ -182,7 +180,7 @@ month = {June},
 year = {2014}
 }
 
-8. Selective Search:
+8. Selective Search:  
 @ARTICLE{Uijlings13,
   author = {J.R.R. Uijlings and K.E.A. van de Sande and T. Gevers and A.W.M.
 	Smeulders},
