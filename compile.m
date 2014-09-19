@@ -38,7 +38,7 @@ try
 	configjson.mcg.root_dir = mcg_root_dir(mcg_path);
 
 	%build and install
-	mcg_build(configjson.mcg.root_dir, configjson.mcg.boostpath);
+	mcg_build(configjson.mcg.root_dir, configjson.mcg.opts.boostpath);
 	mcg_install(configjson.mcg.root_dir);
 
 	%set databse root directory
