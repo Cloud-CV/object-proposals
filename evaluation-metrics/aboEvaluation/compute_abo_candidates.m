@@ -4,12 +4,11 @@ function compute_abo_candidates(testset, methods)
   candidates_thresholds = round(10 .^ (0:0.5:4))
   num_candidates_thresholds = numel(candidates_thresholds);
 
-  parfor method_idx = 1:numel(methods)
-    method = methods(method_idx);
-    fileName=[method.candidate_dir 'abo_candidates.mat']; 
+  for method_idx = 1:numel(methods)
+    fileName=[ methods(method_idx).opts.outputLocation 'abo_candidates.mat']; 
     try
       load(fileName, 'abo_candidates');
-	continue;
+      continue;
 
     catch
 
@@ -22,15 +21,15 @@ function compute_abo_candidates(testset, methods)
        end
 
         for i=1:num_images
-                img_id =testset.impos(i).im
+                img_id =testset.impos(i).im;
                 for j=1:num_candidates_thresholds
-                        [candidates, scores] = get_candidates(method, img_id, ...
+                        [candidates, scores] = get_candidates(methods(method_idx), img_id, ...
                                                 candidates_thresholds(j));
                          abo_candidates(j).candidates{i}=candidates;
                 end
                 r=rem(i,1000);
                 if(r==0)
-                        fprintf('done with image :%s,%s\n',img_id,method.name );
+                        fprintf('done with image :%s,%s\n',img_id,methods(method_idx).opts.name);
                 end
        end
      parsave(fileName, abo_candidates);

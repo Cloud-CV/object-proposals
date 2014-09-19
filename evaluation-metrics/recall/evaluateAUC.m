@@ -1,22 +1,17 @@
-function plot_num_candidates_auc( methods, output_file_prefix)
-  if nargin < 3
+function evaluateAUC( methods, output_file_prefix)
+  if nargin < 2
     output_file_prefix = '';
   end
    bestRecallFileName= 'best_recall_candidates.mat';
    
- % [~,method_order] = sort([methods.sort_key]);
- % methods = methods(method_order)
-
-  iou_file_locs={methods.candidate_dir};
-  labels = {methods.name}
- n=numel(iou_file_locs)
+ n=length(methods);
  for i=1:n
-  	methods(i).color=(randi(256,1,3)-1)/256;
+  	methods(i).opts.color=(randi(256,1,3)-1)/256;
   end
  
   figure;
   for i = 1:n
-    data = load([iou_file_locs{i}  bestRecallFileName]);
+    data = load([methods(i).opts.outputLocation  bestRecallFileName]);
     num_experiments = numel(data.best_candidates);
     x = zeros(num_experiments, 1);
     y = zeros(num_experiments, 1);
@@ -26,14 +21,13 @@ function plot_num_candidates_auc( methods, output_file_prefix)
       x(exp_idx) = mean([experiment.image_statistics.num_candidates]);
       y(exp_idx) = auc;
     end
-    label=labels{i};
-  %  label=[label(1) label(end-1)];
+    label=methods(i).opts.name;
     labels{i}=label;
     line_style = '-';
-    if methods(i).isBaseline
+    if methods(i).opts.isBaseline
       line_style = '--';
     end
-    semilogx(x, y, 'Color', methods(i).color, 'LineWidth', 1.5, 'LineStyle', line_style);
+    semilogx(x, y, 'Color', methods(i).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
     hold on; grid on;
   end
   xlim([10, 10000]);
@@ -55,7 +49,7 @@ function plot_num_candidates_auc( methods, output_file_prefix)
     threshold = thresholds(threshold_i);
     figure;
     for i = 1:n
-      data = load([iou_file_locs{i}  bestRecallFileName]);
+      data = load([methods(i).opts.outputLocation  bestRecallFileName]);
       num_experiments = numel(data.best_candidates);
       x = zeros(num_experiments, 1);
       y = zeros(num_experiments, 1);
@@ -66,11 +60,11 @@ function plot_num_candidates_auc( methods, output_file_prefix)
         y(exp_idx) = recall;
       end
       line_style = '-';
-      if methods(i).isBaseline
+      if methods(i).opts.isBaseline
         line_style = '--';
       end
 	%labels{i} = sprintf('%s %s', label, number_str);
-      semilogx(x, y, 'Color', methods(i).color, 'LineWidth', 1.5, 'LineStyle', line_style);
+      semilogx(x, y, 'Color', methods(i).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
       hold on; grid on;
     end
     xlim([10, 10000]);

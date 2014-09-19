@@ -1,42 +1,18 @@
-function plot_overlap_recall_curve(methods, num_candidates, ...
-  names_in_plot, legend_location, use_long_labels)
+function evaluateRECALL(methods, num_candidates)
   
   bestRecallFileName= 'best_recall_candidates.mat';
-   fh = figure;
-  if nargin < 5
-    use_long_labels = false;
-  end
- 
-  %do the sorting dance
- % sort_keys = [num2cell([methods.isBaseline])', {methods.name}'];
- % for i = 1:numel(methods)
- %   sort_keys{i,1} = sprintf('%d', sort_keys{i,1});
- % end
- % [~,idx] = sortrows(sort_keys);
- % for i = 1:numel(methods)
- %   methods(idx(i)).sort_key = i;
- % end
-
-
- 
-  %[~,method_order] = sort([methods.sort_key]);
- % methods = methods(method_order);
-  iou_file_locs ={methods.candidate_dir};
-  
-  labels = {methods.name};
-  n = numel(iou_file_locs);
+  fh = figure;
+  n = length(methods);
    
   for i=1:n
-
-  methods(i).color=(randi(256,1,3)-1)./256;
-
+  	methods(i).opts.color=(randi(256,1,3)-1)./256;
   end
   num_pos = zeros(n, 1);
   display_auc=zeros(n,1);
   display_num_candidates=zeros(n,1);
   figure(fh); hold on; grid on;
   for i = 1:n
-    data = load([iou_file_locs{i}  bestRecallFileName]);
+    data = load([methods(i).opts.outputLocation  bestRecallFileName]);
     thresh_idx = find( ...
       [data.best_candidates.candidates_threshold] <= num_candidates, 1, 'last');
     experiment = data.best_candidates(thresh_idx);
@@ -47,8 +23,6 @@ function plot_overlap_recall_curve(methods, num_candidates, ...
     display_auc(i) = round(display_auc(i) * 10) / 10;
     display_num_candidates(i) = mean([experiment.image_statistics.num_candidates]);
     display_num_candidates(i) = round(display_num_candidates(i) * 10) / 10;
-   %{ 
-    %}
     num_pos(i) = numel(overlaps);
     line_style = '-';
     if methods(i).isBaseline
@@ -66,22 +40,12 @@ function plot_overlap_recall_curve(methods, num_candidates, ...
   for i=1:n
      sorted_num_candidates(i)= display_num_candidates(I(i));
      number_str = sprintf('%g (%g)', sorted_auc(i),sorted_num_candidates(i));
-      if names_in_plot
-      label=labels{i};
-     % short_name=[label(1)  label(end-1) ]
-      labels{i} = sprintf('%s %s', label, number_str)
-      long_labels{i} = sprintf('%s %s', label, number_str);
-    else
-      labels{i} = number_str;
-      long_labels{i} = number_str;
-    end
+     label=methods(i).opts.name;
+     labels{i} = sprintf('%s %s', label, number_str)
+     labels{i} = number_str;
   end
 
-  if use_long_labels
-    lgnd = legend(long_labels, 'Location', legend_location);
-  else
-    lgnd = legend(labels, 'Location', legend_location);
-  end
+    lgnd = legend(labels, 'Location', 'NorthEast');
 %   set(lgnd, 'color','none');
   legendshrink(0.5);
   legend boxoff;
