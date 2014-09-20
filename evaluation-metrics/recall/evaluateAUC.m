@@ -56,7 +56,7 @@ function evaluateAUC( methods, varargin)
     threshold = thresholds(threshold_i);
     figure;
     for i = 1:n
-      data = load([methods.(char(proposalNames(i))).opts.outputLocation  bestRecallFileName]);
+      data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation,  bestRecallFileName)));
       num_experiments = numel(data.best_candidates);
       x = zeros(num_experiments, 1);
       y = zeros(num_experiments, 1);
@@ -67,7 +67,7 @@ function evaluateAUC( methods, varargin)
         y(exp_idx) = recall;
       end
       line_style = '-';
-      if methods(i).opts.isBaseline
+      if methods.(char(proposalNames(i))).opts.isBaseline
         line_style = '--';
       end
 	%labels{i} = sprintf('%s %s', label, number_str);

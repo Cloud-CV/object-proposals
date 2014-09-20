@@ -14,10 +14,12 @@ function evaluateRECALL(methods, varargin)
   for i=1:n
   	methods.(char(proposalNames(i))).opts.color=(randi(256,1,3)-1)./256;
   end
+  
   num_pos = zeros(n, 1);
   display_auc=zeros(n,1);
   display_num_candidates=zeros(n,1);
   figure(fh); hold on; grid on;
+  
   for i = 1:n
     data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
     thresh_idx = find( ...
@@ -32,11 +34,12 @@ function evaluateRECALL(methods, varargin)
     display_num_candidates(i) = round(display_num_candidates(i) * 10) / 10;
     num_pos(i) = numel(overlaps);
     line_style = '-';
-    if methods.(char(proposalNames(i))).isBaseline
+    if methods.(char(proposalNames(i))).opts.isBaseline
       line_style = '--';
     end
-    plot(overlaps, recall, 'Color', methods.(char(proposalNames(i))).color, 'LineWidth', 1.5, 'LineStyle', line_style);
+    plot(overlaps, recall, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
   end
+  
   xlabel('IoU overlap threshold');
   ylabel('recall');
   xlim([0.5, 1]);
@@ -47,7 +50,7 @@ function evaluateRECALL(methods, varargin)
   for i=1:n
      sorted_num_candidates(i)= display_num_candidates(I(i));
      number_str = sprintf('%g (%g)', sorted_auc(i),sorted_num_candidates(i));
-     label=methods.(char(proposalNames(i))).opts.name;
+     label=char(methods.(char(proposalNames(i))).opts.name);
      labels{i} = sprintf('%s %s', label, number_str)
      labels{i} = number_str;
   end

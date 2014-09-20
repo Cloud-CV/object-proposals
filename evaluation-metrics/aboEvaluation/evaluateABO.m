@@ -17,7 +17,7 @@ function evaluateABO( methods, varargin)
 
   figure;
   for i = 1:n
-    data = load([methods.(char(proposalNames(i))).opts.outputLocation aboFileName]);
+    data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, aboFileName)));
     num_experiments = numel(data.abo_candidates);
     x = zeros(num_experiments, 1);
     y = zeros(num_experiments, 1);
