@@ -17,14 +17,16 @@ function evaluateMetricForProposal(metricName,varargin)
        
     end
 
- %%
-funcName = sprintf('evaluate%s',metricName);
-fh = makeHandle(funcName);
-fh(proposalData);
-
+     %%
+    funcName = sprintf('evaluate%s',metricName);
+    fh = makeHandle(funcName);
+    if(strcmp(metricName, 'RECALL'))
+        fh(proposalData,1000,configjson.outputLocation)
+    else
+        fh(proposalData)
+    end
 end
 
-
 function handle = makeHandle(funcName)
-    handle = str2func(funcName)
+    handle = str2func(funcName);
 end
