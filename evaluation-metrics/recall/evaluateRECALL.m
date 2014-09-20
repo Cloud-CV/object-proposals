@@ -1,5 +1,8 @@
 function evaluateRECALL(methods, varargin)
   
+  if(length(varargin)>1)
+		num_candidates=varargin{1};
+        outputLocation = varargin{2};
   if(length(varargin)>0)
 		num_candidates=varargin{1};
   else
@@ -59,11 +62,11 @@ function evaluateRECALL(methods, varargin)
 %   set(lgnd, 'color','none');
   legendshrink(0.5);
   legend boxoff;
-  if(~exist(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, ...
+  if(~exist(char(fullfile(outputLocation, ...
           'figures')), 'dir'))
-     mkdir(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, ...
+     mkdir(char(fullfile(outputLocation, ...
          'figures')))
   end
-  printpdf(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, 'figures/num_candidates_recall.pdf')));
+  printpdf(char(fullfile(outputLocation, 'figures/num_candidates_recall.pdf')));
   %printpdf(sprintf('figures/num_candidates_recall.pdf'));
 end
