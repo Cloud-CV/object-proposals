@@ -59,4 +59,11 @@ function evaluateRECALL(methods, varargin)
 %   set(lgnd, 'color','none');
   legendshrink(0.5);
   legend boxoff;
+  if(~exist(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, ...
+          'figures')), 'dir'))
+     mkdir(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, ...
+         'figures')))
+  end
+  printpdf(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, 'figures/num_candidates_recall.pdf')));
+  %printpdf(sprintf('figures/num_candidates_recall.pdf'));
 end
