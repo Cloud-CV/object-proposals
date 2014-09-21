@@ -14,7 +14,7 @@ for i=1:length(images)
     im=imread(impath);
     
     fprintf('Calculating MCG proposasls for %s\n', imname);
-    proposals=calcMcgProposalsForImage(im,config.mcg);
+    proposals=calcmcgForIm(im,config.mcg);
     saveFile=[imname '.mat'];
     save([config.outputLocation '/mcg/' saveFile], 'proposals');
 end

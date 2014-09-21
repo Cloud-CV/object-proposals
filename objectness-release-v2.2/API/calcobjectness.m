@@ -19,7 +19,7 @@ for i=1:length(images)
 		im=repmat(im,[1,1,3]);
 	end
      fprintf('Generating prpposals for %s\n',imname);
-	proposals=calcObjectnessProposalsForIm(im,config.objectness);	
+	proposals=calcobjectnessForIm(im,config.objectness);	
 	
 	saveFile=[imname '.mat'];
 	save([config.outputLocation '/objectness/' saveFile], 'proposals');

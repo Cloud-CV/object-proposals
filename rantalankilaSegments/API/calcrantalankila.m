@@ -17,7 +17,7 @@ for i=1:length(images)
             im=repmat(im,[1,1,3]);
         end
         fprintf('Calculating Rantalankila Proposals for %s\n', imname);
-        proposals=calcRantalankilaProposalsForIm(im,raconfig);
+        proposals=calcrantalankilaForIm(im,raconfig);
 
         saveFile=[imname '.mat'];
         save([config.outputLocation '/rantalankila/' saveFile], 'proposals');

@@ -18,7 +18,7 @@ function calcrahtu( config )
         end
         
         fprintf('Generating Rahtu proposals for %s\n', imname);
-        proposals= calcRahtuProposalsForIm(im,rahtuconfig);
+        proposals= calcrahtuForIm(im,rahtuconfig);
             
         saveFile=[imname '.mat'];
         save([config.outputLocation '/rahtu/' saveFile], 'proposals');

@@ -19,7 +19,7 @@ function calcendres(config)
 	    impath = fullfile(config.imageLocation, imname);
 	    im=imread(impath);
             fprintf('Generating proposals for image:%s\n',imname);
-	    proposals=calcEndresProposalForIm(im,endresconfig);
+	    proposals=calcendresForIm(im,endresconfig);
 
 	    saveFile=[imname '.mat'];
             save([config.outputLocation '/endres/' saveFile], 'proposals');

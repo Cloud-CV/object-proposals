@@ -18,7 +18,7 @@ for i=1:length(images)
         end
         
         fprintf('Generating Randomized Prims proposals for %s\n', imname);
-        proposals=calcRandomizedPrimProposalsForIm(im,rpconfig);
+        proposals=calcrandomPrimForIm(im,rpconfig);
         saveFile=[imname '.mat'];
         save([config.outputLocation '/randomPrim/' saveFile], 'proposals');
 end
