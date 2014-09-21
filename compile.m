@@ -31,7 +31,7 @@ end
 %% building MCG and installation
 try
 	mcg_path = [pwd '/mcg/MCG-Full'];
-	addpath(mcg_path);
+	addpath(genpath(mcg_path));
 	addpath([pwd '/mcg/API'])
 	%set root_dir for mcg
 	configjson.mcg.root_dir = mcg_root_dir(mcg_path);

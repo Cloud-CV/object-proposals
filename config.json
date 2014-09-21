@@ -59,7 +59,8 @@
 				"numProposals" : 10000,
 				"boostpath" : "/opt/local/include/",
 				"isBaseline" : false,
-				"order": "descend"		
+				"order": "descend",		
+				"mode": "fast"
 			},
 			"params" : {
 				"mode" : "accurate",
