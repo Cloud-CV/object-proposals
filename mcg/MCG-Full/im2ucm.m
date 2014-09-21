@@ -31,11 +31,9 @@
 %    UCM returned by im2mcg
 % ------------------------------------------------------------------------
 function ucm2 = im2ucm(image,mode)
-fprintf('entered im2ucm')
 if nargin<2
     mode = 'fast';
 end
-fprintf('****loading variables...\n')
 % Load pre-trained Structured Forest model
 sf_model = loadvar(fullfile(root_dir, 'datasets', 'models', 'sf_modelFinal.mat'),'model');
 
@@ -44,7 +42,6 @@ if strcmp(mode,'fast')
     scales = 1;
 
     % Get the hierarchies at each scale and the global hierarchy
-	forintf('******inside im2ucms..***\n');
     ucm2 = img2ucms(image, sf_model, scales);
 
 elseif strcmp(mode,'accurate')
