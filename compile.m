@@ -71,10 +71,13 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%
 try
     fprintf('Compilation of Rantalankila Segments started\n ');
-	addpath(genpath([pwd '/dependencies']));
-	addpath(genpath([pwd '/rantalankilaSegments']));
-	configjson.rantalankila.rapath =   [pwd '/rantalankilaSegments'];
-	configjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
+    addpath(genpath([pwd '/dependencies']));
+    addpath(genpath([pwd '/rantalankilaSegments']));
+    configjson.rantalankila.rapath =   [pwd '/rantalankilaSegments'];
+    configjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
+    run(fullfile(configjson.rantalankila.vlfeatpath, 'toolbox/vl_setup'))
+    spagglom_options;
+    configjson.rantalankila.params=opts;
     fprintf('Compilation of Rantalankila Segments finished\n ');
 catch
     fprintf('Compilation of Rantalankila failed\n ');
