@@ -12,7 +12,7 @@ function evaluateMetricForProposal(metricName,varargin)
     else
         proposalsToEvaluate=proposalNames(3:end);	
     	for i=1:length(proposalsToEvaluate)
-		eval(sprintf('proposalData.%s=configjson.%s',proposalsToEvaluate{i}));
+		eval(sprintf('proposalData.%s=configjson.%s',proposalsToEvaluate{i},proposalsToEvaluate{i}));
         end
        
     end
@@ -23,7 +23,7 @@ function evaluateMetricForProposal(metricName,varargin)
     if(strcmp(metricName, 'RECALL'))
         fh(proposalData,1000,configjson.outputLocation)
     else
-        fh(proposalData)
+        fh(proposalData,'',configjson.outputLocation)
     end
 end
 

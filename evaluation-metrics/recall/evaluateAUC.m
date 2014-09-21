@@ -1,9 +1,13 @@
 function evaluateAUC( methods, varargin)
-
-  if(length(varargin)>0)
+  if(length(varargin)>1)
+    output_file_prefix=varargin{1};
+    outputLocation = varargin{2};
+  elseif(length(varargin)>0)
 		output_file_prefix=varargin{1};
+        outputLocation = '';
   else
         output_file_prefix = '';
+        outputLocation = '';
   end
    bestRecallFileName= 'best_recall_candidates.mat';
    
@@ -13,29 +17,34 @@ function evaluateAUC( methods, varargin)
  
  for i=1:n
   	methods.(char(proposalNames(i))).opts.color=(randi(256,1,3)-1)/256;
-  end
- 
+ end
+  count = 1;
   figure;
   for i = 1:n
-      
-    data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
-    num_experiments = numel(data.best_candidates);
-    x = zeros(num_experiments, 1);
-    y = zeros(num_experiments, 1);
-    for exp_idx = 1:num_experiments
-      experiment = data.best_candidates(exp_idx);
-      [~, ~, auc] = compute_average_recall(experiment.best_candidates.iou);
-      x(exp_idx) = mean([experiment.image_statistics.num_candidates]);
-      y(exp_idx) = auc;
-    end
-    label=methods.(char(proposalNames(i))).opts.name;
-    labels{i}=label;
-    line_style = '-';
-    if methods.(char(proposalNames(i))).opts.isBaseline
-      line_style = '--';
-    end
-    semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
-    hold on; grid on;
+      try
+        data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
+        num_experiments = numel(data.best_candidates);
+        x = zeros(num_experiments, 1);
+        y = zeros(num_experiments, 1);
+        for exp_idx = 1:num_experiments
+          experiment = data.best_candidates(exp_idx);
+          [~, ~, auc] = compute_average_recall(experiment.best_candidates.iou);
+          x(exp_idx) = mean([experiment.image_statistics.num_candidates]);
+          y(exp_idx) = auc;
+        end
+        
+        label=methods.(char(proposalNames(i))).opts.name;
+        labels{count}=label;
+        line_style = '-';
+        if methods.(char(proposalNames(i))).opts.isBaseline
+          line_style = '--';
+        end
+        semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
+        hold on; grid on;
+        count = count + 1;
+      catch
+          fprintf('Error evaluating %s\n', (char(proposalNames(i))));
+      end
   end
   xlim([10, 10000]);
   ylim([0 1]);
@@ -52,6 +61,7 @@ function evaluateAUC( methods, varargin)
   % fixed threshold
   legend_locations = {'SouthEast', 'NorthWest', 'NorthWest'};
   thresholds = [0.5 0.7 0.8];
+  
   for threshold_i = 1:numel(thresholds)
     threshold = thresholds(threshold_i);
     figure;
@@ -85,6 +95,12 @@ function evaluateAUC( methods, varargin)
     wid = 10;
     set(gcf, 'Units','centimeters', 'Position',[0 0 wid hei]);
     set(gcf, 'PaperPositionMode','auto');
+    if(~exist(char(fullfile(outputLocation, ...
+          'figures')), 'dir'))
+            mkdir(char(fullfile(outputLocation, ...
+         'figures')))
+    end
     printpdf(sprintf('figures/%snum_candidates_recall_%.1f.pdf', output_file_prefix, threshold));
   end
+  
 end
