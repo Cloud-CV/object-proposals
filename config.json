@@ -1,6 +1,6 @@
 {
-	"imageLocation": "/workspace/test_images",
-	"outputLocation":	 "/workspace/result_eb/",	
+	"imageLocation": "/home/gneelima/work/data/datasets/PASCAL2007/testImages/",
+	"outputLocation":	 "/home/gneelima/work/data/output/objectProposals/",	
 	"edgeBoxes":{	
 		"opts" : {
 			"numProposals" : 10000,

@@ -90,9 +90,12 @@ try
     fprintf('Compiling Objectness \n');
     addpath(genpath([pwd, '/objectness-release-v2.2']));
     configjson.objectness.objectnesspath = [pwd, '/objectness-release-v2.2'];
+    params=defaultParams(configjson.objectness.objectnesspath)
+
+    configjson.objectness.params=params
     fprintf('Compiling Objectness finished \n');
 catch
-    fprintf('Compilation of Objectness failed\n ');
+   fprintf('Compilation of Objectness failed\n ');
 end
 %% building selective_search
 try
