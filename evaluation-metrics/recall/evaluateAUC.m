@@ -100,7 +100,7 @@ function evaluateAUC( methods, varargin)
             mkdir(char(fullfile(outputLocation, ...
          'figures')))
     end
-    printpdf(sprintf('figures/%snum_candidates_recall_%.1f.pdf', output_file_prefix, threshold));
+      printpdf(char(fullfile(outputLocation, 'figures/AUC_plots.pdf')));
   end
   
 end

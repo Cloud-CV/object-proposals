@@ -60,6 +60,5 @@ function evaluateABO( methods, varargin)
      mkdir(char(fullfile(outputLocation, ...
          'figures')))
   end
-  
-  printpdf(sprintf('figures/pascal/%s_average_best_overlap.pdf', output_file_prefix));
+  printpdf(char(fullfile(outputLocation, 'figures/ABO_plots.pdf')));
 end
