@@ -1,4 +1,4 @@
-function proposals=calcRantalankilaProposalsForIm(input, raconfig )
+function proposals=calcrantalankilaForIm(input, raconfig )
 spagglom_options;
 if(isstr(input))
         im = im2uint8(imread(input));

@@ -1,4 +1,4 @@
-function proposals=calcRandomizedPrimProposalsForIm( input, rpconfig )
+function proposals=calcrandomPrimForIm( input, rpconfig )
     
 if(isstr(input))
 	im = im2uint8(imread(input));

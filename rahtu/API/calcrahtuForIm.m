@@ -1,4 +1,4 @@
-function proposals=calcrahtu(input,rahtuconfig )
+function proposals=calcrahtuForIm(input,rahtuconfig )
     
 if(isstr(input))
         im = im2double(imread(input));

@@ -1,4 +1,4 @@
-function proposals=calcMcgProposalsForImage( input, mcgconfig)
+function proposals=calcmcgForIm( input, mcgconfig)
 	
 if(isstr(input))
 	im = im2double(imread(input));

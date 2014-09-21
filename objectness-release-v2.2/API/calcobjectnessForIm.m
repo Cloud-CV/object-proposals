@@ -1,4 +1,4 @@
-function proposals=calcObjectnessProposalsForIm( input,objectnessconfig )
+function proposals = calcobjectnessForIm( input,objectnessconfig )
 
 if(isstr(input))
 	im = im2double(imread(input));

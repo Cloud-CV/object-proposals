@@ -1,4 +1,4 @@
-function proposals=calcEndresProposalForIm(input,endresconfig)
+function proposals=calcendresForIm(input,endresconfig)
 %INPUTS
 %input: image location or image
 %endresconfig: config of this proposal from configjson
