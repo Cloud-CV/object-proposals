@@ -22,28 +22,6 @@
 		}
 	},
 
-	"bing" : {
-			"opts" : {
-				"numProposals" : 10000,
-				"isBaseline" : false,
-				"order": "descend"
-			},
-			"params":{
-
-			}
-		},
-
-	"cpmc" : {
-			"opts" : {
-				"numProposals" : 10000,
-				
-				"isBaseline" : false,
-				"order": "descend"
-			},
-			"params":{
-
-			}
-		},
 	"endres" : {
 			"opts" : {
 				"numProposals" : 10000,
