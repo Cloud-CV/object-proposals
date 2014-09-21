@@ -4,7 +4,7 @@
 	"edgeBoxes":{	
 		"opts" : {
 			"numProposals" : 10000,
-			"isbaseline" : false,
+			"isBaseline" : false,
 			"order": "descend"
 				},
 		"params" : {
@@ -22,32 +22,10 @@
 		}
 	},
 
-	"bing" : {
-			"opts" : {
-				"numProposals" : 10000,
-				"isbaseline" : false,
-				"order": "descend"
-			},
-			"params":{
-
-			}
-		},
-
-	"cpmc" : {
-			"opts" : {
-				"numProposals" : 10000,
-				
-				"isbaseline" : false,
-				"order": "descend"
-			},
-			"params":{
-
-			}
-		},
 	"endres" : {
 			"opts" : {
 				"numProposals" : 10000,
-				"isbaseline" : false,
+				"isBaseline" : false,
 				"order": "none"
 			},
 			"params":{
@@ -58,7 +36,7 @@
 			"opts": {
 				"numProposals" : 10000,
 				"boostpath" : "/opt/local/include/",
-				"isbaseline" : false,
+				"isBaseline" : false,
 				"order": "descend"		
 			},
 			"params" : {
@@ -70,7 +48,7 @@
 	"objectness" : {
 			"opts" : {
 				"numProposals" : 10000,
-				"isbaseline" : false,
+				"isBaseline" : false,
 				"order": "descend"
 			},
 			"params":{
@@ -81,7 +59,7 @@
 	"rahtu" : {
 			"opts" : {
 				"numProposals" : 10000,
-				"isbaseline" : false,
+				"isBaseline" : false,
 				"order": "none"
 			},
 
@@ -93,7 +71,7 @@
 	"randomPrim": {
 			"opts" : {
 				"numProposals" : 10000,
-			"isbaseline" : false,
+			"isBaseline" : false,
 			"order": "none"
 			},
 			"params":{
@@ -104,7 +82,7 @@
 	"rantalankila" : {
 			"opts" : {
 				"numProposals" : 10000,
-			"isbaseline" : false,
+			"isBaseline" : false,
 			"order": "none"
 			},
 			"params":{
@@ -116,7 +94,7 @@
 	"selective_search" : {
 			"opts" : {
 				"numProposals" : 10000,
-				"isbaseline" : false,
+				"isBaseline" : false,
 				"order": "ascend"
 			},
 			"params": {

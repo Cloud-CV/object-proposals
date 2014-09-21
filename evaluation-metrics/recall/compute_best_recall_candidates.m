@@ -5,10 +5,11 @@ function compute_best_recall_candidates(testset, methods)
   num_candidates_thresholds = numel(candidates_thresholds);
   for method_idx = 1:numel(methods)
   	method = methods(method_idx);
-	fileName=[method.candidate_dir 'best_recall_candidates.mat'];
+	fileName=[method.opts.outputLocation 'best_recall_candidates.mat'];
     	try
 		
       		load(fileName);
+ 		continue;
     	catch
 
 	    % preallocate
@@ -23,7 +24,6 @@ function compute_best_recall_candidates(testset, methods)
     		end
 
     		pos_range_start = 1;
-    		testset.impos(1).im
     		for j = 1:numel(testset.impos)
       			pos_range_end = pos_range_start + size(testset.impos(j).boxes, 1) - 1;
       			assert(pos_range_end <= num_annotations);

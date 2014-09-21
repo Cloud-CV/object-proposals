@@ -4,8 +4,7 @@
 	parDir = pwd;
     
 % adding evaluation metrics into path
-    addpath([parDir '/evaluation-metrics']);
-    
+    addpath(genpath([parDir '/evaluation-metrics']));
 % add jsonlib to path and load the config file
 	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
 	fprintf('Added json encoder/decoder to the path\n');
