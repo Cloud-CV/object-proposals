@@ -1,34 +1,42 @@
-    global configjson
+global configjson
     
 % add current directory as the parent directory
-	parDir = pwd;
-    
+parDir = pwd;
 % adding evaluation metrics into path
-    addpath(genpath([parDir '/evaluation-metrics']));
+addpath(genpath([parDir '/evaluation-metrics']));
 % add jsonlib to path and load the config file
-	addpath([parDir '/jsonlab_1.0beta/jsonlab']);
-	fprintf('Added json encoder/decoder to the path\n');
+addpath([parDir '/jsonlab_1.0beta/jsonlab']);
     
-    configjson = loadjson([parDir, '/config.json']);
-    configjson.params.parDir = pwd;
+fprintf('Added json encoder/decoder to the path\n');
     
-    addpath(fullfile(pwd, 'utils'));
+configjson = loadjson([parDir, '/config.json']);
+configjson.params.parDir = pwd;
+    
+addpath(fullfile(pwd, 'utils'));
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% compilation of edge boxes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
-	mex edgeBoxes/releaseV3/private/edgesDetectMex.cpp
-	mex edgeBoxes/releaseV3/private/edgesNmsMex.cpp 
-	mex edgeBoxes/releaseV3/private/spDetectMex.cpp 
-	mex edgeBoxes/releaseV3/private/edgeBoxesMex.cpp
-
+	cd edgeBoxes/releaseV3/private/;
+	mex edgesDetectMex.cpp
+	mex edgesNmsMex.cpp 
+	mex spDetectMex.cpp 
+	mex edgeBoxesMex.cpp
+	cd(parDir)
+   
 	addpath(genpath([parDir '/edgeBoxes']));
-    configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat'];
+        configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat'];
 	configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
-    fprintf('Compilation of Edge Boxes finished\n ');
+        fprintf('Compilation of Edge Boxes finished\n ');
 catch
-    fprintf('Compilation of Edge Boxes failed\n ');
+        fprintf('Compilation of Edge Boxes failed\n ');
 end
+
+
 %% building MCG and installation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%n
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
 	mcg_path = [pwd '/mcg/MCG-Full'];
 	addpath(genpath(mcg_path));
@@ -45,15 +53,22 @@ try
 catch
     fprintf('Compilation of MCG failed\n ');
 end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
 %% building Endres
+%%%%%%%%%%%%%%%%%%%%%%%%5
 try
-	endres_path = [pwd '/endres/proposals'];
+    endres_path = [pwd '/endres/proposals'];
     configjson.endres.endrespath = endres_path;
-	addpath(genpath(endres_path));
+    addpath(genpath(endres_path));
 catch
     fprintf('Compilation of Endres failed\n ');
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%
 %% building rantalankila
+%%%%%%%%%%%%%%%%%%%%%%%%
 try
     fprintf('Compilation of Rantalankila Segments started\n ');
 	addpath(genpath([pwd '/dependencies']));
@@ -64,28 +79,41 @@ try
 catch
     fprintf('Compilation of Rantalankila failed\n ');
 end
+
+%%%%%%%%%%%%%%%%%%%
 %% building rahtu
+%%%%%%%%%%%%%%%%%%%
+
 try
     fprintf('Compilation of Rahtu started\n ');
-	addpath(genpath([pwd '/rahtu']));
-	configjson.rahtu.rahtuPath = [pwd '/rahtu/rahtuObjectness'];
-	compileObjectnessMex(configjson.rahtu.rahtuPath);
+    addpath(genpath([pwd '/rahtu']));
+    configjson.rahtu.rahtuPath = [pwd '/rahtu/rahtuObjectness'];
+    compileObjectnessMex(configjson.rahtu.rahtuPath);
     fprintf('Compilation of Rahtu finished\n ');
 catch
     fprintf('Compilation of Edge Boxes failed\n ');
 end
-%% building randomizedPrims
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% building randomizedPrims%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
     fprintf('Compilation of Randomized Prims started\n ');
-	addpath(genpath([pwd, '/randomizedPrims']));
-	configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master'];
-	setupRandomizedPrim(configjson.randomPrim.rpPath);
+    addpath(genpath([pwd, '/randomizedPrims']));
+    configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master']
+    fprintf('doind setuup')
+    setupRandomizedPrim(configjson.randomPrim.rpPath)
+    params=LoadConfigFile(fullfile(configjson.randomPrim.rpPath, 'config/rp.mat'))
+    configjson.randomPrim.params=params;
     addpath([configjson.randomPrim.rpPath, '/cmex']);
     fprintf('Compilation of Randomized Prims finished\n ');
 catch
     fprintf('Compilation of Randomized Prims failed\n ');
 end
-%% building objectness
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%% building objectness %%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
 try
     fprintf('Compiling Objectness \n');
     addpath(genpath([pwd, '/objectness-release-v2.2']));
