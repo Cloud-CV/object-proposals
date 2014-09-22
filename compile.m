@@ -33,9 +33,8 @@ catch
         fprintf('Compilation of Edge Boxes failed\n ');
 end
 
-
-%% building MCG and installation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%n
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% building MCG and installation%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
 	mcg_path = [pwd '/mcg/MCG-Full'];
@@ -56,8 +55,8 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
-%% building Endres
-%%%%%%%%%%%%%%%%%%%%%%%%5
+%% building Endres %%%%
+%%%%%%%%%%%%%%%%%%%%%%%
 try
     endres_path = [pwd '/endres/proposals'];
     configjson.endres.endrespath = endres_path;
@@ -66,9 +65,9 @@ catch
     fprintf('Compilation of Endres failed\n ');
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%
-%% building rantalankila
-%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% building rantalankila %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
     fprintf('Compilation of Rantalankila Segments started\n ');
     addpath(genpath([pwd '/dependencies']));
@@ -76,6 +75,9 @@ try
     configjson.rantalankila.rapath =   [pwd '/rantalankilaSegments'];
     configjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
     run(fullfile(configjson.rantalankila.vlfeatpath, 'toolbox/vl_setup'));
+    cd([pwd '/dependencies/GCMex/']);
+    GCMex_compile;
+    cd(parDir);
     spagglom_options;
     configjson.rantalankila.params=opts;
     fprintf('Compilation of Rantalankila Segments finished\n ');
@@ -83,9 +85,9 @@ catch
     fprintf('Compilation of Rantalankila failed\n ');
 end
 
-%%%%%%%%%%%%%%%%%%%
-%% building rahtu
-%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%
+%% building rahtu %%
+%%%%%%%%%%%%%%%%%%%%
 
 try
     fprintf('Compilation of Rahtu started\n ');
@@ -96,6 +98,7 @@ try
 catch
     fprintf('Compilation of Edge Boxes failed\n ');
 end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% building randomizedPrims%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
