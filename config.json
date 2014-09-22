@@ -3,7 +3,6 @@
 	"outputLocation":	 "/home/gneelima/work/data/output/objectProposals/",	
 	"edgeBoxes":{	
 		"opts" : {
-			"numProposals" : 10000,
 			"isBaseline" : false,
 			"order": "descend"
 				},
@@ -24,7 +23,6 @@
 
 	"bing" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "descend"
 			},
@@ -35,7 +33,6 @@
 
 	"cpmc" : {
 			"opts" : {
-				"numProposals" : 10000,
 				
 				"isBaseline" : false,
 				"order": "descend"
@@ -46,7 +43,6 @@
 		},
 	"endres" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "none"
 			},
@@ -56,7 +52,6 @@
 		},
 	"mcg" : {
 			"opts": {
-				"numProposals" : 10000,
 				"boostpath" : "/opt/local/include/",
 				"isBaseline" : false,
 				"order": "descend",		
@@ -70,7 +65,6 @@
 		},
 	"objectness" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "descend"
 			},
@@ -81,7 +75,6 @@
 
 	"rahtu" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "none"
 			},
@@ -93,7 +86,6 @@
 
 	"randomPrim": {
 			"opts" : {
-				"numProposals" : 10000,
 			"isBaseline" : false,
 			"order": "none"
 			},
@@ -104,7 +96,6 @@
 
 	"rantalankila" : {
 			"opts" : {
-				"numProposals" : 10000,
 			"isBaseline" : false,
 			"order": "none"
 			},
@@ -116,7 +107,6 @@
 
 	"selective_search" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "ascend"
 			},
@@ -126,7 +116,6 @@
 				"minBoxWidth":20,
 				"imWidth":500,
 				"mode":"fast",
-				"numProposals":10000,
 				"colorTypes": ["Hsv", "Lab", "RGI", "H", "Intensity"]
 			}
 		}
