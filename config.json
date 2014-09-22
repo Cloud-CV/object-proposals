@@ -1,9 +1,8 @@
 {
-	"imageLocation": "/workspace/test_images",
-	"outputLocation":	 "/workspace/result_eb/",	
+	"imageLocation": "/home/gneelima/work/data/datasets/PASCAL2007/testImages/",
+	"outputLocation":	 "/home/gneelima/work/data/output/objectProposals/",	
 	"edgeBoxes":{	
 		"opts" : {
-			"numProposals" : 10000,
 			"isBaseline" : false,
 			"order": "descend"
 				},
@@ -24,7 +23,6 @@
 
 	"endres" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "none"
 			},
@@ -34,10 +32,10 @@
 		},
 	"mcg" : {
 			"opts": {
-				"numProposals" : 10000,
 				"boostpath" : "/opt/local/include/",
 				"isBaseline" : false,
-				"order": "descend"		
+				"order": "descend",		
+				"mode": "fast"
 			},
 			"params" : {
 				"mode" : "accurate",
@@ -47,7 +45,6 @@
 		},
 	"objectness" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "descend"
 			},
@@ -58,7 +55,6 @@
 
 	"rahtu" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "none"
 			},
@@ -70,7 +66,6 @@
 
 	"randomPrim": {
 			"opts" : {
-				"numProposals" : 10000,
 			"isBaseline" : false,
 			"order": "none"
 			},
@@ -81,7 +76,6 @@
 
 	"rantalankila" : {
 			"opts" : {
-				"numProposals" : 10000,
 			"isBaseline" : false,
 			"order": "none"
 			},
@@ -93,7 +87,6 @@
 
 	"selective_search" : {
 			"opts" : {
-				"numProposals" : 10000,
 				"isBaseline" : false,
 				"order": "ascend"
 			},
@@ -103,7 +96,6 @@
 				"minBoxWidth":20,
 				"imWidth":500,
 				"mode":"fast",
-				"numProposals":10000,
 				"colorTypes": ["Hsv", "Lab", "RGI", "H", "Intensity"]
 			}
 		}
