@@ -1,13 +1,13 @@
 %% Compile RP mex file
 function setupRandomizedPrim(rppath)
 	mexDir = 'cmex';
-	mexDir = (fullfile(rppath, mexDir));
+	mexDir = (fullfile(rppath, mexDir))
 
 	if(exist(mexDir, 'dir') ~= 0)
-	  rmdir(mexDir, 's');
+	 [~,~,~]= rmdir(mexDir, 's');
 	end
 	mkdir (rppath, 'cmex')
-    currDir = pwd;
+        currDir = pwd;
 	disp('Compiling RP mex file...');
 
 	% Release:

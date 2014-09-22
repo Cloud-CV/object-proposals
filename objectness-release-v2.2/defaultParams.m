@@ -3,7 +3,6 @@ function params = defaultParams(dirRoot)
 if nargin < 1
     dirRoot = pwd;
 end
-
 %params in general
 params.min_window_height = 10;
 params.min_window_width  = 10;

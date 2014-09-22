@@ -39,10 +39,10 @@
 %  - See demos/demo_im2mcg.m
 % ------------------------------------------------------------------------
 function [candidates, ucm2] = im2mcg(root_dir, image,mode,compute_masks)
-if nargin<2
+if nargin<3
     mode = 'fast';
 end
-if nargin<3
+if nargin<4
     compute_masks = 0;
 end
 

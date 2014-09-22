@@ -15,22 +15,22 @@
 % is forbidden without prior agreement in written
 % by the author.
 
-function boxes = runObjectness(img,numberSamples,params, rootpath)
+function boxes = runObjectness(img,numberProposals,params)
 %This function computes the objectness measure and samples boxes from it.
 
 %INPUT
 %img - input image
-%numberSamples - number of windows sampled from the objectness measure
+%numberProposals - number of windows sampled from the objectness measure
 %params - struct containing parameters of the function (loaded in startup.m)
 
 %OUTPUT
 %boxes - samples windows from the objectness measure
 %      - each row contains a window using the format [xmin ymin xmax ymax score]
 
-dir_root = rootpath;%change this to an absolute path
+%dir_root = rootpath;%change this to an absolute path
 
 img = gray2rgb(img);
-
+%{
 if nargin < 3
     try            
         struct = load([dir_root '/Data/params.mat']);
@@ -42,8 +42,7 @@ if nargin < 3
     end
 end
 %params = updatePath(dir_root,params);
-
-
+%}
 if length(params.cues)==1    
     %single cues
     
@@ -60,13 +59,13 @@ if length(params.cues)==1
             end
             
             %sampling
-            boxes = nms_pascal(distributionBoxes, 0.5,numberSamples);
+            boxes = nms_pascal(distributionBoxes, 0.5,numberProposals);
             
         case 'multinomial'            
             %multinomial sampling
             
             %sample from the distribution of the scores
-            indexSamples = scoreSampling(distributionBoxes(:,end),numberSamples,1);
+            indexSamples = scoreSampling(distributionBoxes(:,end),numberProposals,1);
             boxes = distributionBoxes(indexSamples,:);
                         
         otherwise
@@ -109,13 +108,13 @@ else
             %nms sampling
                         
             distributionBoxes(:,5) = scoreBayes;
-            boxes = nms_pascal(distributionBoxes, 0.5, numberSamples);
+            boxes = nms_pascal(distributionBoxes, 0.5, numberProposals);
             
         case 'multinomial'            
             %multinomial sampling
             
             %sample from the distribution of the scores
-            indexSamples = scoreSampling(scoreBayes,numberSamples,1);  
+            indexSamples = scoreSampling(scoreBayes,numberProposals,1);  
         boxes = [windows(indexSamples,:) scoreBayes(indexSamples,:)];   
                         
         otherwise

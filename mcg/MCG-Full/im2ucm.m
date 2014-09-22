@@ -34,7 +34,6 @@ function ucm2 = im2ucm(image,mode)
 if nargin<2
     mode = 'fast';
 end
-
 % Load pre-trained Structured Forest model
 sf_model = loadvar(fullfile(root_dir, 'datasets', 'models', 'sf_modelFinal.mat'),'model');
 

@@ -1,17 +1,20 @@
-function compute_best_recall_candidates(testset, methods)
- fprintf('computing besti\n');
+function compute_best_recall_candidates(testset, config)
   num_annotations = testset.num_annotations;
   candidates_thresholds = round(10 .^ (0:0.5:4));
   num_candidates_thresholds = numel(candidates_thresholds);
-  for method_idx = 1:numel(methods)
-  	method = methods(method_idx);
-	fileName=[method.opts.outputLocation 'best_recall_candidates.mat'];
+ 
+  proposalNames = fieldnames(config);
+  proposalsToEvaluate=proposalNames(3:end-1);
+  
+  for i = 1:length(proposalsToEvaluate)
+  	method = config.(char(proposalsToEvaluate{i}));
+	candidate_dir=[config.outputLocation proposalsToEvaluate{i}];
+	fileName=[candidate_dir '/' 'best_recall_candidates.mat']
     	try
-		
+   		method=config.(char(proposalsToEvaluate(i)))
       		load(fileName);
  		continue;
     	catch
-
 	    % preallocate
   	  	best_candidates = [];
     		best_candidates(num_candidates_thresholds).candidates_threshold = [];
@@ -31,8 +34,7 @@ function compute_best_recall_candidates(testset, methods)
      			fprintf('sampling candidates for image %d/%d\n', j, numel(testset.impos));
       			img_id = [testset.impos(j).im] ;
       			for i = 1:num_candidates_thresholds
-        			[candidates, scores] = get_candidates(method, img_id, ...
-          				candidates_thresholds(i));
+        			[candidates, scores] = get_candidates(candidate_dir,method, img_id,candidates_thresholds(i),true);
         			if isempty(candidates)
           				impos_best_ious = zeros(size(testset.impos(j).boxes, 1), 1);
           				impos_best_boxes = zeros(size(testset.impos(j).boxes, 1), 4);
