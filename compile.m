@@ -40,7 +40,7 @@ end
 try
 	mcg_path = [pwd '/mcg/MCG-Full'];
 	addpath(genpath(mcg_path));
-	addpath([pwd '/mcg/API'])
+	addpath([pwd '/mcg/API']);
 	%set root_dir for mcg
 	configjson.mcg.root_dir = mcg_root_dir(mcg_path);
 
@@ -75,7 +75,7 @@ try
     addpath(genpath([pwd '/rantalankilaSegments']));
     configjson.rantalankila.rapath =   [pwd '/rantalankilaSegments'];
     configjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
-    run(fullfile(configjson.rantalankila.vlfeatpath, 'toolbox/vl_setup'))
+    run(fullfile(configjson.rantalankila.vlfeatpath, 'toolbox/vl_setup'));
     spagglom_options;
     configjson.rantalankila.params=opts;
     fprintf('Compilation of Rantalankila Segments finished\n ');
@@ -102,10 +102,9 @@ end
 try
     fprintf('Compilation of Randomized Prims started\n ');
     addpath(genpath([pwd, '/randomizedPrims']));
-    configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master']
-    fprintf('doind setuup')
-    setupRandomizedPrim(configjson.randomPrim.rpPath)
-    params=LoadConfigFile(fullfile(configjson.randomPrim.rpPath, 'config/rp.mat'))
+    configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master'];
+    setupRandomizedPrim(configjson.randomPrim.rpPath);
+    params=LoadConfigFile(fullfile(configjson.randomPrim.rpPath, 'config/rp.mat'));
     configjson.randomPrim.params=params;
     addpath([configjson.randomPrim.rpPath, '/cmex']);
     fprintf('Compilation of Randomized Prims finished\n ');
@@ -121,9 +120,9 @@ try
     fprintf('Compiling Objectness \n');
     addpath(genpath([pwd, '/objectness-release-v2.2']));
     configjson.objectness.objectnesspath = [pwd, '/objectness-release-v2.2'];
-    params=defaultParams(configjson.objectness.objectnesspath)
+    params=defaultParams(configjson.objectness.objectnesspath);
 
-    configjson.objectness.params=params
+    configjson.objectness.params=params;
     fprintf('Compiling Objectness finished \n');
 catch
    fprintf('Compilation of Objectness failed\n ');
@@ -150,9 +149,9 @@ for i = 1:length(proposalNames)
     if((strcmp(proposalNames(i), 'imageLocation')==1 || strcmp(proposalNames(i), 'outputLocation')==1 || strcmp(proposalNames(i), 'params')==1))
         continue;
     else    
-        eval(sprintf('configjson.%s.opts.outputLocation = fullfile(configjson.outputLocation,proposalNames(i))',char(proposalNames(i))))
-        eval(sprintf('configjson.%s.opts.name = proposalNames(i)',  char(proposalNames(i)) ))
-        eval(sprintf('configjson.%s.opts.color = (randi(256,1,3)-1)/256',  char(proposalNames(i))  ))
+        eval(sprintf('configjson.%s.opts.outputLocation = fullfile(configjson.outputLocation,proposalNames(i));',char(proposalNames(i))))
+        eval(sprintf('configjson.%s.opts.name = proposalNames(i);',  char(proposalNames(i)) ))
+        eval(sprintf('configjson.%s.opts.color = (randi(256,1,3)-1)/256;',  char(proposalNames(i))  ))
 
     end
 end
