@@ -13,7 +13,7 @@ ii. First time users:
 
 > compile;
 
-> proposals = runObjectProposals('<proposal name>', 'path\to\image.jpg');
+> proposals = runObjectProposals('<proposalname>', 'path\to\image.jpg');
  
  or
 > im=imread('path\to\image.jpg'); proposals = runObjectProposals('<proposal name>', im);
