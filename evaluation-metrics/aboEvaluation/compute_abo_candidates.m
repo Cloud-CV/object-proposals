@@ -1,17 +1,21 @@
-function compute_abo_candidates(testset, methods)
+function compute_abo_candidates(testset, config)
 
-  num_images = numel(testset.impos);
-  candidates_thresholds = round(10 .^ (0:0.5:4))
-  num_candidates_thresholds = numel(candidates_thresholds);
+num_images = numel(testset.impos);
+candidates_thresholds = round(10 .^ (0:0.5:4))
+num_candidates_thresholds = numel(candidates_thresholds);
 
-  for method_idx = 1:numel(methods)
-    fileName=[ methods(method_idx).opts.outputLocation 'abo_candidates.mat']; 
+proposalNames = fieldnames(config);
+proposalsToEvaluate=proposalNames(3:end-1);
+
+for i = 1:length(proposalsToEvaluate)
+	method = config.(char(proposalsToEvaluate{i}));
+	candidate_dir=[config.outputLocation proposalsToEvaluate{i}];
+	fileName=[ candidate_dir '/' 'abo_candidates.mat']; 
     try
-      load(fileName, 'abo_candidates');
-      continue;
-
+	method=config.(char(proposalsToEvaluate(i)))
+	load(fileName, 'abo_candidates');
+        continue;
     catch
-
        abo_candidates = [];
        abo_candidates(num_candidates_thresholds).candidates_threshold = [];
        abo_candidates(num_candidates_thresholds).candidates = [];
@@ -19,18 +23,16 @@ function compute_abo_candidates(testset, methods)
                 abo_candidates(i).candidates_threshold = candidates_thresholds(i);
                 abo_candidates(i).candidates = cell(num_images, 1);
        end
-
-        for i=1:num_images
+       for i=1:num_images
                 img_id =testset.impos(i).im;
                 for j=1:num_candidates_thresholds
-                        [candidates, scores] = get_candidates(methods(method_idx), img_id, ...
-                                                candidates_thresholds(j));
+                        [candidates, scores] = get_candidates(candidate_dir, method, img_id, candidates_thresholds(j), true);
                          abo_candidates(j).candidates{i}=candidates;
                 end
                 r=rem(i,1000);
                 if(r==0)
-                        fprintf('done with image :%s,%s\n',img_id,methods(method_idx).opts.name);
-                end
+                	fprintf('done with image :%s,%s\n',img_id,char(method.opts.name));
+		end
        end
      parsave(fileName, abo_candidates);
    end

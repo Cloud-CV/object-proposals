@@ -1,22 +1,11 @@
-function [candidates, scores] = get_candidates(method_config, img_id, num_candidates, ...
-  allow_filtering, subdirlen, candidate_dir)
+function [candidates, scores] = get_candidates(candidate_dir,method_config, img_id, num_candidates, allow_filtering)
 
   if nargin < 4
     allow_filtering = true;
   end
-  if nargin < 5
-    candidate_dir = method_config.opts.outputLocation;
-  end
 
   [candidates, scores, rerun_num_candidates] = read_candidates_mat(candidate_dir, img_id);
   if iscell(candidates) && iscell(scores)
-%     error('this shouldn''t be used');
-    % we have candidates from multiple runs, with different num_candidates
-    % parameters
-%     assert(numel(rerun_num_candidates) == numel(candidates));
-%     assert(numel(scores) == numel(candidates));
-%     assert(all(rerun_num_candidates(1:(end-1)) <= rerun_num_candidates(2:end)));
-%     idx = find(rerun_num_candidates <= num_candidates, 1, 'last');
     [~,idx] = min(abs(rerun_num_candidates - num_candidates));
     candidates = candidates{idx};
     scores = scores{idx};
