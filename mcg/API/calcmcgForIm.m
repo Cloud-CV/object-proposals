@@ -10,7 +10,7 @@ if(size(im, 3) == 1)
 end
 
 
-[candidates, scores] = im2mcg(mcgconfig.root_dir, im, mcgconfig.opts.mode);
+[candidates, ~] = im2mcg(mcgconfig.root_dir, im, mcgconfig.opts.mode);
 boxes=zeros(length(candidates.labels),4);
 for j=1:length(candidates.labels)
 	boxes(j,:)=mask2box(ismember(candidates.superpixels,candidates.labels{j}));
@@ -27,7 +27,7 @@ if(isfield(mcgconfig.opts,'numProposals'))
 end
 boxes=[boxes(:,2) boxes(:,1) boxes(:,4) boxes(:,3)];
 proposals.boxes=boxes;
-proposals.scores = scores;
+proposals.scores = candidates.scores;
 proposals.regions.labels=labels;
 proposals.regions.superpixels=candidates.superpixels;
 
