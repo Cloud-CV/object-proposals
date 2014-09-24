@@ -2,7 +2,7 @@ global configjson
     
 % add current directory as the parent directory
 parDir = pwd;
-    
+addpath(genpath(pwd));    
 % adding evaluation metrics into path
 addpath(genpath([parDir '/evaluation-metrics']));
     
@@ -23,18 +23,15 @@ addpath(genpath([parDir '/edgeBoxes']));
 configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat'];
 configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
 	
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% configuring MCG  %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-mcg_path = [pwd '/mcg/MCG-Full'];
-addpath(mcg_path);
-addpath([pwd '/mcg/API']);
+
+mcg_path = [pwd '/mcg/MCG-Full/'];
 %set root_dir for mcg
 configjson.mcg.root_dir = mcg_root_dir(mcg_path);
 mcg_install(configjson.mcg.root_dir);
-
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% configuring Endres %%%%
