@@ -1,0 +1,7 @@
+This file describes changes and the moment they took place.
+
+22 May 2009
+- Created interface for Matlab
+
+20 Feb 2011
+- Fixed the backIdx bug
