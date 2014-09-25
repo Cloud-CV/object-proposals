@@ -1,8 +1,9 @@
 {
-	"imageLocation": "/home/gneelima/work/data/datasets/PASCAL2007/testImages/",
-	"outputLocation":	 "/home/gneelima/work/data/output/objectProposals/",	
+	"imageLocation": "/home/lpemula/test_images",
+	"outputLocation":	 "/home/lpemula/test_images",
+	
 	"edgeBoxes":{	
-		"opts" : {
+	"opts" : {
 			"isBaseline" : false,
 			"order": "descend"
 				},
@@ -22,7 +23,7 @@
 	},
 
 	"endres" : {
-			"opts" : {
+		"opts" : {
 				"isBaseline" : false,
 				"order": "none"
 			},
@@ -31,7 +32,7 @@
 			}
 		},
 	"mcg" : {
-			"opts": {
+		"opts": {
 				"boostpath" : "/opt/local/include/",
 				"isBaseline" : false,
 				"order": "descend",		
@@ -44,7 +45,7 @@
 
 		},
 	"objectness" : {
-			"opts" : {
+		"opts" : {
 				"isBaseline" : false,
 				"order": "descend"
 			},
@@ -54,7 +55,7 @@
 		},
 
 	"rahtu" : {
-			"opts" : {
+		"opts" : {
 				"isBaseline" : false,
 				"order": "none"
 			},
@@ -65,7 +66,7 @@
 		},
 
 	"randomPrim": {
-			"opts" : {
+		"opts" : {
 			"isBaseline" : false,
 			"order": "none"
 			},
@@ -75,7 +76,7 @@
 	},
 
 	"rantalankila" : {
-			"opts" : {
+		"opts" : {
 			"isBaseline" : false,
 			"order": "none"
 			},
@@ -86,7 +87,7 @@
 		},
 
 	"selective_search" : {
-			"opts" : {
+		"opts" : {
 				"isBaseline" : false,
 				"order": "ascend"
 			},
@@ -98,7 +99,21 @@
 				"mode":"fast",
 				"colorTypes": ["Hsv", "Lab", "RGI", "H", "Intensity"]
 			}
-		}
+		},
+
+	"rigor" : {
+		"opts" : {
+				"numProposals" : 100,
+				"isbaseline" : false,
+				"order": "none"
+			},
+			"params": {
+				"param_set" : "@params_default"
+			}
+			
+
+	}
+
 }
 
 
