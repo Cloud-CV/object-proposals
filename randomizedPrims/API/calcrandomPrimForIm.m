@@ -13,7 +13,6 @@ if(isfield(rpconfig.opts,'numProposals'))
         numProposals=rpconfig.opts.numProposals;
         if(size(boxes,1)>=numProposals)
         	boxes=boxes(1:numProposals,:);
-                labels=labels(1:numProposals);
             else
                 fprintf('Only %d proposals were generated for the input image\n',size(boxes,1));
             end
