@@ -39,8 +39,10 @@ function varargout = runObjectProposal(varargin)
                 try
                         fh = makeHandle(funcName);
                         varargout{1} = fh( imageInput, configjson.(char(proposalName)));
-                catch
-                        fprintf('Error running %s\n', funcName);
+                catch exc
+                        fprintf('****Error running %s ********\n', funcName);
+			msgString = getReport(exc);
+                        fprintf(msgString);
                 end
 	end
     else
@@ -64,5 +66,5 @@ function varargout = runObjectProposal(varargin)
 end
 
 function handle = makeHandle(funcName)
-    handle = str2func(funcName)
+    handle = str2func(funcName);
 end
