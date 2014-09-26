@@ -184,9 +184,10 @@ try
        extra_opts = '-lrt';
    end
    rigor_path = [pwd '/rigor/rigor_src'];
-   addpath(rigor_path);
-   addpath([pwd '/rigor/API'])
-   	
+   addpath(genpath(rigor_path));
+   addpath([pwd '/rigor/API']);
+   make
+  	
    % find locations of files
    code_root_dir = fullfile(fileparts(which(mfilename)), 'rigor/rigor_src');
    utils_dir = fullfile(code_root_dir, 'utils');
