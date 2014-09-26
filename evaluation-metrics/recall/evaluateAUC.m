@@ -1,19 +1,9 @@
-function evaluateAUC( methods, varargin)
-  if(length(varargin)>1)
-    output_file_prefix=varargin{1};
-    outputLocation = varargin{2};
-  elseif(length(varargin)>0)
-		output_file_prefix=varargin{1};
-        outputLocation = '';
-  else
-        output_file_prefix = '';
-        outputLocation = '';
-  end
-   bestRecallFileName= 'best_recall_candidates.mat';
+function evaluateAUC( methods, outputLocation)
+ bestRecallFileName= 'best_recall_candidates.mat';
    
  %n=length(methods);
- proposalNames = fieldnames(methods)
- n = length(proposalNames)
+ proposalNames = fieldnames(methods);
+ n = length(proposalNames);
  
   count = 0;
   figure;
@@ -32,16 +22,18 @@ function evaluateAUC( methods, varargin)
         end
         
         label=methods.(char(proposalNames(i))).opts.name;
-        labels{count}=label;
+        labels(count)=label;
         line_style = '-';
         if methods.(char(proposalNames(i))).opts.isBaseline
           line_style = '--';
         end
         semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
         hold on; grid on;
-      catch
+      catch exc
           fprintf('Error evaluating %s\n', (char(proposalNames(i))));
-	  continue;
+          msg = exc.message;
+          fprintf(msg);
+          fprintf('\n****  Continuing ..****\n');
       end
   end
   xlim([10, 10000]);
@@ -54,7 +46,7 @@ function evaluateAUC( methods, varargin)
   wid = 10;
   set(gcf, 'Units','centimeters', 'Position',[0 0 wid hei]);
   set(gcf, 'PaperPositionMode','auto');
-  printpdf(sprintf('figures/%snum_candidates_area_under_recall.pdf', output_file_prefix));
+  printpdf('figures/num_candidates_area_under_recall.pdf');
 
   % fixed threshold
   legend_locations = {'SouthEast', 'NorthWest', 'NorthWest'};
@@ -64,22 +56,29 @@ function evaluateAUC( methods, varargin)
     threshold = thresholds(threshold_i);
     figure;
     for i = 1:n
-      data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation,  bestRecallFileName)));
-      num_experiments = numel(data.best_candidates);
-      x = zeros(num_experiments, 1);
-      y = zeros(num_experiments, 1);
-      for exp_idx = 1:num_experiments
-        experiment = data.best_candidates(exp_idx);
-        recall = sum(experiment.best_candidates.iou >= threshold) / numel(experiment.best_candidates.iou);
-        x(exp_idx) = mean([experiment.image_statistics.num_candidates]);
-        y(exp_idx) = recall;
-      end
-      line_style = '-';
-      if methods.(char(proposalNames(i))).opts.isBaseline
-        line_style = '--';
-      end
-      semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
-      hold on; grid on;
+      try
+      	data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation,  bestRecallFileName)));
+      	num_experiments = numel(data.best_candidates);
+      	x = zeros(num_experiments, 1);
+      	y = zeros(num_experiments, 1);
+      	for exp_idx = 1:num_experiments
+        	experiment = data.best_candidates(exp_idx);
+        	recall = sum(experiment.best_candidates.iou >= threshold) / numel(experiment.best_candidates.iou);
+        	x(exp_idx) = mean([experiment.image_statistics.num_candidates]);
+        	y(exp_idx) = recall;
+      	end
+      	line_style = '-';
+      	if methods.(char(proposalNames(i))).opts.isBaseline
+        	line_style = '--';
+      	end
+      	semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
+      	hold on; grid on;
+	catch exc
+		fprintf('Error evaluating %s\n', (char(proposalNames(i))));
+	        msg = exc.message;
+         	fprintf(msg);
+         	fprintf('\n****  Continuing ..****\n');
+	end
     end
     xlim([10, 10000]);
     ylim([0 1]);
@@ -97,8 +96,7 @@ function evaluateAUC( methods, varargin)
             mkdir(char(fullfile(outputLocation, ...
          'figures')))
     end
-	threshold
-      printpdf(char(fullfile(outputLocation,sprintf('figures/%snum_candidates_recall_%.1f.pdf',output_file_prefix,threshold))));
+      printpdf(char(fullfile(outputLocation,sprintf('figures/num_candidates_recall_%.1f.pdf',threshold))));
   end
   
 end

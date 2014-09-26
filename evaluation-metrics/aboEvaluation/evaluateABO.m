@@ -1,28 +1,16 @@
-function evaluateABO( config, varargin)
-  if(length(varargin)>1)
-    output_file_prefix=varargin{1};
-    outputLocation = varargin{2};
-  elseif(length(varargin)>0)
-		output_file_prefix=varargin{1};
-        outputLocation = '';
-  else
-        output_file_prefix = '';
-        outputLocation = '';
-  end
+function evaluateABO( config,outputLocation)
   aboFileName= 'abo_candidates.mat';
   load('aboEvaluation/data/GtPascal2007ObjPRop.mat'); 
   
   proposalNames = fieldnames(config);
   n = length(proposalNames);
-  
-  for i=1:n
-  	config.(char(proposalNames(i))).opts.color=(randi(256,1,3)-1)/256;
-  end
+ count=0;  
 
   figure;
   for i = 1:n
-     % try
+      try
         data = load(char(fullfile(config.(char(proposalNames(i))).opts.outputLocation, aboFileName)));
+ 	count=count+1;
         num_experiments = numel(data.abo_candidates);
         x = zeros(num_experiments, 1);
         y = zeros(num_experiments, 1);
@@ -33,16 +21,16 @@ function evaluateABO( config, varargin)
           y(exp_idx) = abo;
         end
         label=config.(char(proposalNames(i))).opts.name;
-        labels{i}=label;
+        labels(count)=label;
         line_style = '-';
         if config.(char(proposalNames(i))).opts.isBaseline
           line_style = '--';
         end
         semilogx(x, y, 'Color', config.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
         hold on; grid on;
-     % catch
-      %    fprintf('Error evaluating %s\n', (char(proposalNames(i))));
-     % end
+      catch exc
+         fprintf('Error evaluating %s\n', (char(proposalNames(i))));
+      end
   end
   xlim([10, 10000]);
   ylim([0 1]);
@@ -58,7 +46,7 @@ function evaluateABO( config, varargin)
   if(~exist(char(fullfile(outputLocation, ...
           'figures')), 'dir'))
      mkdir(char(fullfile(outputLocation, ...
-         'figures')))
+         'figures')));
   end
   printpdf(char(fullfile(outputLocation, 'figures/ABO_plots.pdf')));
 end
