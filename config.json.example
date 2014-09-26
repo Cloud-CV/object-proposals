@@ -1,0 +1,119 @@
+{
+	"imageLocation": "/workspace/imageLocation/",
+	"outputLocation":	 "/workspace/outputLocation/",
+	
+	"edgeBoxes":{	
+	"opts" : {
+			"isBaseline" : false,
+			"order": "descend"
+				},
+		"params" : {
+			"alpha": 0.65, 
+			"beta": 0.75,
+			"minScore": 0.01, 
+			"maxBoxes": 1e4,
+			"edgeMinMag": 0.1,
+			"edgeMergeThr": 0.5,
+			"clusterMinMag": 0.5,
+			"maxAspectRatio": 3,
+			"minBoxArea": 1000,
+			"gamma": 2,
+			"kappa": 1.5
+		}
+	},
+
+	"endres" : {
+		"opts" : {
+				"isBaseline" : false,
+				"order": "none"
+			},
+			"params":{
+
+			}
+		},
+	"mcg" : {
+		"opts": {
+				"boostpath" : "/opt/local/include/",
+				"isBaseline" : false,
+				"order": "descend",		
+				"mode": "fast"
+			},
+			"params" : {
+				"mode" : "accurate",
+				"database": "pascal2012"
+			}
+
+		},
+	"objectness" : {
+		"opts" : {
+				"isBaseline" : false,
+				"order": "descend"
+			},
+			"params":{
+
+			}	
+		},
+
+	"rahtu" : {
+		"opts" : {
+				"isBaseline" : false,
+				"order": "none"
+			},
+
+			"params":{
+
+			}
+		},
+
+	"randomPrim": {
+		"opts" : {
+			"isBaseline" : false,
+			"order": "none"
+			},
+			"params":{
+
+			}
+	},
+
+	"rantalankila" : {
+		"opts" : {
+			"isBaseline" : false,
+			"order": "none"
+			},
+			"params":{
+
+			}
+			
+		},
+
+	"selective_search" : {
+		"opts" : {
+				"isBaseline" : false,
+				"order": "ascend"
+			},
+			"params": {
+				"ks" :[50, 100],
+				"sigma":0.8,
+				"minBoxWidth":20,
+				"imWidth":500,
+				"mode":"fast",
+				"colorTypes": ["Hsv", "Lab", "RGI", "H", "Intensity"]
+			}
+		},
+
+	"rigor" : {
+		"opts" : {
+				"numProposals" : 100,
+				"isbaseline" : false,
+				"order": "none"
+			},
+			"params": {
+				"param_set" : "@params_default"
+			}
+			
+
+	}
+
+}
+
+
