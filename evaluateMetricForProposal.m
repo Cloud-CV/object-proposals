@@ -2,17 +2,17 @@ function evaluateMetricForProposal(metricName,varargin)
 %%
     global configjson;
     proposalNames = fieldnames(configjson);
-    
     if(length(varargin)>0)
 		proposalsToEvaluate=varargin{1};
 		[exists,index]=ismember(proposalsToEvaluate,proposalNames);
         if(exists)
-            eval(sprintf('proposalData.%s=configjson.%s',proposalNames{index}, proposalNames{index}))
+            eval(sprintf('proposalData.%s=configjson.%s;',proposalNames{index}, proposalNames{index}))
         end
+	
     else
-        proposalsToEvaluate=proposalNames(3:end);	
+        proposalsToEvaluate=proposalNames(3:end-1);	
     	for i=1:length(proposalsToEvaluate)
-		eval(sprintf('proposalData.%s=configjson.%s',proposalsToEvaluate{i},proposalsToEvaluate{i}));
+		eval(sprintf('proposalData.%s=configjson.%s;',proposalsToEvaluate{i},proposalsToEvaluate{i}));
         end
        
     end
@@ -20,11 +20,7 @@ function evaluateMetricForProposal(metricName,varargin)
      %%
     funcName = sprintf('evaluate%s',metricName);
     fh = makeHandle(funcName);
-    if(strcmp(metricName, 'RECALL'))
-        fh(proposalData,1000,configjson.outputLocation)
-    else
-        fh(proposalData,'',configjson.outputLocation)
-    end
+    fh(proposalData,configjson.outputLocation);
 end
 
 function handle = makeHandle(funcName)
