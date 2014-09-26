@@ -15,15 +15,13 @@ function evaluateAUC( methods, varargin)
  proposalNames = fieldnames(methods)
  n = length(proposalNames)
  
- for i=1:n
-  	methods.(char(proposalNames(i))).opts.color=(randi(256,1,3)-1)/256;
- end
-  count = 1;
+  count = 0;
   figure;
   for i = 1:n
       try
         data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
-        num_experiments = numel(data.best_candidates);
+        count=count+1;
+	num_experiments = numel(data.best_candidates);
         x = zeros(num_experiments, 1);
         y = zeros(num_experiments, 1);
         for exp_idx = 1:num_experiments
@@ -41,15 +39,15 @@ function evaluateAUC( methods, varargin)
         end
         semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
         hold on; grid on;
-        count = count + 1;
       catch
           fprintf('Error evaluating %s\n', (char(proposalNames(i))));
+	  continue;
       end
   end
   xlim([10, 10000]);
   ylim([0 1]);
   xlabel('# candidates'); ylabel('area under recall');
-  legend(labels, 'Location', 'SouthEast');
+  legend(labels{:}, 'Location', 'SouthEast');
   legendshrink(0.5);
   legend boxoff;
   hei = 10;
@@ -80,14 +78,13 @@ function evaluateAUC( methods, varargin)
       if methods.(char(proposalNames(i))).opts.isBaseline
         line_style = '--';
       end
-	%labels{i} = sprintf('%s %s', label, number_str);
       semilogx(x, y, 'Color', methods.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
       hold on; grid on;
     end
     xlim([10, 10000]);
     ylim([0 1]);
     xlabel('# candidates'); ylabel(sprintf('recall at IoU threshold %.1f', threshold));
-    legend(labels, 'Location', legend_locations{threshold_i});
+    legend(labels{:}, 'Location', legend_locations{threshold_i});
     legendshrink(0.5);
     legend boxoff;
 %     legend(labels, 'Location', 'SouthEast');
@@ -100,7 +97,8 @@ function evaluateAUC( methods, varargin)
             mkdir(char(fullfile(outputLocation, ...
          'figures')))
     end
-      printpdf(char(fullfile(outputLocation, 'figures/AUC_plots.pdf')));
+	threshold
+      printpdf(char(fullfile(outputLocation,sprintf('figures/%snum_candidates_recall_%.1f.pdf',output_file_prefix,threshold))));
   end
   
 end
