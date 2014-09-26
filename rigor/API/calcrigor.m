@@ -29,7 +29,7 @@ for i=1:length(images)
     whos impath
     im=imread(impath);
     fprintf('Calculating RIGOR for %s\n', imname);
-    proposals =calcRigorForIm(impath,rigorconfig); 
+    proposals =calcrigorForIm(impath,rigorconfig); 
     saveFile=[imname '.mat'];
     save([config.outputLocation saveFile], 'proposals');
 end
