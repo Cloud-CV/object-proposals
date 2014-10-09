@@ -23,7 +23,7 @@ function evaluateABO( config,outputLocation)
         label=config.(char(proposalNames(i))).opts.name;
         labels(count)=label;
         line_style = '-';
-        if config.(char(proposalNames(i))).opts.isbaseline
+        if config.(char(proposalNames(i))).opts.isBaseline
           line_style = '--';
         end
         semilogx(x, y, 'Color', config.(char(proposalNames(i))).opts.color, 'LineWidth', 1.5, 'LineStyle', line_style);
