@@ -13,7 +13,6 @@ function compute_best_recall_candidates(testset, config)
     	try
    		method=config.(char(proposalsToEvaluate(i)))
       		load(fileName);
- 		continue;
     	catch
 	    % preallocate
   	  	best_candidates = [];
@@ -30,7 +29,6 @@ function compute_best_recall_candidates(testset, config)
     		for j = 1:numel(testset.impos)
       			pos_range_end = pos_range_start + size(testset.impos(j).boxes, 1) - 1;
       			assert(pos_range_end <= num_annotations);
-
      			fprintf('sampling candidates for image %d/%d\n', j, numel(testset.impos));
       			img_id = [testset.impos(j).im] ;
       			for i = 1:num_candidates_thresholds
@@ -47,8 +45,9 @@ function compute_best_recall_candidates(testset, config)
         			best_candidates(i).image_statistics(j).num_candidates = size(candidates, 1);
       			end
       			pos_range_start = pos_range_end + 1;
-      			save(fileName, 'best_candidates');
+      			%save(fileName, 'best_candidates');
     		end
+		save(fileName, 'best_candidates');
    	end
   end
 end
