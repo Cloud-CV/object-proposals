@@ -35,6 +35,12 @@ In steps (ii) and (iii) < proposalname> is the object proposal you want to run. 
   * randomPrim [6]
   * rantalankila  [7]
   * selective_search [8]
+  * rigor [9]
+
+Note: 
+	RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
+	RIGOR does not support .mat as argument for calcrigorForIm function. It only accepts the image path.
+
 
 License:
 ==================
@@ -179,7 +185,21 @@ License: rantalankilaSegments/Readme.txt (GNU General Public Licence)
     }
 License: selective_search/License.txt(Copyright University of Amsterdam)
 
-[9] Evaluation Metrics:
+[9] rigor:
+@InProceedings{RIGOR_2014_CVPR,
+     author    = {
+               Ahmad Humayun and
+               Fuxin Li and
+               James M. Rehg},
+     journal = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+     month = {June},
+     year = {2014}
+     title = {RIGOR- Recycling Inference in Graph Cuts for generating Object Regions},
+    }
+License: rigor/rigor_src/LICENSE ( GNU General Public License)
+
+
+[10] Evaluation Metrics:
 
     @INPROCEEDINGS{Hosang2014Bmvc,
         author = {J. Hosang and R. Benenson and B. Schiele},
