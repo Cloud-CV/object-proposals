@@ -3,25 +3,28 @@ Object-proposals:
 
 This is a library/API which can be used to generate bounding box/region proposals using most of the existing object proposal approaches.
 
+Compile:
+========
+i. Run compile.m
+
+
 
 Usage:
 ======
 
-i. Open config.json. Set *imageLocation*, and *outputLocation* to locations of your choice. (All other config values have been set to default values)
+i. Initialize path variables using: 
+> initialize;
 
-ii. First time users:
-
-> compile;
-
+ii. To generate proposals, you can use either of the following commands:
 > proposals = runObjectProposals('<proposalname>', 'path\to\image.jpg');
  
  or
 > im=imread('path\to\image.jpg'); proposals = runObjectProposals('<proposal name>', im);
 
 
-If you have already compiled once, use the initialize command instead of compile commande before generating proposals.
+Open config.json. Set *imageLocation*, and *outputLocation* to locations of your choice.
 
-iii. Alternately, you can call
+iii. Once  *imageLocation*, and *outputLocation* are set, you can call
 >runObjectProposals('<proposal name>');
 
 This will generate proposals for all the images in the *imageLocation* and save the proposals in the *outputLocation*.

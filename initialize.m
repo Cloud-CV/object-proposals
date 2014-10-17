@@ -14,12 +14,14 @@ configjson = loadjson([parDir, '/config.json']);
 configjson.params.parDir = pwd;
     
 addpath(fullfile(pwd, 'utils'));
-   
+
+
+addpath(genpath([pwd, '/dependencies']));   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% configuring of edge boxes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-addpath(genpath([parDir '/edgeBoxes']));
+addpath(genpath([pwd '/edgeBoxes']));
 configjson.edgeBoxes.modelPath = [parDir, '/edgeBoxes/releaseV3/', 'models/forest/modelBsds.mat'];
 configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes);
 	
@@ -27,11 +29,10 @@ configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes)
 %% configuring MCG  %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+addpath(genpath([pwd '/mcg']));
 mcg_path = [pwd '/mcg/MCG-Full/'];
 %set root_dir for mcg
 configjson.mcg.root_dir = mcg_root_dir(mcg_path);
-mcg_install(configjson.mcg.root_dir);
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% configuring Endres %%%%
@@ -66,10 +67,8 @@ configjson.rahtu.rahtuPath = [pwd '/rahtu/rahtuObjectness'];
 addpath(genpath([pwd, '/randomizedPrims']));
 configjson.randomPrim.rpPath = [pwd, '/randomizedPrims/rp-master'];
 addpath([configjson.randomPrim.rpPath, '/cmex']);
-%setupRandomizedPrim(configjson.randomPrim.rpPath);
 GenerateRPConfig(configjson.randomPrim.rpPath);
 GenerateRPConfig_4segs(configjson.randomPrim.rpPath);
-
 params=LoadConfigFile(fullfile(configjson.randomPrim.rpPath, 'config/rp.mat'));
 configjson.randomPrim.params=params;
 
@@ -134,8 +133,8 @@ configjson.objectness.params=params;
 addpath(genpath(fullfile(pwd,'selective_search')));
 configjson.selective_search.params.colorTypes = {'Hsv', 'Lab', 'RGI', 'H', 'Intensity'};
 configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSizeFillOrig,@SSSimTextureSizeFill};
-    fprintf('Initialization finished. All the necessary paths have been set.\n ');
-    %%
+    
+
     proposalNames = fieldnames(configjson);
     for i = 1:length(proposalNames)
         if((strcmp(proposalNames(i), 'imageLocation')==1 || strcmp(proposalNames(i), 'outputLocation')==1 || strcmp(proposalNames(i), 'params')==1))
@@ -149,4 +148,4 @@ configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSize
     end
 
 
-    
+fprintf('**Initialization finished. All the necessary paths have been set.**\n'); 
