@@ -16,16 +16,16 @@ i. Initialize path variables using:
 > initialize;
 
 ii. To generate proposals, you can use either of the following commands:
-> proposals = runObjectProposals('<proposalname>', 'path\to\image.jpg');
+> proposals = runObjectProposals(' <proposalname>', 'path\to\image.jpg');
  
  or
-> im=imread('path\to\image.jpg'); proposals = runObjectProposals('<proposal name>', im);
+> im=imread('path\to\image.jpg'); proposals = runObjectProposals(' <proposal name>', im);
 
 
 Open config.json. Set *imageLocation*, and *outputLocation* to locations of your choice.
 
 iii. Once  *imageLocation*, and *outputLocation* are set, you can call
->runObjectProposals('<proposal name>');
+>runObjectProposals(' <proposal name>');
 
 This will generate proposals for all the images in the *imageLocation* and save the proposals in the *outputLocation*.
  
