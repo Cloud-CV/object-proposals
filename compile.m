@@ -198,7 +198,46 @@ end
 %%%%%%%%%%%%%%%%%%%%
 %% building rigor %%
 %%%%%%%%%%%%%%%%%%%%
-%{
+   fprintf('Compiling Rigor \n');
+   tbb_incl_opt = '';
+   tbb_lib_opt = '';
+   boost_incl_opt = '';
+   boost_lib_opt = '';
+   extra_opts = '';
+   
+   % set directories and options
+   if ispc
+       % if windows
+       tbb_dir = 'D:/tbb42';
+       tbb_incl_dir = fullfile(tbb_dir, 'include');
+       tbb_libs = fullfile(tbb_dir, 'lib/intel64/vc12');
+       boost_dir = 'D:/boost/1.55.0/VC/11.0';
+       boost_libs = fullfile(boost_dir, 'stage/lib');
+       
+       tbb_incl_opt = ['-I', tbb_incl_dir];
+       tbb_lib_opt = ['-L', tbb_libs];
+       boost_incl_opt = ['-I', boost_dir];
+       boost_lib_opt = ['-L', boost_libs];
+   elseif ismac
+       % if mac
+   else
+       % if unix/linux
+       fprintf('linux var set for rigor \n');
+       boost_libs = '/usr/local/lib';
+       boost_lib_opt = ['-L', boost_libs];
+       extra_opts = '-lrt';
+   end
+   rigor_path = [pwd '/rigor/rigor_src'];
+   addpath(genpath(rigor_path));
+   addpath([pwd '/rigor/API']);
+  % make
+  	
+  %  addpath(genpath([pwd '/dependencies']));
+   % find locations of files
+   code_root_dir = fullfile(fileparts(which(mfilename)), 'rigor/rigor_src');
+   utils_dir = fullfile(code_root_dir, 'utils');
+   extern_dir = fullfile(code_root_dir, 'extern_src');
+   boykov_dir = fullfile(code_root_dir, 'boykov_maxflow');
 try
 	
   fprintf('eval statements\n');
@@ -237,6 +276,5 @@ catch exc
     fprintf(exc.message);
     fprintf('***************************\n');
 end
-%}
 
   fprintf('******Compiling complete.*********\n')
