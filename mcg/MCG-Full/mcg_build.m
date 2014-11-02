@@ -18,7 +18,7 @@
 % Dependencies needed to build: Boost C++ libraries (http://www.boost.org)
 %
 % ------------------------------------------------------------------------
-function mcg_build(root_dir, boostpath)
+function mcg_build(parDir, root_dir, boostpath)
 % Check that 'root_dir' has been set
 if ~exist(root_dir,'dir')
     error('Error building MCG, try updating the value of root_dir in the file "root_dir.m"')
@@ -80,15 +80,16 @@ eval(['mex ' file1 ' ' dep1 ' ' dep2 ' -output ' o_file1 ' -DMATLAB -O'])
 eval(['mex ' file2 ' ' dep1 ' ' dep2 ' -output ' o_file2 ' -DMATLAB -O'])
 
 %% Build structured forest files
-eval(['mex ' fullfile(root_dir, 'src', 'external','structured_forest', 'edgesDetectMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
+eval(['mex ' fullfile(parDir, 'dependencies' ,'structuredEdges', 'release', 'edgesDetectMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
 
 %% Build piotr_toolbox files
-eval(['mex ' fullfile(root_dir, 'src', 'external','piotr_toolbox',     'convConst.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
-eval(['mex ' fullfile(root_dir, 'src', 'external','piotr_toolbox',   'gradientMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
-eval(['mex ' fullfile(root_dir, 'src', 'external','piotr_toolbox',      'imPadMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
-eval(['mex ' fullfile(root_dir, 'src', 'external','piotr_toolbox', 'imResampleMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
-eval(['mex ' fullfile(root_dir, 'src', 'external','piotr_toolbox', 'rgbConvertMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
-
+display('pdollar copying');
+eval(['mex ' fullfile(parDir, 'dependencies', 'pDollarToolbox', 'channels', 'private',   'convConst.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
+eval(['mex ' fullfile(parDir, 'dependencies', 'pDollarToolbox', 'channels', 'private',   'gradientMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
+eval(['mex ' fullfile(parDir, 'dependencies', 'pDollarToolbox', 'channels', 'private',     'imPadMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
+eval(['mex ' fullfile(parDir, 'dependencies', 'pDollarToolbox', 'channels', 'private', 'imResampleMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
+eval(['mex ' fullfile(parDir, 'dependencies', 'pDollarToolbox', 'channels', 'private', 'rgbConvertMex.cpp') ' -outdir ' fullfile(root_dir, 'lib') include_str])
+display('pdollar copying');
 
 %% Build BSR-related files
 % 'ucm_mean_pb'

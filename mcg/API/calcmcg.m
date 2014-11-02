@@ -1,5 +1,5 @@
 function calcmcg( config )
-
+rmpath(genpath([pwd '/dependencies/structuredEdges/release']));
 images = dir(config.imageLocation);
 images = regexpi({images.name}, '.*jpg|.*jpeg|.*png|.*bmp', 'match');
 images = [images{:}];
@@ -18,6 +18,6 @@ for i=1:length(images)
     saveFile=[imname '.mat'];
     save([config.outputLocation '/mcg/' saveFile], 'proposals');
 end
-
+addpath(genpath([pwd '/dependencies/structuredEdges/release']));
 end
 

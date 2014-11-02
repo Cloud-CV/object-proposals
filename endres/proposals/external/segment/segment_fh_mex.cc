@@ -1,8 +1,8 @@
 #include <math.h>
 #include <sys/types.h>
 #include "mex.h"
-#include <misc.h>
-#include <pnmfile.h>
+#include "misc.h"
+#include "pnmfile.h"
 
 #include <iostream>
 #include <stdio.h>

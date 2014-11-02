@@ -1,5 +1,5 @@
 function proposals=calcmcgForIm( input, mcgconfig)
-	
+rmpath(genpath([pwd '/dependencies/structuredEdges/release']));
 if(isstr(input))
 	im = im2double(imread(input));
 else
@@ -30,6 +30,6 @@ proposals.boxes=boxes;
 proposals.scores = candidates.scores;
 proposals.regions.labels=labels;
 proposals.regions.superpixels=candidates.superpixels;
-
+addpath(genpath([pwd '/dependencies/structuredEdges/release']));
 end
 

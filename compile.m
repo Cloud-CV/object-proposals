@@ -73,8 +73,8 @@ try
 	mcgRootDir = mcg_root_dir(mcg_path);
         boostPath='/opt/local/include/';
 	%build and install
-	mcg_build(mcgRootDir, boostPath);
-	mcg_install(mcgRootDir);
+	mcg_build(parDir, mcgRootDir, boostPath);
+	%mcg_install(mcgRootDir);
 	fprintf('Compilation of MCG sucessfully finished\n ');
         fprintf('***************************\n');
 catch exc
@@ -88,12 +88,15 @@ end
 %% building Endres %%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 %noothing to do
-%{
+
 try
      fprintf('Compilation of Endres started\n ');
     endres_path = [pwd '/endres/proposals'];
-    configjson.endres.endrespath = endres_path;
-    addpath(genpath(endres_path));
+    %configjson.endres.endrespath = endres_path;
+    %addpath(genpath(endres_path));
+    cd(endres_path);
+    endres_compile;
+    cd(parDir);
     fprintf('Compilation of Endres sucessfully finished\n ');
     fprintf('***************************\n');
 catch exc

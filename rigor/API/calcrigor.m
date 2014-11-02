@@ -1,5 +1,4 @@
 function calcRigor( config )
-
 %RIGOR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -33,6 +32,5 @@ for i=1:length(images)
     saveFile=[imname '.mat'];
     save([config.outputLocation saveFile], 'proposals');
 end
-
 end
 

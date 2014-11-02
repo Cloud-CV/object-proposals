@@ -1,5 +1,4 @@
 function proposals= calcRigorForIm( input, rigorconfig )
-
 %RIGOR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,5 +19,4 @@ im = input;
 		boxes(j,:)=mask2box(masks(:,:,j));
 	end
 	proposals.boxes= boxes;
-
 end

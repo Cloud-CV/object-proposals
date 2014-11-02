@@ -14,9 +14,6 @@ configjson = loadjson([parDir, '/config.json']);
 configjson.params.parDir = pwd;
     
 addpath(fullfile(pwd, 'utils'));
-
-
-addpath(genpath([pwd, '/dependencies']));   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% configuring of edge boxes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -33,7 +30,7 @@ addpath(genpath([pwd '/mcg']));
 mcg_path = [pwd '/mcg/MCG-Full/'];
 %set root_dir for mcg
 configjson.mcg.root_dir = mcg_root_dir(mcg_path);
-
+mcg_install(configjson.mcg.root_dir);
 %%%%%%%%%%%%%%%%%%%%%%%
 %% configuring Endres %%%%
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -149,3 +146,6 @@ configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSize
 
 
 fprintf('**Initialization finished. All the necessary paths have been set.**\n'); 
+
+
+addpath(genpath([pwd, '/dependencies']));  
