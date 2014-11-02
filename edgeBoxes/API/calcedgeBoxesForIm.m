@@ -1,5 +1,5 @@
 function proposals= calcEdgeBoxesForIm( input, ebconfig )
-
+rmpath(genpath([pwd '/rigor']));
 rmpath(genpath([pwd '/mcg/']));
 if(isstr(input))
 	im = im2double(imread(input));
@@ -42,7 +42,7 @@ proposals.boxes= boxes;
 proposals.scores = bbs(:,5);
 
 addpath(genpath([pwd '/mcg/']));
-
+addpath(genpath([pwd '/rigor']));
 end
 
 

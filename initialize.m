@@ -148,4 +148,4 @@ configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSize
 fprintf('**Initialization finished. All the necessary paths have been set.**\n'); 
 
 
-addpath(genpath([pwd, '/dependencies']));  
+addpath(genpath([pwd, '/dependencies'])); 

@@ -131,7 +131,7 @@ try
     fprintf('Compilation of Rahtu started\n ');
     addpath(genpath([pwd '/rahtu']));
     rahtuPath = [pwd '/rahtu/rahtuObjectness'];
-    compileObjectnessMex(rahtuPath);
+    compileObjectnessMex(parDir, rahtuPath);
     fprintf('Compilation of Rahtu successfully finished\n ');
     fprintf('***************************\n');
 catch exc
@@ -161,14 +161,22 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 %nothing to do
-%{
+
 try
     fprintf('Compiling Objectness \n');
-    addpath(genpath([pwd, '/objectness-release-v2.2']));
-    configjson.objectness.objectnesspath = [pwd, '/objectness-release-v2.2'];
-    params=defaultParams(configjson.objectness.objectnesspath);
+    %addpath(genpath([pwd, '/objectness-release-v2.2']));
+    %configjson.objectness.objectnesspath = [pwd, '/objectness-release-v2.2'];
+    %params=defaultParams(configjson.objectness.objectnesspath);
 
-    configjson.objectness.params=params;
+    %configjson.objectness.params=params;
+    cd objectness-release-v2.2/MEX;
+    mex slidingWindowComputeScore.c;
+    mex scoreSamplingMex.c;
+    mex NMS_sampling.c;
+    mex NMS4d.c;
+    mex computeScoreContrast.c;
+    mex computeIntegralHistogramMex.c;
+    cd(parDir);
     fprintf('Compiling Objectness succesfully finished \n');
     fprintf('***************************\n');
 catch exc
@@ -177,7 +185,7 @@ catch exc
    fprintf('***************************\n');
 end
 
-%}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% building selective_search %%%%%
