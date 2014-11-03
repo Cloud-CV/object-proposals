@@ -35,11 +35,27 @@ try
  	fprintf('Compilation of Structured edge detector sucessfully finished\n ');
         fprintf('***************************\n');
 catch exc
-	fprintf('Compilation of Edge Boxes failed\n ');
+	fprintf('Compilation of structured edge detector failed\n ');
         fprintf(exc.message);
         fprintf('***************************\n');
 
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%compiling vlfeat%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+try 
+    vlDir = [parDir '/dependencies/vlfeat-0.9.16/toolbox'];
+    cd(vlDir);
+    vl_setup;
+    cd(parDir);
+catch exc
+    fprintf('Compilation of vlfeat failed\n ');
+        fprintf(exc.message);
+        fprintf('***************************\n');
+
+end
+    
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% compilation of edge boxes
