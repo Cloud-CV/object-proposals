@@ -49,7 +49,6 @@ configjson.rantalankila.rapath =   [pwd '/rantalankilaSegments'];
 configjson.rantalankila.vlfeatpath = [ pwd '/dependencies/vlfeat-0.9.16/' ];
 spagglom_options;
 configjson.rantalankila.params=opts; 
-
 %%%%%%%%%%%%%%%%%%%%%%%
 %% configuring rahtu %%
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -149,3 +148,4 @@ fprintf('**Initialization finished. All the necessary paths have been set.**\n')
 
 
 addpath(genpath([pwd, '/dependencies'])); 
+vl_setup;
