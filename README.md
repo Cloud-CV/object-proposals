@@ -1,7 +1,8 @@
 Object-proposals:
 ================
 
-This is a library/API which can be used to generate bounding box/region proposals using most of the existing object proposal approaches.
+This is a library/API which can be used to generate bounding box/region proposals using most of the existing object proposal approaches. It is fully supported on Linux and partially supported on macOS. Rigor, Randomized prim are NOT supported on macOS.
+Rigor requires installation of boost, tbb libraries.
 
 Compile:
 ========
