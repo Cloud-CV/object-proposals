@@ -1,5 +1,5 @@
 function proposals=calcrandomPrimForIm( input, rpconfig )
- if is_mac
+ if ismac
      error('random Prim not supported on macOS');
  end
 if(isstr(input))
