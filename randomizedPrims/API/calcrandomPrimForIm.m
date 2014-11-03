@@ -1,5 +1,7 @@
 function proposals=calcrandomPrimForIm( input, rpconfig )
-    
+ if is_mac
+     error('random Prim not supported on macOS');
+ end
 if(isstr(input))
 	im = im2uint8(imread(input));
 else

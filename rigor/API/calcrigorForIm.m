@@ -3,6 +3,9 @@ function proposals= calcRigorForIm( input, rigorconfig )
 %   Detailed explanation goes here
 
 %RIGOR doesnt suppoert .mat as an input yet
+if is_mac
+    error('rigor not supported on macOS');
+end
 im = input;
 	[masks]=rigor_obj_segments(im,'force_recompute',true);
 
