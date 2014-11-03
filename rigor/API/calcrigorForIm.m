@@ -3,7 +3,7 @@ function proposals= calcRigorForIm( input, rigorconfig )
 %   Detailed explanation goes here
 
 %RIGOR doesnt suppoert .mat as an input yet
-if is_mac
+if ismac
     error('rigor not supported on macOS');
 end
 im = input;
