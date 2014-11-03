@@ -189,7 +189,7 @@ try
     mex slidingWindowComputeScore.c;
     mex scoreSamplingMex.c;
     mex NMS_sampling.c;
-    mex NMS4d.c;
+    mex nms4d.c;
     mex computeScoreContrast.c;
     mex computeIntegralHistogramMex.c;
     cd(parDir);
