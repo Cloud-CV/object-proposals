@@ -1,7 +1,9 @@
 Object-proposals:
 ================
 
-This is a library/API which can be used to generate bounding box/region proposals using most of the existing object proposal approaches. It is fully supported on Linux and partially supported on macOS. Rigor, Randomized prim are NOT supported on macOS.
+This is a library/API which can be used to generate bounding box/region proposals using a large number of the existing object proposal approaches. 
+
+It is fully supported on Linux and partially supported on macOS. Rigor, Randomized prim are NOT supported on macOS.
 Rigor requires installation of boost, tbb libraries.
 
 Compile:
@@ -59,7 +61,7 @@ This package contain various object proposal implementations of the algorithms p
     
 
 
-    @inproceedings{ZitnickECCV14edgeBoxes,
+    @inproceedings{ZitnickECCV14,
         Author = {C. Lawrence Zitnick and Piotr Dollar},
         Title = {Edge Boxes: Locating Object Proposals from Edges},
         Booktitle = {ECCV},
@@ -72,7 +74,7 @@ This package contain various object proposal implementations of the algorithms p
 
 
 
-    @article{10.1109/TPAMI.2013.122,
+    @article{EndresPAMI14,
         Author = {Ian Endres and Derek Hoiem},
         Title = {Category-Independent Object Proposals with Diverse Ranking},
         Journal ={IEEE Transactions on Pattern Analysis and Machine Intelligence},
@@ -81,9 +83,6 @@ This package contain various object proposal implementations of the algorithms p
         issn = {0162-8828},
         year = {2014},
         pages = {222-234},
-        doi = {http://doi.ieeecomputersociety.org/10.1109/TPAMI.2013.122},
-        publisher = {IEEE Computer Society},
-        address = {Los Alamitos, CA, USA},
     } 
 License: endres/proposals/README( GNU General Public License)
 
@@ -92,10 +91,10 @@ License: endres/proposals/README( GNU General Public License)
     
     
     
-    @inproceedings{APBMM2014,
+    @inproceedings{Arbelaez_CVPR14,
         Author = {Arbel\'{a}ez, P. and Pont-Tuset, J. and Barron, J. and Marques,F. and Malik, J.},
         Title = {Multiscale Combinatorial Grouping},
-        Booktitle = {Computer Vision and Pattern Recognition},
+        Booktitle = {CVPR},
         year = {2014}
     } 
 License: mcg/MCG-Full/license.txt (BSD)
@@ -104,15 +103,11 @@ License: mcg/MCG-Full/license.txt (BSD)
 
 
 
-    @string{pami="IEEE Transactions on Pattern Analysis and Machine Intelligence     (TPAMI)"}
-    @string{calvinroot="http://groups.inf.ed.ac.uk/calvin/"}
-    @Article{Alexe2012pami,
+    @article{AlexePAMI12,
         Author = {Alexe, Bogdan and Deselaers, Thomas and Ferrari, Vittorio},
         Title = {Measuring the objectness of image windows },
-        journal = pami,
-        year = 2012,
-        url = calvinroot # {objectness/},
-        pdf = calvinroot # {Publications/alexe12pami.pdf},
+        Journal ={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+        year = {2012},
     } 
 License: objectness-release-v2.2/LICENSE.txt (rights to use, copy, modify, merge and distribute)
 
@@ -120,55 +115,31 @@ License: objectness-release-v2.2/LICENSE.txt (rights to use, copy, modify, merge
 
 
 
-    @inproceedings{DBLP:conf/iccv/RahtuKB11,
-        author    = {
-               Esa Rahtu and
-               Juho Kannala and
-               Matthew B. Blaschko},
-        title     = {
-                Learning a category independent object detection cascade
-                },
-         booktitle = {{IEEE} International Conference on Computer Vision, {ICCV} 2011, Barcelona,
-               Spain, November 6-13, 2011},
+    @inproceedings{RahtuICCV11,
+        author    = {Esa Rahtu and Juho Kannala and Matthew B. Blaschko},
+        title     = {Learning a category independent object detection cascade},
+        booktitle = {ICCV},
         year      = {2011},
-        pages     = {1052--1059},
-        crossref  = {DBLP:conf/iccv/2011},
-        url       = {http://dx.doi.org/10.1109/ICCV.2011.6126351},
-        doi       = {10.1109/ICCV.2011.6126351},
-        timestamp = {Fri, 19 Sep 2014 06:11:46 +0200},
-        biburl    = {http://dblp.uni-trier.de/rec/bib/conf/iccv/RahtuKB11},
-        bibsource = {dblp computer science bibliography, http://dblp.org}
     }
 License: rahtu/rahtuObjectness/Licence.txt( MIT licence)
 
 [6] Randomized Prims:
 
 
-    @inproceedings{Manen:2013:POP:2586117.2587333,
+    @inproceedings{ManenICCV13,
          author = {Manen, Santiago and Guillaumin, Matthieu and Gool, Luc Van},
          title = {Prime Object Proposals with Randomized Prim's Algorithm},
-         booktitle = {Proceedings of the 2013 IEEE International Conference on Computer Vision},
-        series = {ICCV '13},
+         booktitle = {ICCV},
         year = {2013},
-        isbn = {978-1-4799-2840-8},
-        pages = {2536--2543},
-        numpages = {8},
-        url = {http://dx.doi.org/10.1109/ICCV.2013.315},
-        doi = {10.1109/ICCV.2013.315},
-        acmid = {2587333},
-        publisher = {IEEE Computer Society},
-        address = {Washington, DC, USA},
-        keywords = {Object Detection, Object Proposal},
     }
 License: randomizedPrims/rp-master/LICENSE.txt(same as [4])
 
 [7] Rantalankila:
 
-    @InProceedings{Rantalankila_2014_CVPR,
+    @inproceedings{RantalankilaCVPR14,
         author = {Rantalankila, Pekka and Kannala, Juho and Rahtu, Esa},
         title = {Generating Object Segmentation Proposals using Global and Local Search},
-        journal = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-        month = {June},
+        booktitle = {CVPR},
         year = {2014}
     }
 License: rantalankilaSegments/Readme.txt (GNU General Public Licence)
@@ -176,36 +147,31 @@ License: rantalankilaSegments/Readme.txt (GNU General Public Licence)
 [8] Selective Search:
 
 
-    @ARTICLE{Uijlings13,
-        author = {J.R.R. Uijlings and K.E.A. van de Sande and T. Gevers and A.W.M.
-        Smeulders},
+    @article{UijlingsIJCV13,
+        author = {J.R.R. Uijlings and K.E.A. van de Sande and T. Gevers and A.W.M. Smeulders},
         title = {Selective Search for Object Recognition},
         journal = {International Journal of Computer Vision},
         year = {2013},
-        doi = {10.1007/s11263-013-0620-5},
-        owner = {jrruijli},
-        timestamp = {2013.02.06},
         url = {http://www.huppelen.nl/publications/selectiveSearchDraft.pdf}
     }
 License: selective_search/License.txt(Copyright University of Amsterdam)
 
 [9] rigor:
-@InProceedings{RIGOR_2014_CVPR,
-     author    = {
-               Ahmad Humayun and
-               Fuxin Li and
-               James M. Rehg},
-     journal = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
-     month = {June},
-     year = {2014}
-     title = {RIGOR- Recycling Inference in Graph Cuts for generating Object Regions},
-    }
+
+
+
+	@inproceedings{HumayunCVPR14,
+	     author    = {Ahmad Humayun and Fuxin Li and James M. Rehg},
+	     title = {RIGOR- Recycling Inference in Graph Cuts for generating Object Regions},
+	     booktitle = {CVPR},
+	     year = {2014}
+	    }
 License: rigor/rigor_src/LICENSE ( GNU General Public License)
 
 
 [10] Evaluation Metrics:
 
-    @INPROCEEDINGS{Hosang2014Bmvc,
+    @inproceedings{HosangBMVC14,
         author = {J. Hosang and R. Benenson and B. Schiele},
         title = {How good are detection proposals, really?},
         booktitle = {BMVC},
