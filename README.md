@@ -53,19 +53,19 @@ Evaluating proposals:
 A ground truth file needs to be generated for the dataset. We have provided the file for PASCAL 2007 test set. The following code assumes you have generated proposals for all the images in the dataset for which you want to evaluate for each proposal in your config.json file. 
 ### Evaluation using recall curves and area under recall curves
 i. load groundtruth.
->testset=load('evaluation-metrics/data/pascal_gt_data.mat');
+> testset=load('evaluation-metrics/data/pascal_gt_data.mat');
 
 ii. generate best recall candidates
 > compute_best_recall_candidates(testset,configjson);
 
 iii. plot RECALL/AUC curves.
 > evaluateMetricForProposal('RECALL','< proposalName>');
-evaluateMetricForProposal('AUC','< proposalName');
+> evaluateMetricForProposal('AUC','< proposalName');
 
 or
 
 > evaluateMetricForProposal('RECALL');   
-evaluateMetricForProposal('AUC');
+> evaluateMetricForProposal('AUC');
 
 ### Evaluation using ABO curves
 
@@ -211,28 +211,3 @@ License: rigor/rigor_src/LICENSE ( GNU General Public License)
         year = {2014}
     }
 License: evaluation-metrics/LICENSE(GNU GENERAL PUBLIC LICENSE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
