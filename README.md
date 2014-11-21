@@ -47,6 +47,41 @@ Note:
         RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
         RIGOR does not support .mat as argument for calcrigorForIm function. It only accepts the image path.
 
+Evaluating proposals:
+=====================
+ 
+A ground truth file needs to be generated for the dataset. We have provided the file for PASCAL 2007 test set. The following code assumes you have generated proposals for all the images in the dataset for which you want to evaluate for each proposal in your config.json file. 
+### Evaluation using recall curves and area under recall curves
+i. load groundtruth.
+>testset=load('evaluation-metrics/data/pascal_gt_data.mat');
+
+ii. generate best recall candidates
+> compute_best_recall_candidates(testset,configjson);
+
+iii. plot RECALL/AUC curves.
+> evaluateMetricForProposal('RECALL','< proposalName>');
+evaluateMetricForProposal('AUC','< proposalName');
+
+or
+
+> evaluateMetricForProposal('RECALL');   
+evaluateMetricForProposal('AUC');
+
+### Evaluation using ABO curves
+
+i. load groundtruth.
+>testset=load('evaluation-metrics/data/pascal_gt_data.mat');
+
+ii. generate best recall candidates
+> compute_abo_candidates(testset,configjson);
+
+iii. plot ABO curve
+> evaluateMetricForProposal('ABO', '< proposalName');
+
+or 
+> evaluateMetricForProposal('ABO');
+
+
 
 License:
 ==================
@@ -177,39 +212,9 @@ License: rigor/rigor_src/LICENSE ( GNU General Public License)
     }
 License: evaluation-metrics/LICENSE(GNU GENERAL PUBLIC LICENSE)
 
-Evaluating proposals:
-=====================
- 
-A ground truth file needs to be generated for the dataset. We have provided the file for PASCAL 2007 test set. The following code assumes you have generated proposals for all the images in the dataset for which you want to evaluate for each proposal in your config.json file. 
-### Evaluation using recall curves and area under recall curves
-i. load groundtruth.
->>testset=load('evaluation-metrics/data/pascal_gt_data.mat');
 
-ii. generate best recall candidates
->> compute_best_recall_candidates(testset,configjson);
 
-iii. plot RECALL/AUC curves.
->> evaluateMetricForProposal('RECALL','< proposalName>');
-evaluateMetricForProposal('AUC','< proposalName');
 
-or
-
->> evaluateMetricForProposal('RECALL');   
-evaluateMetricForProposal('AUC');
-
-### Evaluation using ABO curves
-
-i. load groundtruth.
->>testset=load('evaluation-metrics/data/pascal_gt_data.mat');
-
-ii. generate best recall candidates
->> compute_abo_candidates(testset,configjson);
-
-iii. plot ABO curve
->> evaluateMetricForProposal('ABO', '< proposalName');
-
-or 
->> evaluateMetricForProposal('ABO');
 
 
 
