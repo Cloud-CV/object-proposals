@@ -1,7 +1,7 @@
 Object-proposals:
 ================
 
-This is a library/API which can be used to generate bounding box/region proposals using a large number of the existing object proposal approaches. 
+This is a library/API which can be used to generate bounding box/region proposals using a large number of the existing object proposal approaches.
 
 It is fully supported on Linux and partially supported on macOS. Rigor, Randomized prim are NOT supported on macOS.
 Rigor requires installation of boost, tbb libraries.
@@ -12,15 +12,15 @@ i. Run compile.m
 
 
 
-Usage:
+ Generating proposals:
 ======
 
-i. Initialize path variables using: 
+i. Initialize path variables using:
 > initialize;
 
 ii. To generate proposals, you can use either of the following commands:
 > proposals = runObjectProposals('< proposalname >', 'path\to\image.jpg');
- 
+
  or
 > im=imread('path\to\image.jpg'); proposals = runObjectProposals('< proposal name >', im);
 
@@ -31,7 +31,7 @@ Once  *imageLocation*, and *outputLocation* are set, you can call
 >runObjectProposals('< proposal name >');
 
 This will generate proposals for all the images in the *imageLocation* and save the proposals in the *outputLocation*.
- 
+
 In steps (ii) and (iii) < proposalname > is the object proposal you want to run.  Here are the possible names that can be passed to the function are:
   * edgeBoxes  [1]
   * endres  [2]
@@ -43,9 +43,9 @@ In steps (ii) and (iii) < proposalname > is the object proposal you want to run.
   * selective_search [8]
   * rigor [9]
 
-Note: 
-	RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
-	RIGOR does not support .mat as argument for calcrigorForIm function. It only accepts the image path.
+Note:
+        RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
+        RIGOR does not support .mat as argument for calcrigorForIm function. It only accepts the image path.
 
 
 License:
@@ -57,8 +57,8 @@ Citations
 ==================
 This package contain various object proposal implementations of the algorithms presented in the following papers. If you are using object proposals presented in these papers, we request you to cite appropriate papers:
 
-[1] EdgeBoxes: 
-    
+[1] EdgeBoxes:
+
 
 
     @inproceedings{ZitnickECCV14,
@@ -68,7 +68,7 @@ This package contain various object proposal implementations of the algorithms p
         Year = {2014},
     }
  Licence: edgeBoxes/releaseV3/license.txt (MICROSOFT RESEARCH LICENSE TERMS)
- 
+
 [2] Endres - Category Independent Object Proposals:
 
 
@@ -83,20 +83,20 @@ This package contain various object proposal implementations of the algorithms p
         issn = {0162-8828},
         year = {2014},
         pages = {222-234},
-    } 
+    }
 License: endres/proposals/README( GNU General Public License)
 
 [3] MCG: Multiscale Combinatorial Grouping:
 
-    
-    
-    
+
+
+
     @inproceedings{Arbelaez_CVPR14,
         Author = {Arbel\'{a}ez, P. and Pont-Tuset, J. and Barron, J. and Marques,F. and Malik, J.},
         Title = {Multiscale Combinatorial Grouping},
         Booktitle = {CVPR},
         year = {2014}
-    } 
+    }
 License: mcg/MCG-Full/license.txt (BSD)
 
 [4] Objectness:
@@ -108,7 +108,7 @@ License: mcg/MCG-Full/license.txt (BSD)
         Title = {Measuring the objectness of image windows },
         Journal ={IEEE Transactions on Pattern Analysis and Machine Intelligence},
         year = {2012},
-    } 
+    }
 License: objectness-release-v2.2/LICENSE.txt (rights to use, copy, modify, merge and distribute)
 
 [5] Rahtu:
@@ -158,14 +158,12 @@ License: selective_search/License.txt(Copyright University of Amsterdam)
 
 [9] rigor:
 
-
-
-	@inproceedings{HumayunCVPR14,
-	     author    = {Ahmad Humayun and Fuxin Li and James M. Rehg},
-	     title = {RIGOR- Recycling Inference in Graph Cuts for generating Object Regions},
-	     booktitle = {CVPR},
-	     year = {2014}
-	    }
+        @inproceedings{HumayunCVPR14,
+             author    = {Ahmad Humayun and Fuxin Li and James M. Rehg},
+             title = {RIGOR- Recycling Inference in Graph Cuts for generating Object Regions},
+             booktitle = {CVPR},
+             year = {2014}
+            }
 License: rigor/rigor_src/LICENSE ( GNU General Public License)
 
 
@@ -178,4 +176,58 @@ License: rigor/rigor_src/LICENSE ( GNU General Public License)
         year = {2014}
     }
 License: evaluation-metrics/LICENSE(GNU GENERAL PUBLIC LICENSE)
+
+Evaluating proposals:
+=====================
+ 
+A ground truth file needs to be generated for the dataset. We have provided the file for PASCAL 2007 test set. The following code assumes you have generated proposals for all the images in the dataset for which you want to evaluate for each proposal in your config.json file. 
+### Evaluation using recall curves and area under recall curves
+i. load groundtruth.
+>>testset=load('evaluation-metrics/data/pascal_gt_data.mat');
+
+ii. generate best recall candidates
+>> compute_best_recall_candidates(testset,configjson);
+
+iii. plot RECALL/AUC curves.
+>> evaluateMetricForProposal('RECALL','< proposalName>');
+evaluateMetricForProposal('AUC','< proposalName');
+
+or
+
+>> evaluateMetricForProposal('RECALL');   
+evaluateMetricForProposal('AUC');
+
+### Evaluation using ABO curves
+
+i. load groundtruth.
+>>testset=load('evaluation-metrics/data/pascal_gt_data.mat');
+
+ii. generate best recall candidates
+>> compute_abo_candidates(testset,configjson);
+
+iii. plot ABO curve
+>> evaluateMetricForProposal('ABO', '< proposalName');
+
+or 
+>> evaluateMetricForProposal('ABO');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
