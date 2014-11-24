@@ -1,4 +1,4 @@
-function varargout = runObjectProposal(varargin)
+function varargout = runObjectProposals(varargin)
 	%if not inputs are provided, this will run for all images in the imageLocation of configjson
 	%first input should be the proposal name. If
     global configjson;
