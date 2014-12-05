@@ -22,4 +22,5 @@ im = input;
 		boxes(j,:)=mask2box(masks(:,:,j));
 	end
 	proposals.boxes= boxes;
+	proposals.regions=masks;
 end
