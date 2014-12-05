@@ -33,6 +33,8 @@ if(isfield(raconfig.opts,'numProposals'))
 end
 
 proposals.boxes=boxes;
+proposals.regions.region_parts=region_parts;
+proposals.regions.orig_sp= orig_sp;
 end
 
     
