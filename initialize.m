@@ -130,6 +130,14 @@ addpath(genpath(fullfile(pwd,'selective_search')));
 configjson.selective_search.params.colorTypes = {'Hsv', 'Lab', 'RGI', 'H', 'Intensity'};
 configjson.selective_search.params.simFunctionHandles = {@SSSimColourTextureSizeFillOrig,@SSSimTextureSizeFill};
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% configuring Geodesic Object Proposal %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+gopPath = [pwd, '/gop_1.3'];
+addpath(genpath(gopPath));
+configjson.gop.gopdatapath=[gopPath '/data'];
+
 
     proposalNames = fieldnames(configjson);
     for i = 1:length(proposalNames)
