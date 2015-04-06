@@ -5,6 +5,7 @@ This is a library/API which can be used to generate bounding box/region proposal
 
 It is fully supported on Linux and partially supported on macOS. Rigor, Randomized prim are NOT supported on macOS.
 Rigor requires installation of boost, tbb libraries.
+Geodesic Object Proposals require c++11 compiler (C++ 4.7 or higher) and eigen (3.2 or higher)
 
 Compile:
 ========
@@ -42,6 +43,7 @@ In steps (ii) and (iii) < proposalname > is the object proposal you want to run.
   * rantalankila  [7]
   * selective_search [8]
   * rigor [9]
+  * gop [10]
 
 Note:
         RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
@@ -201,8 +203,9 @@ License: selective_search/License.txt(Copyright University of Amsterdam)
             }
 License: rigor/rigor_src/LICENSE ( GNU General Public License)
 
+[10] Geodesic Object Proposals
 
-[10] Evaluation Metrics:
+[11] Evaluation Metrics:
 
     @inproceedings{HosangBMVC14,
         author = {J. Hosang and R. Benenson and B. Schiele},
