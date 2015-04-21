@@ -45,7 +45,6 @@ In steps (ii) and (iii) < proposalname > is the object proposal you want to run.
 
 Note:
         RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
-        RIGOR does not support .mat as argument for calcrigorForIm function. It only accepts the image path.
 
 Evaluating proposals:
 =====================
