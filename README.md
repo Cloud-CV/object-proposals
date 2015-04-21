@@ -56,7 +56,8 @@ i. load groundtruth.
 > testset=load('evaluation-metrics/data/pascal_gt_data.mat');
 
 ii. generate best recall candidates
-> compute_best_recall_candidates(testset,configjson);
+> compute_best_recall_candidates(testset,configjson,'< proposalName >');
+'proposalName' is an optional argument. If not provided, the function works for all the object proposals listed above. 
 
 iii. plot RECALL/AUC curves.
 > evaluateMetricForProposal('RECALL','< proposalName>');
