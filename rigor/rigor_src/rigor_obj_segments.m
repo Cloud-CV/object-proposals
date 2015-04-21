@@ -182,8 +182,16 @@ function [masks, seg_obj, total_time] = rigor_obj_segments(img_filepath, ...
                     extra_params);
     
     % read im
-    input_info.img_filepath = img_filepath;
-    I = imread(img_filepath);
+    if ischar(img_filepath)
+        input_info.img_filepath = img_filepath;
+        I = imread(img_filepath);
+    else
+        % copy image onto I from img_filepath
+        I = img_filepath;
+        % set random default img_filepath with random image name! 
+        img_filepath = 'mypath/myimage';
+        input_info.img_filepath = img_filepath; 
+    end
     
     % initialize the Segmenter (include paths, init data-structures,
     % preload data, start threads ...)
