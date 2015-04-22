@@ -9,7 +9,8 @@ function evaluateABO( config,outputLocation)
   figure;
   for i = 1:n
       try
-        data = load(char(fullfile(config.(char(proposalNames(i))).opts.outputLocation, aboFileName)));
+        %data = load(char(fullfile(config.(char(proposalNames(i))).opts.outputLocation, aboFileName)));
+        data = load([ num2str(cell2mat(config.(char(proposalNames(i))).opts.outputLocation)) '/' aboFileName]);
  	count=count+1;
         num_experiments = numel(data.abo_candidates);
         x = zeros(num_experiments, 1);
