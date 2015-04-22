@@ -1,4 +1,4 @@
-function compute_abo_candidates(testset, config)
+function compute_abo_candidates(testset, config, varargin)
 
 num_images = numel(testset.impos);
 candidates_thresholds = round(10 .^ (0:0.5:4))
@@ -7,9 +7,18 @@ num_candidates_thresholds = numel(candidates_thresholds);
 proposalNames = fieldnames(config);
 proposalsToEvaluate=proposalNames(3:end-1);
 
+if length(varargin) == 1
+      if ischar(varargin{1})
+          proposalsToEvaluate = proposalsToEvaluate(strcmp(proposalsToEvaluate,varargin{1}));
+      else
+          display('Input proposal as string')
+          return;
+      end
+end
+
 for i = 1:length(proposalsToEvaluate)
 	method = config.(char(proposalsToEvaluate{i}));
-	candidate_dir=[config.outputLocation proposalsToEvaluate{i}];
+	candidate_dir=[config.outputLocation '/' proposalsToEvaluate{i}];
 	fileName=[ candidate_dir '/' 'abo_candidates.mat']; 
     try
 	method=config.(char(proposalsToEvaluate(i)))
