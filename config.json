@@ -89,7 +89,7 @@
 	"selective_search" : {
 		"opts" : {
 				"isBaseline" : false,
-				"order": "ascend"
+				"order": "random"
 			},
 			"params": {
 				"ks" :[50, 100],
