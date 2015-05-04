@@ -45,7 +45,6 @@ In steps (ii) and (iii) < proposalname > is the object proposal you want to run.
 
 Note:
         RIGOR requires boost and tbb libraries. Please follow the instruction at https://docs.google.com/document/d/19hEkfpPsRYnYHBBmWxI-EMFPkkO-fhhDx8Js4HFrKv8 to setup these libraries.
-        RIGOR does not support .mat as argument for calcrigorForIm function. It only accepts the image path.
 
 Evaluating proposals:
 =====================
@@ -56,7 +55,8 @@ i. load groundtruth.
 > testset=load('evaluation-metrics/data/pascal_gt_data.mat');
 
 ii. generate best recall candidates
-> compute_best_recall_candidates(testset,configjson);
+> compute_best_recall_candidates(testset,configjson,'< proposalName >');
+'proposalName' is an optional argument. If not provided, the function works for all the object proposals listed above. 
 
 iii. plot RECALL/AUC curves.
 > evaluateMetricForProposal('RECALL','< proposalName>');

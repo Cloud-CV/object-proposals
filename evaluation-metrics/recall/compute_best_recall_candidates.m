@@ -1,4 +1,4 @@
-function compute_best_recall_candidates(testset, config)
+function compute_best_recall_candidates(testset, config,varargin)
   num_annotations = testset.num_annotations;
   candidates_thresholds = round(10 .^ (0:0.5:4));
   num_candidates_thresholds = numel(candidates_thresholds);
@@ -6,9 +6,18 @@ function compute_best_recall_candidates(testset, config)
   proposalNames = fieldnames(config);
   proposalsToEvaluate=proposalNames(3:end-1);
   
+  if length(varargin) == 1
+      if ischar(varargin{1})
+          proposalsToEvaluate = proposalsToEvaluate(strcmp(proposalsToEvaluate,varargin{1}));
+      else
+          display('Input proposal as string')
+          return;
+      end
+  end
+  
   for i = 1:length(proposalsToEvaluate)
   	method = config.(char(proposalsToEvaluate{i}));
-	candidate_dir=[config.outputLocation proposalsToEvaluate{i}];
+	candidate_dir=[config.outputLocation '/' proposalsToEvaluate{i}];
 	fileName=[candidate_dir '/' 'best_recall_candidates.mat']
     	try
    		method=config.(char(proposalsToEvaluate(i)))

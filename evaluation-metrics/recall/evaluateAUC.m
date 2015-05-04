@@ -9,7 +9,8 @@ function evaluateAUC( methods, outputLocation)
   figure;
   for i = 1:n
       try
-        data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
+        %data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
+        data = load([ num2str(cell2mat(methods.(char(proposalNames(i))).opts.outputLocation)) '/' bestRecallFileName]);
         count=count+1;
 	num_experiments = numel(data.best_candidates);
         x = zeros(num_experiments, 1);

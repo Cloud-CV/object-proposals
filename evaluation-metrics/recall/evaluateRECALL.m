@@ -20,7 +20,8 @@ function evaluateRECALL(methods, outputLocation,varargin)
   count = 0;
   for i = 1:n
       try
-        data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
+        %data = load(char(fullfile(methods.(char(proposalNames(i))).opts.outputLocation, bestRecallFileName)));
+        data = load([ num2str(cell2mat(methods.(char(proposalNames(i))).opts.outputLocation)) '/' bestRecallFileName]);
     	count=count+1;
         thresh_idx = find( ...
           [data.best_candidates.candidates_threshold] <= num_candidates, 1, 'last');
