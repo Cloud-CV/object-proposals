@@ -304,4 +304,24 @@ catch exc
     fprintf('***************************\n');
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Building Geodesic Object Proposals
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+try
+    fprintf('Compilation of Geodesic Object Proposals started\n ');
+    gopPath = [pwd, '/gop_1.3/matlab'];
+    addpath(genpath(gopPath));
+    cd(gopPath);
+    compile();
+    system(sprintf('cp %s/gop_mex.mexa64.compiled %s/gop_mex.mexa64',pwd,pwd));
+    cd(parDir);
+    fprintf('Compilation of Geodesic Object Proposals  successfully finished\n ');
+    fprintf('***************************\n');
+catch exc
+    fprintf('Compilation of Geodesic Object Proposals failed\n ');
+    fprintf(exc.message);
+    fprintf('***************************\n');
+end
+
   fprintf('******Compiling complete.*********\n')

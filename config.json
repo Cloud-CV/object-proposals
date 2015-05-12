@@ -112,8 +112,20 @@
 			}
 			
 
-	}
-
+	},
+    "gop" :{
+        "opts":{
+                    "isBaseline" :false,
+                    "order":"none"
+               },
+        "params":{
+            "method":"learned",
+            "detector":"MultiScaleStructuredForest",
+            "max_iou": 0.8,
+            "NumberOfSeeds":140,
+            "NumberOfSegmentationsPerSeed":5
+        }
+    }
 }
 
 
