@@ -314,7 +314,7 @@ try
     addpath(genpath(gopPath));
     cd(gopPath);
     compile();
-    system(sprintf('cp %s/gop_mex.mexa64.compiled %s/gop_mex.mexa64',pwd,pwd));
+    %%system(sprintf('cp %s/gop_mex.mexa64.compiled %s/gop_mex.mexa64',pwd,pwd));
     cd(parDir);
     fprintf('Compilation of Geodesic Object Proposals  successfully finished\n ');
     fprintf('***************************\n');
