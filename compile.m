@@ -60,7 +60,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 %% compilation of edge boxes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%{
+
 try
 	fprintf('Compilation of Edge Boxes started\n ');
 	cd edgeBoxes/releaseV3/private/;
@@ -77,7 +77,7 @@ catch exc
 	fprintf(exc.message);
 	fprintf('***************************\n');
 end
-%}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% building MCG and installation%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
