@@ -19,6 +19,7 @@ catch exc
       fprintf('Piotr Dollar tool box compilation failed\n');
       fprintf(exc.message);
       fprintf('***************************\n');
+      cd(parDir);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,7 +39,7 @@ catch exc
 	fprintf('Compilation of structured edge detector failed\n ');
         fprintf(exc.message);
         fprintf('***************************\n');
-
+        cd(parDir);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%compiling vlfeat%%%%%%%%%
@@ -52,7 +53,7 @@ catch exc
     fprintf('Compilation of vlfeat failed\n ');
         fprintf(exc.message);
         fprintf('***************************\n');
-
+     cd(parDir);
 end
     
 
@@ -76,6 +77,7 @@ catch exc
         fprintf('Compilation of Edge Boxes failed\n ');
 	fprintf(exc.message);
 	fprintf('***************************\n');
+        cd(parDir);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +99,7 @@ catch exc
     fprintf('Compilation of MCG failed\n ');
     fprintf(exc.message);
     fprintf('***************************');
+    cd(parDir);
 end
 
 
@@ -119,6 +122,7 @@ catch exc
     fprintf('Compilation of Endres failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +141,7 @@ catch exc
     fprintf('Compilation of Rantalankila failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 
 %%%%%%%%%%%%%%%%%%%%
@@ -154,6 +159,7 @@ catch exc
     fprintf('Compilation of Rahtu failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,6 +176,7 @@ catch exc
     fprintf('Compilation of Randomized Prims failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,6 +206,7 @@ catch exc
    fprintf('Compilation of Objectness failed\n ');
    fprintf(exc.message);
    fprintf('***************************\n');
+   cd(parDir);
 end
 
 
@@ -218,6 +226,7 @@ catch exc
     fprintf('Compilation of Selective Search failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 
 
@@ -302,6 +311,7 @@ catch exc
     fprintf('Compilation of RIGOR failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 
 
@@ -322,6 +332,7 @@ catch exc
     fprintf('Compilation of Geodesic Object Proposals failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
+    cd(parDir);
 end
 
   fprintf('******Compiling complete.*********\n')
