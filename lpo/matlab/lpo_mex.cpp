@@ -1,7 +1,7 @@
 /*
-    Copyright (c) 2015, Philipp Krähenbühl
+    Copyright (c) 2014, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,27 +12,30 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
     DISCLAIMED. IN NO EVENT SHALL Philipp Krähenbühl BE LIABLE FOR ANY
     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-	 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-	 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+     ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 #include "mex.h"
 #include <string>
 #include <map>
 #include <memory>
 #include <sstream>
 #include "contour/directedsobel.h"
-#include "contour/sketchtokens.h"
 #include "contour/structuredforest.h"
+#include "segmentation/segmentation.h"
+#include "proposals/lpo.h"
 #include "proposals/proposal.h"
+#include "proposals/seed.h"
 
 #define MEX_ARGS int nlhs, mxArray **plhs, int nrhs, const mxArray **prhs
 typedef void (*MatlabFunction)(MEX_ARGS);
@@ -98,14 +101,9 @@ static std::shared_ptr<BoundaryDetector> detectorFromString( const std::string &
     std::string args       = s.substr(p+1, s.rfind(')')-p-1 );
     p = args.find('"');
     std::string fn = args.substr(p+1, args.rfind('"')-p-1 );
-    
+
     if( d_name == "DirectedSobel" )
         return std::make_shared<DirectedSobel>();
-    else if( d_name == "SketchTokens" ) {
-        std::shared_ptr<SketchTokens> d = std::make_shared<SketchTokens>();
-        d->load( fn );
-        return d;
-    }
     else if( d_name == "StructuredForest" ) {
         std::shared_ptr<StructuredForest> d = std::make_shared<StructuredForest>();
         d->load( fn );
@@ -164,12 +162,12 @@ static void newImageOverSegmentation( MEX_ARGS ) {
         for( int i=0; i<W; i++ )
             for( int c=0; c<3; c++ )
                 im(j,i,c) = pim[c*W*H+i*H+j];
-    
+
     // Read the number of superpixels
     int n_spix=1000;
     if( nrhs > 1 && mxIsNumeric(prhs[1]) )
         n_spix = mxGetScalar(prhs[1]);
-    
+
     if( nrhs > 3 ) {
         RMatrixXf bnd[2];
         for( int i=2; i<4; i++ ) {
@@ -177,7 +175,7 @@ static void newImageOverSegmentation( MEX_ARGS ) {
             if( mxGetNumberOfDimensions(prhs[i])!=2 || !mxIsSingle(prhs[i]) || dims2[0]!=dims[0] || dims2[1]!=dims[1] )
                 mexErrMsgTxt( "Expected arguments: Image:HxWx3 uint8-array N_SPIX:int ThickBoundryMap:HxW single-array ThinBoundryMap:HxW single-array" );
             float * pBnd = (float *)mxGetData(prhs[i]);
-			bnd[i-2] = MatrixXf::Map( pBnd, H, W );
+            bnd[i-2] = MatrixXf::Map( pBnd, H, W );
         }
         plhs[0] = ptr2Mat( geodesicKMeans( im, bnd[0], bnd[1], n_spix ) );
     }
@@ -230,14 +228,14 @@ static void ImageOverSegmentation_serialize( MEX_ARGS ) {
         return ;
     }
     std::shared_ptr<ImageOverSegmentation> os = mat2Ptr<ImageOverSegmentation>( prhs[0] );
-	// Save to a string stream
-	std::stringstream ss;
-	os->save( ss );
-	std::string data = ss.str();
-	// And then copy it to a matlab array
-	mwSize dims[1] = {(mwSize)data.size()};
-	plhs[0] = mxCreateNumericArray( 1, dims, mxUINT8_CLASS, mxREAL );
-	memcpy( mxGetData(plhs[0]), data.c_str(), data.size() );
+    // Save to a string stream
+    std::stringstream ss;
+    os->save( ss );
+    std::string data = ss.str();
+    // And then copy it to a matlab array
+    mwSize dims[1] = {(mwSize)data.size()};
+    plhs[0] = mxCreateNumericArray( 1, dims, mxUINT8_CLASS, mxREAL );
+    memcpy( mxGetData(plhs[0]), data.c_str(), data.size() );
 }
 static void ImageOverSegmentation_unserialize( MEX_ARGS ) {
     if( nrhs != 2 ) {
@@ -281,43 +279,10 @@ static void freeImageOverSegmentation( MEX_ARGS ) {
         destroyObject<ImageOverSegmentation>( prhs[i] );
 }
 /////////////// Proposals ///////////////
-std::shared_ptr<UnaryFactory> createUnaryFromString( const std::string & s ) {
-    size_t p = s.find('(');
-    std::string unary_name = s.substr(0, p );
-    std::string args       = s.substr(p+1, s.rfind(')')-p-1 );
-    if( unary_name == "seedUnary" )
-        return seedUnary();
-    else if( unary_name == "zeroUnary" )
-        return zeroUnary();
-    else if( unary_name == "backgroundUnary" ) {
-        std::vector<int> types;
-        for( size_t i=1; i+1<args.length(); i++ ) {
-            size_t n = args.find( ',', i );
-            if( n==args.npos )
-                n = args.length()-1;
-            types.push_back( std::stoi( args.substr( i, n-i ) ) );
-            i = n;
-        }
-        return backgroundUnary( types );
-    }
-    else if( unary_name == "binaryLearnedUnary" ) {
-        p = args.find('"');
-        std::string fn = args.substr(p+1, args.rfind('"')-p-1 );
-        try {
-            return binaryLearnedUnary( fn );
-        }
-        catch (...) {
-            mexWarnMsgTxt(("Unary term '"+s+"' not found!").c_str());
-        }
-    }
-    return zeroUnary();
-}
 std::shared_ptr<SeedFunction> createSeed( const std::string & s ) {
     if( s == "RegularSeed"  ) return std::make_shared<RegularSeed>();
-    if( s == "SaliencySeed" ) return std::make_shared<SaliencySeed>();
     if( s == "GeodesicSeed" ) return std::make_shared<GeodesicSeed>();
     if( s == "RandomSeed"   ) return std::make_shared<RandomSeed>();
-    if( s == "SegmentationSeed" ) return std::make_shared<SegmentationSeed>();
     std::shared_ptr<LearnedSeed> seed = std::make_shared<LearnedSeed>();
     try {
         seed->load( s );
@@ -333,46 +298,7 @@ static void newProposal( MEX_ARGS ) {
         mexErrMsgTxt("newProposal expected one return argument");
         return;
     }
-    // Create an empty unary
-    ProposalSettings prop_settings;
-    prop_settings.unaries.clear();
-    
-    // Add all settings
-    for ( int i=0; i<nrhs; i++ ) {
-        std::string c = toString( prhs[i] );
-        
-        // Process the command
-        if (c == "max_iou") {
-            if( i+1>=nrhs || !mxIsNumeric(prhs[i+1]) )
-                mexErrMsgTxt("max_iou numeric argument required");
-            prop_settings.max_iou = mxGetScalar(prhs[i+1]);
-            i++;
-        }
-        else if (c == "seed") {
-            if( i+1>=nrhs || !mxIsChar(prhs[i+1]) )
-                mexErrMsgTxt("seed string argument required");
-            prop_settings.foreground_seeds = createSeed( toString( prhs[i+1] ) );
-            i++;
-        }
-        else if (c == "unary") {
-            if( i+4 >= nrhs || !mxIsNumeric(prhs[i+1]) || !mxIsNumeric(prhs[i+2]) || !mxIsChar(prhs[i+3]) || !mxIsChar(prhs[i+4]) )
-                mexErrMsgTxt("unary N_S:int N_T:int fg_unary:string bg_unary:string [min_size:float max_side:float]");
-            const int N_S = mxGetScalar(prhs[i+1]), N_T = mxGetScalar(prhs[i+2]);
-            std::string fg_unary = toString( prhs[i+3] ), bg_unary = toString( prhs[i+4] );
-            float min_size = 0.0, max_size=0.75;
-            if( i+6 <= nrhs && mxIsNumeric(prhs[i+5]) && mxIsNumeric(prhs[i+5]) ) {
-                min_size = mxGetScalar( prhs[i+5] );
-                max_size = mxGetScalar( prhs[i+6] );
-                i += 2;
-            }
-            prop_settings.unaries.push_back( ProposalSettings::UnarySettings( N_S, N_T, createUnaryFromString( fg_unary ), createUnaryFromString( bg_unary ), min_size, max_size ) );
-            i+=4;
-        }
-        else {
-            mexErrMsgTxt(("Setting '"+c+"' not found").c_str());
-        }
-    }
-    plhs[0] = ptr2Mat( std::make_shared<Proposal>( prop_settings ) );
+    plhs[0] = ptr2Mat( std::make_shared<Proposals>( ) );
 }
 static void Proposal_propose( MEX_ARGS ) {
     if( nrhs != 2 ) {
@@ -383,11 +309,13 @@ static void Proposal_propose( MEX_ARGS ) {
         mexErrMsgTxt("Expected a single output argument");
         return;
     }
-    std::shared_ptr<Proposal> p = mat2Ptr<Proposal>( prhs[0] );
+    std::shared_ptr<LPO> p = mat2Ptr<LPO>( prhs[0] );
     std::shared_ptr<ImageOverSegmentation> os = mat2Ptr<ImageOverSegmentation>( prhs[1] );
-    
-    RMatrixXb r = p->propose( *os );
-    
+
+    std::vector<Proposals> s = p->propose( *os );
+    RMatrixXb r = s.front().p;
+
+
     // Create and write the resulting segmentation
     mwSize dims[2] = {(mwSize)r.rows(), (mwSize)r.cols()};
     plhs[0] = mxCreateNumericArray( 2, dims, mxLOGICAL_CLASS, mxREAL );
@@ -399,7 +327,7 @@ static void freeProposal( MEX_ARGS ) {
         return;
     }
     for( int i=0; i<nrhs; i++ )
-        destroyObject<Proposal>( prhs[i] );
+        destroyObject<LPO>( prhs[i] );
 }
 
 typedef std::pair<std::string,MatlabFunction> C;
@@ -425,10 +353,10 @@ void mexFunction( MEX_ARGS ) {
         mexErrMsgTxt("An API command is required");
         return;
     }
-    
+
     // Get the command
     std::string c = toString( prhs[0] );
-    
+
     // Execute the command
     if (commands.find( c ) == commands.end()) {
         mexErrMsgTxt( (std::string("API command not recognized '")+c+"'").c_str() );

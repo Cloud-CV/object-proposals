@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,7 +25,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "crfmodel.h"
-#include "crf/features.h"
+#include "crf/crf_features.h"
 #include "crf/loss.h"
 #include "segmentation/segmentation.h"
 #include "util/util.h"
@@ -85,10 +85,10 @@ class CRFTrainer: public LPOModelTrainer {
 protected:
 	// Per image ground truth
 	std::vector< SegmentationOverlap > gt_;
-	
+
 	// Sample to image map
 	std::vector<int> sample_to_im_id_, sample_to_seg_id_;
-	
+
 	// Training loss
 	const TrainingLoss & loss_;
 public:
@@ -157,14 +157,14 @@ public:
 		const int n_obj = sample_to_seg_id_.size();
 		latent_variables.resize( n_obj );
 		if(!parameter.size()) return VectorXf::Zero( n_obj );
-		
+
 		// Prepare the CRFs
 		BinaryCRF crf = paramToCRF( parameter );
-		
+
 		std::vector<int> seg_start( gt_.size()+1, 0 );
 		for( int i=0; i<gt_.size(); i++ )
 			seg_start[i+1] = seg_start[i] + gt_[i].nObjects();
-		
+
 		// Propose like there is no tomorrow
 		VectorXf r( n_obj );
 #pragma omp parallel for
@@ -177,7 +177,7 @@ public:
 		}
 		return r;
 	}
-	
+
 	float averageProposalsPerParameter( const VectorXf & parameter ) const {
 		/* Strictly speaking this should be 1. Setting it to a higher value penalizes
 		 * global models, which in turn prevents overfitting for small proposal sets.
@@ -223,7 +223,7 @@ public:
 			VectorXi seeds = seed->compute( *ios[i], max_seed );
 #pragma omp atomic
 			n_seed += seeds.size();
-			
+
 			// Only keep seeds that are close to/in a ground truth segment
 			ArrayXb m( gt[i].Ns() );
 			for( int k=0; k<gt[i].nObjects(); k++ )
@@ -233,7 +233,7 @@ public:
 			for( int it=0; it<1; it++ )
 				for( Edge e: ios[i]->edges() )
 					if( m[e.a] || m[e.b] ) mm[e.a] = mm[e.b] = 1;
-			
+
 			// Filter out all seeds in the background
 			VectorXi x( seeds.size() );
 			for( int j=0; j<seeds.size(); j++ )
@@ -242,7 +242,7 @@ public:
 			for( int j=0,k=0; j<seeds.size(); j++ )
 				if( x[j] )
 					seeds_[i][k++] = seeds[j];
-			
+
 			// Create the features
 			features_[i] = std::make_shared<CachedSeedBinaryCRFFeatures>( *ios[i], seeds_[i] );
 		}
@@ -251,9 +251,9 @@ public:
 	// Train a CRF on a single training sample
 	virtual VectorXf fit( int sample ) const {
 		const int im_id = sample_to_im_id_[sample], seg_id = sample_to_seg_id_[sample];
-		
+
 		VectorXs gt = gt_[im_id].project(seg_id).cast<short>();
-		
+
 		std::vector<int> gt_seed;
 		for( int it=0; it<5 && gt_seed.size() == 0; it++ ) {
 			// See if there is any seed inside the object
@@ -270,7 +270,7 @@ public:
 		}
 		if( gt_seed.size() == 0 )
 			return VectorXf();
-		
+
 		// Use a random seed inside the object
 		VectorXf best_param;
 		float best_iou = -1;
@@ -285,7 +285,7 @@ public:
 			BinaryCRF crf;
 			crf.train( features_[im_id]->get(s), gt, loss_ );
 			VectorXb map = crf.map( features_[im_id]->get(s) ).array() > 0.5;
-			
+
 			float iou = gt_[im_id].iou( map )[ seg_id ];
 			if( iou > best_iou ) {
 				best_iou = iou;
@@ -321,14 +321,14 @@ public:
 		const int n_obj = sample_to_seg_id_.size();
 		latent_variables.resize( n_obj );
 		if(!parameter.size()) return VectorXf::Zero( n_obj );
-		
+
 		// Prepare the CRFs
 		BinaryCRF crf = paramToCRF( parameter );
-		
+
 		std::vector<int> seg_start( gt_.size()+1, 0 );
 		for( int i=0; i<gt_.size(); i++ )
 			seg_start[i+1] = seg_start[i] + gt_[i].nObjects();
-		
+
 		// Propose like there is no tomorrow
 		VectorXf r( n_obj );
 #pragma omp parallel for
@@ -342,7 +342,7 @@ public:
 				VectorXb map = crf.map( features_[im_id]->get(s) ).array()>0.5;
 				// Evaluate the proposal
 				VectorXf iou = gt_[im_id].iou( map );
-				
+
 				for( int k=0; k<n_seg; k++ )
 					if( iou[k] > best_iou[k] ) {
 						best_iou[k] = iou[k];
@@ -356,7 +356,7 @@ public:
 		}
 		return r;
 	}
-	
+
 	float averageProposalsPerParameter( const VectorXf & parameter ) const {
 		return avg_seed_;
 	}

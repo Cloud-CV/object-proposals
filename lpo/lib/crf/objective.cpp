@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -43,21 +43,21 @@ std::tuple<VectorXf,VectorXf> OneSlackObjective::optimize( const std::vector<Par
 	// Floating point type
 	typedef double T;
 	// Should we constrain the pairwise term to be positive?
-	
+
 	eassert( constraints.size() > 0 );
-	
+
 	const int Nu = constraints[0].du.size();
 	const int Np = constraints[0].dp.size();
 	const int Ns = 1;
 	const int N = Nu + Np + Ns;
 	const int Nc = 1 + constraints.size() + (pairwise_positive?Np:0);
-	
+
 	// Setup the Quadratic Objective
 	const float SQRT_EPS = sqrt(EPS);
 	RMatrixX<T> Q = RMatrixX<T>::Identity( N, N );
 	VectorX<T> c = VectorX<T>::Zero( N );
 	c[N-1] = C_ / SQRT_EPS;
-	
+
 	// Setup the constraints
 	RMatrixX<T> A = RMatrixX<T>::Zero( Nc, N );
 	VectorX<T> b = VectorX<T>::Zero( Nc );
@@ -75,12 +75,12 @@ std::tuple<VectorXf,VectorXf> OneSlackObjective::optimize( const std::vector<Par
 			A(nc++,Nu+i) = -1;
 	// Add a positivity constraint on the slack variable
 	A(nc,N-1) = -1;
-	
+
 	// Compute the parameter vector
 	VectorX<T> x = qp( Q, c, A, b );
 	if (pairwise_positive)
 		x.segment(Nu,Np).array() *= (x.segment(Nu,Np).array()>=0).cast<T>();
-	
+
 	if( objective_value )
 		*objective_value = (0.5*Q*x+c).dot(x);
 	if (verbose>1) printf("  Objective %f  +  %f\n", 0.5*(Q*x).dot(x), x.dot(c) );
@@ -105,10 +105,10 @@ std::tuple<VectorXf,VectorXf> NSlackObjective::optimize( const std::vector< std:
 	// Floating point type
 	typedef float T;
 	// Should we constrain the pairwise term to be positive?
-	
+
 	eassert( constraints.size() > 0 );
 	eassert( constraints[0].size() > 0 );
-	
+
 	const int Nu = constraints[0][0].du.size();
 	const int Np = constraints[0][0].dp.size();
 	const int Ns = constraints.size();
@@ -116,13 +116,13 @@ std::tuple<VectorXf,VectorXf> NSlackObjective::optimize( const std::vector< std:
 	int Nc = Ns + (pairwise_positive?Np:0);
 	for( auto c: constraints )
 		Nc += c.size();
-	
+
 	// Setup the Quadratic Objective
 	const float SQRT_EPS = sqrt(EPS);
 	RMatrixX<T> Q = RMatrixX<T>::Identity( N, N );
 	VectorX<T> c = VectorX<T>::Zero( N );
 	c.tail(Ns).setConstant( C_ / N / SQRT_EPS );
-	
+
 	// Setup the constraints
 	RMatrixX<T> A = RMatrixX<T>::Zero( Nc, N );
 	VectorX<T> b = VectorX<T>::Zero( Nc );
@@ -144,12 +144,12 @@ std::tuple<VectorXf,VectorXf> NSlackObjective::optimize( const std::vector< std:
 	if( pairwise_positive )
 		for( int i=0; i<Np; i++ )
 			A(nc++,Nu+i) = -1;
-	
+
 	// Compute the parameter vector
 	VectorX<T> x = qp( Q, c, A, b );
 	if (pairwise_positive)
 		x.segment(Nu,Np).array() *= (x.segment(Nu,Np).array()>=0).cast<T>();
-	
+
 	if( objective_value )
 		*objective_value = (0.5*Q*x+c).dot(x);
 	if (verbose>1) printf("  Objective %f  +  %f\n", 0.5*(Q*x).dot(x), x.dot(c) );
