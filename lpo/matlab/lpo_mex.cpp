@@ -24,7 +24,6 @@
      (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
 #include "mex.h"
 #include <string>
 #include <map>
@@ -293,12 +292,28 @@ std::shared_ptr<SeedFunction> createSeed( const std::string & s ) {
     }
     return seed;
 }
+static std::string model;
 static void newProposal( MEX_ARGS ) {
     if( nlhs == 0 ) {
         mexErrMsgTxt("newProposal expected one return argument");
         return;
     }
-    plhs[0] = ptr2Mat( std::make_shared<LPO>( ) );
+
+    for ( int i=0; i<nrhs; i++ ) {
+        std::string c = toString( prhs[i] );
+
+        // Process the command
+        if (c == "model") {
+            if( i+1>=nrhs || !mxIsChar(prhs[i+1]) )
+                mexErrMsgTxt("model argument required");
+            model =  toString( prhs[i+1] );
+            i++;
+        }
+        else {
+            mexErrMsgTxt(("Setting '"+c+"' not found").c_str());
+        }
+    }
+    plhs[0] = ptr2Mat( std::make_shared<LPO>() );
 }
 static void Proposal_propose( MEX_ARGS ) {
     if( nrhs != 2 ) {
@@ -312,12 +327,7 @@ static void Proposal_propose( MEX_ARGS ) {
     std::shared_ptr<LPO> p = mat2Ptr<LPO>( prhs[0] );
     std::shared_ptr<ImageOverSegmentation> os = mat2Ptr<ImageOverSegmentation>( prhs[1] );
 
-    p->load("../models/lpo_VOC_0.01.dat");
-    p->load("../models/lpo_VOC_0.02.dat");
-    p->load("../models/lpo_VOC_0.03.dat");
-    p->load("../models/lpo_VOC_0.05.dat");
-    p->load("../models/lpo_VOC_0.1.dat");
-    p->load("../models/lpo_VOC_0.2.dat");
+    p->load( model );
 
     std::vector<Proposals> s = p->propose( *os );
 

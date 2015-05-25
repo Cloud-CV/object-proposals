@@ -1,9 +1,10 @@
 function proposals=calclpoForIm(input, lpoconfig )
-    if ~isfield(lpoconfig,'lpodatapath')
-        fprintf('Path to LPO data does not exist. Please make sure you give a proper full path\n');
+    if ~isfield(lpoconfig,'path')
+        fprintf('Path to LPO does not exist. Please make sure you give a proper full path\n');
         return;
     else
-        datapath=lpoconfig.lpodatapath;
+        datapath=[lpoconfig.path, '/data/'];
+        modelpath=[lpoconfig.path, '/models/'];
     end
     if(isstr(input))
         im = im2uint8(imread(input));
@@ -13,8 +14,12 @@ function proposals=calclpoForIm(input, lpoconfig )
     if(size(im, 3) == 1)
         im=repmat(im,[1,1,3]);
     end
+    model=[modelpath, 'lpo_VOC_0.1.dat'];
     detector='MultiScaleStructuredForest';
     max_iou=0.9;
+    if isfield(lpoconfig.params,'model')
+        model=[modelpath, lpoconfig.params.model];
+    end
     if isfield(lpoconfig.params,'detector')
         detector=lpoconfig.params.detector;
     end
@@ -22,9 +27,9 @@ function proposals=calclpoForIm(input, lpoconfig )
         max_iou=lpoconfig.params.max_iou;
     end
     % Set a boundary detector by calling (before creating an OverSegmentation!):
-    lpo_mex( 'setDetector', [detector '("'  datapath '/sf.dat")'] );
+    lpo_mex( 'setDetector', [detector '("'  datapath 'sf.dat")'] );
 
-    p = Proposal();
+    p = Proposal( 'model', model );
     os = OverSegmentation( im );
     props = p.propose( os );
     boxes = os.maskToBox( props );
