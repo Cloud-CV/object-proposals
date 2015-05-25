@@ -1,16 +1,16 @@
 {
 	"imageLocation": "/workspace/imageLocation/",
 	"outputLocation":	 "/workspace/outputLocation/",
-	
-	"edgeBoxes":{	
+
+	"edgeBoxes":{
 	"opts" : {
 			"isBaseline" : false,
 			"order": "descend"
 				},
 		"params" : {
-			"alpha": 0.65, 
+			"alpha": 0.65,
 			"beta": 0.75,
-			"minScore": 0.01, 
+			"minScore": 0.01,
 			"maxBoxes": 1e4,
 			"edgeMinMag": 0.1,
 			"edgeMergeThr": 0.5,
@@ -35,7 +35,7 @@
 		"opts": {
 				"boostpath" : "/opt/local/include/",
 				"isBaseline" : false,
-				"order": "descend",		
+				"order": "descend",
 				"mode": "fast"
 			},
 			"params" : {
@@ -51,7 +51,7 @@
 			},
 			"params":{
 
-			}	
+			}
 		},
 
 	"rahtu" : {
@@ -83,7 +83,7 @@
 			"params":{
 
 			}
-			
+
 		},
 
 	"selective_search" : {
@@ -110,9 +110,33 @@
 			"params": {
 				"param_set" : "@params_default"
 			}
-			
 
-	}
+
+	},
+	"gop" :{
+        "opts":{
+                    "isBaseline" :false,
+                    "order":"none"
+               },
+        "params":{
+            "method":"learned",
+            "detector":"MultiScaleStructuredForest",
+            "max_iou": 0.8,
+            "NumberOfSeeds":140,
+            "NumberOfSegmentationsPerSeed":5
+        }
+    },
+    "lpo" :{
+        "opts":{
+            "isBaseline" :false,
+            "order": "none"
+        },
+        "params":{
+            "model": "lpo_VOC_0.1.dat",
+            "detector": "MultiScaleStructuredForest",
+            "max_iou": 0.9
+        }
+    }
 
 }
 

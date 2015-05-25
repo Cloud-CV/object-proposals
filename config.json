@@ -125,6 +125,17 @@
             "NumberOfSeeds":140,
             "NumberOfSegmentationsPerSeed":5
         }
+    },
+    "lpo" :{
+        "opts":{
+            "isBaseline" :false,
+            "order": "none"
+        },
+        "params":{
+            "model": "lpo_VOC_0.1.dat",
+            "detector": "MultiScaleStructuredForest",
+            "max_iou": 0.9
+        }
     }
 }
 
