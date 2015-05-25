@@ -1,7 +1,7 @@
 %{
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -37,13 +37,13 @@ classdef Proposal
     properties (SetAccess = private, GetAccess = private)
         c_p
     end
-    
+
     methods
         function obj = Proposal( varargin )
-            obj.c_p = gop_mex( 'newProposal', varargin{:} );
+            obj.c_p = lpo_mex( 'newProposal', varargin{:} );
         end
         function r = propose(this,os)
-            r = gop_mex( 'Proposal_propose', this.c_p, os.c_s );
+            r = lpo_mex( 'Proposal_propose', this.c_p, os.c_s );
         end
         function sobj = saveobj(this)
             error( 'You cannot load/save a Proposal object!' );
@@ -52,7 +52,7 @@ classdef Proposal
             error( 'You cannot load/save a Proposal object!' );
         end
         function delete(this)
-            gop_mex( 'freeProposal', this.c_p );
+            lpo_mex( 'freeProposal', this.c_p );
         end
     end
 end

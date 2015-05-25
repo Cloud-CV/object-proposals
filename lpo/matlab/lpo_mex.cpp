@@ -298,7 +298,7 @@ static void newProposal( MEX_ARGS ) {
         mexErrMsgTxt("newProposal expected one return argument");
         return;
     }
-    plhs[0] = ptr2Mat( std::make_shared<Proposals>( ) );
+    plhs[0] = ptr2Mat( std::make_shared<LPO>( ) );
 }
 static void Proposal_propose( MEX_ARGS ) {
     if( nrhs != 2 ) {
@@ -312,9 +312,16 @@ static void Proposal_propose( MEX_ARGS ) {
     std::shared_ptr<LPO> p = mat2Ptr<LPO>( prhs[0] );
     std::shared_ptr<ImageOverSegmentation> os = mat2Ptr<ImageOverSegmentation>( prhs[1] );
 
-    std::vector<Proposals> s = p->propose( *os );
-    RMatrixXb r = s.front().p;
+    p->load("../models/lpo_VOC_0.01.dat");
+    p->load("../models/lpo_VOC_0.02.dat");
+    p->load("../models/lpo_VOC_0.03.dat");
+    p->load("../models/lpo_VOC_0.05.dat");
+    p->load("../models/lpo_VOC_0.1.dat");
+    p->load("../models/lpo_VOC_0.2.dat");
 
+    std::vector<Proposals> s = p->propose( *os );
+
+    RMatrixXb r = s[0].p;
 
     // Create and write the resulting segmentation
     mwSize dims[2] = {(mwSize)r.rows(), (mwSize)r.cols()};
