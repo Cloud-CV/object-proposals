@@ -28,7 +28,7 @@
 #include "loss.h"
 #include "objective.h"
 #include "util/util.h"
-#include <ibfs/ibfs.h>
+#include <ibfs.h>
 #include <iostream>
 #include <random>
 #ifdef _OPENMP

@@ -40,12 +40,12 @@ function compile()
     EIGEN_DIR = '/usr/include/eigen3';
     if ismac
         EIGEN_DIR = '/opt/local/include/eigen3';
-        cmd = ['mex -DLBFGS_FLOAT=32 -I/opt/local/include/ -DEIGEN_DONT_PARALLELIZE -DNO_IMREAD -I../lib -I',EIGEN_DIR,' -I../external/ -I../external/liblbfgs-1.10/include/ CFLAGS="-fPIC -O3" CXXFLAGS="-fPIC -std=c++11 -O3 -stdlib=libc++" lpo_mex.cpp ',' ../external/liblbfgs-1.10/lib/lbfgs.c ', all_files];
+        cmd = ['mex -DLBFGS_FLOAT=32 -I/opt/local/include/ -DEIGEN_DONT_PARALLELIZE -DNO_IMREAD -I../lib -I',EIGEN_DIR,' -I../external/ibfs/ -I../external/ -I../external/liblbfgs-1.10/include/ CFLAGS="-fPIC -O3" CXXFLAGS="-fPIC -std=c++11 -O3 -stdlib=libc++" lpo_mex.cpp ',' ../external/liblbfgs-1.10/lib/lbfgs.c ', all_files];
     elseif ispc
         EIGEN_DIR = '../external/eigen';
-        cmd = ['mex -DLBFGS_FLOAT=32 -DEIGEN_DONT_PARALLELIZE -DNO_IMREAD -I../lib -I',EIGEN_DIR,' -I../external/ -I../external/liblbfgs-1.10/include/ lpo_mex.cpp ',' ../external/liblbfgs-1.10/lib/lbfgs.c ', all_files];
+        cmd = ['mex -DLBFGS_FLOAT=32 -DEIGEN_DONT_PARALLELIZE -DNO_IMREAD -I../lib -I',EIGEN_DIR,' -I../external/ibfs/ -I../external/ -I../external/liblbfgs-1.10/include/ lpo_mex.cpp ',' ../external/liblbfgs-1.10/lib/lbfgs.c ', all_files];
     else
-        cmd = ['mex -DLBFGS_FLOAT=32 -DEIGEN_DONT_PARALLELIZE -DNO_IMREAD -D_GLIBCXX_USE_NANOSLEEP -I../lib -I',EIGEN_DIR,' -I../external/ -I../external/liblbfgs-1.10/include/ CFLAGS="-fPIC -fno-omit-frame-pointer -pthread -O3 -DNDEBUG" CXXFLAGS="-fPIC -fno-omit-frame-pointer -pthread -O3 -DNDEBUG -std=c++11" lpo_mex.cpp ', ' ../external/liblbfgs-1.10/lib/lbfgs.c ', all_files];
+        cmd = ['mex -DLBFGS_FLOAT=32 -DEIGEN_DONT_PARALLELIZE -DNO_IMREAD -D_GLIBCXX_USE_NANOSLEEP -I../lib -I',EIGEN_DIR,' -I../external/ibfs/ -I../external/ -I../external/liblbfgs-1.10/include/ CFLAGS="-fPIC -fno-omit-frame-pointer -pthread -O3 -DNDEBUG" CXXFLAGS="-fPIC -fno-omit-frame-pointer -pthread -O3 -DNDEBUG -std=c++11" lpo_mex.cpp ', ' ../external/liblbfgs-1.10/lib/lbfgs.c ', all_files];
     end
     eval( cmd )
 
