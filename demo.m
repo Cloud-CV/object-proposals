@@ -5,17 +5,23 @@ if(~exist(fullfile(pwd, 'demo_result')))
 end
 configjson.outputLocation = fullfile(pwd, 'demo_result');
 
-%%% proposals for al images in the imageLocation
-runObjectProposal('randomPrim');
+imageFile='demo_img/2007_009084.jpg';
+objectProposal='randomPrim';
 
-%%%proposals for one image
-%1)
-proposals=runObjectProposal('randomPrim','demo_img/2007_009084.jpg');
+%%% Proposals for all images in imageLocation
 
-%2)
-im=imread('demo_img/2007_009084.jpg');
-proposals=runObjectProposal('randomPrim',im);
+runObjectProposals(objectProposal);
 
-%%% certain number of proposals
+% Proposals for one image
+% 1)
 
-proposals=runObjectProposal('randomPrim',im,100);
+proposals=runObjectProposals(objectProposal,imageFile);
+
+% 2)
+
+im=imread(imageFile);
+proposals=runObjectProposals(objectProposal,im);
+
+%%% Certain number of proposals
+
+proposals=runObjectProposals(objectProposal,im,100);
