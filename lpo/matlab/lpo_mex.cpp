@@ -292,12 +292,13 @@ std::shared_ptr<SeedFunction> createSeed( const std::string & s ) {
     }
     return seed;
 }
-static std::string model;
 static void newProposal( MEX_ARGS ) {
     if( nlhs == 0 ) {
         mexErrMsgTxt("newProposal expected one return argument");
         return;
     }
+
+    std::shared_ptr<LPO> p = std::make_shared<LPO>();
 
     for ( int i=0; i<nrhs; i++ ) {
         std::string c = toString( prhs[i] );
@@ -306,14 +307,14 @@ static void newProposal( MEX_ARGS ) {
         if (c == "model") {
             if( i+1>=nrhs || !mxIsChar(prhs[i+1]) )
                 mexErrMsgTxt("model argument required");
-            model =  toString( prhs[i+1] );
+            p->load( toString( prhs[i+1] ) );
             i++;
         }
         else {
             mexErrMsgTxt(("Setting '"+c+"' not found").c_str());
         }
     }
-    plhs[0] = ptr2Mat( std::make_shared<LPO>() );
+    plhs[0] = ptr2Mat( p );
 }
 static void Proposal_propose( MEX_ARGS ) {
     if( nrhs != 2 ) {
@@ -324,10 +325,9 @@ static void Proposal_propose( MEX_ARGS ) {
         mexErrMsgTxt("Expected a single output argument");
         return;
     }
+
     std::shared_ptr<LPO> p = mat2Ptr<LPO>( prhs[0] );
     std::shared_ptr<ImageOverSegmentation> os = mat2Ptr<ImageOverSegmentation>( prhs[1] );
-
-    p->load( model );
 
     std::vector<Proposals> s = p->propose( *os );
 
