@@ -24,8 +24,8 @@
 	 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 %}
-% clear all;
-% init_lpo;
+clear all;
+init_lpo;
 
 % Set a boundary detector by calling (before creating an OverSegmentation!):
 lpo_mex( 'setDetector', 'MultiScaleStructuredForest("../data/sf.dat")' );
@@ -34,8 +34,8 @@ lpo_mex( 'setDetector', 'MultiScaleStructuredForest("../data/sf.dat")' );
 p = Proposal( 'model', '../models/lpo_VOC_0.1.dat' );
 
 % Load in image
-% images = {'pears.png','peppers.png'};
-images = {'../../test_images/input/VOC2012/JPEGImages/000027.jpg','../../test_images/input/VOC2012/JPEGImages/000068.jpg'};
+images = {'pears.png','peppers.png'};
+
 for it = 1:2
     I = imread(images{it});
 
