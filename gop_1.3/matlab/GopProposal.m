@@ -1,5 +1,5 @@
 %{
-    Copyright (c) 2015, Philipp Krähenbühl
+    Copyright (c) 2014, Philipp Krähenbühl
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,17 +33,17 @@
 %              );
 % props = p.propose( os );
 
-classdef Proposal
+classdef GopProposal
     properties (SetAccess = private, GetAccess = private)
         c_p
     end
 
     methods
-        function obj = Proposal( varargin )
-            obj.c_p = lpo_mex( 'newProposal', varargin{:} );
+        function obj = GopProposal( varargin )
+            obj.c_p = gop_mex( 'newProposal', varargin{:} );
         end
         function r = propose(this,os)
-            r = lpo_mex( 'Proposal_propose', this.c_p, os.c_s );
+            r = gop_mex( 'Proposal_propose', this.c_p, os.c_s );
         end
         function sobj = saveobj(this)
             error( 'You cannot load/save a Proposal object!' );
@@ -52,7 +52,7 @@ classdef Proposal
             error( 'You cannot load/save a Proposal object!' );
         end
         function delete(this)
-            lpo_mex( 'freeProposal', this.c_p );
+            gop_mex( 'freeProposal', this.c_p );
         end
     end
 end

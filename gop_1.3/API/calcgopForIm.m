@@ -1,7 +1,7 @@
 function proposals=calcgopForIm(input, gopconfig )
     if ~isfield(gopconfig,'gopdatapath')
         fprintf('Path to GOP data does not exist. Please make sure you give a proper full path\n');
-        return; 
+        return;
     else
         datapath=gopconfig.gopdatapath;
     end
@@ -38,7 +38,7 @@ function proposals=calcgopForIm(input, gopconfig )
 
     if ( strcmp(method,'learned'))
         % Setup the proposal pipeline (learned)
-        p = Proposal('max_iou', max_iou,...
+        p = GopProposal('max_iou', max_iou,...
              'seed', [datapath '/seed_final.dat'],...
              'unary', NumberOfSeeds, NumberOfSegmentationsPerSeed, ['binaryLearnedUnary("' datapath '/masks_final_0_fg.dat")'], ['binaryLearnedUnary("' datapath '/masks_final_0_bg.dat")'],...
              'unary', NumberOfSeeds, NumberOfSegmentationsPerSeed, ['binaryLearnedUnary("' datapath '/masks_final_1_fg.dat")'], ['binaryLearnedUnary("' datapath '/masks_final_1_bg.dat")'],...
@@ -48,12 +48,12 @@ function proposals=calcgopForIm(input, gopconfig )
 
     else
         % Setup the proposal pipeline (baseline)
-        p = Proposal('max_iou', max_iou,...
+        p = GopProposal('max_iou', max_iou,...
                      'unary', NumberOfSeeds, NumberOfSegmentationsPerSeed, 'seedUnary()', 'backgroundUnary({0,15})',...
                      'unary', 0, NumberOfSegmentationsPerSeed, 'zeroUnary()', 'backgroundUnary({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})' ...
                      );
     end
-    os = OverSegmentation( im );
+    os = GopOverSegmentation( im );
     props = p.propose( os );
     boxes = os.maskToBox( props );
     if(isfield(gopconfig.opts,'numProposals'))
@@ -64,7 +64,7 @@ function proposals=calcgopForIm(input, gopconfig )
                     fprintf('Only %d proposals were generated for the input image\n',size(boxes,1));
                 end
     end
-    proposals.boxes=boxes;  
+    proposals.boxes=boxes;
 end
 
-    
+

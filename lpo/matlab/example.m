@@ -31,7 +31,7 @@ init_lpo;
 lpo_mex( 'setDetector', 'MultiScaleStructuredForest("../data/sf.dat")' );
 
 % Setup the proposal pipeline (baseline)
-p = Proposal( 'model', '../models/lpo_VOC_0.1.dat' );
+p = LpoProposal( 'model', '../models/lpo_VOC_0.1.dat' );
 
 % Load in image
 images = {'pears.png','peppers.png'};
@@ -41,7 +41,7 @@ for it = 1:2
 
     % Create an over-segmentation
     tic();
-    os = OverSegmentation( I );
+    os = LpoOverSegmentation( I );
     t1 = toc();
 
     % Generate proposals

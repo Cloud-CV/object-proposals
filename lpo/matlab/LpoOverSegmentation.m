@@ -30,12 +30,12 @@
 % os = OverSegmentation( I );
 % imagesc( os.s() ) % To visualize the over-segmentation
 
-classdef OverSegmentation
+classdef LpoOverSegmentation
     properties (SetAccess = private, GetAccess = public)
         c_s
     end
     methods
-        function obj = OverSegmentation( I, NS, thick_bnd, thin_bnd )
+        function obj = LpoOverSegmentation( I, NS, thick_bnd, thin_bnd )
             if nargin == 0
                 error( 'Input image required' );
             end
