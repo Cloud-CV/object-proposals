@@ -1,5 +1,5 @@
 global configjson
-    
+
 % add current directory as the parent directory
 parDir = pwd;
 % adding evaluation metrics into path
@@ -13,7 +13,7 @@ parDir = pwd;
 try
       pDollarToolBoxPath=[pwd '/dependencies/pDollarToolbox'];
       addpath(genpath(pDollarToolBoxPath));
-      toolboxCompile; 
+      toolboxCompile;
 
 catch exc
       fprintf('Piotr Dollar tool box compilation failed\n');
@@ -44,7 +44,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%compiling vlfeat%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-try 
+try
     vlDir = [parDir '/dependencies/vlfeat-0.9.16/toolbox'];
     cd(vlDir);
     vl_setup;
@@ -55,7 +55,7 @@ catch exc
         fprintf('***************************\n');
      cd(parDir);
 end
-    
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
@@ -66,11 +66,11 @@ try
 	fprintf('Compilation of Edge Boxes started\n ');
 	cd edgeBoxes/releaseV3/private/;
 	mex edgesDetectMex.cpp
-	mex edgesNmsMex.cpp 
-	mex spDetectMex.cpp 
+	mex edgesNmsMex.cpp
+	mex spDetectMex.cpp
 	mex edgeBoxesMex.cpp
 	cd(parDir)
-  	 
+
         fprintf('Compilation of Edge Boxes sucessfully finished\n ');
 	fprintf('***************************\n');
 catch exc
@@ -240,7 +240,7 @@ end
    boost_incl_opt = '';
    boost_lib_opt = '';
    extra_opts = '';
-   
+
    % set directories and options
    if ispc
        % if windows
@@ -249,7 +249,7 @@ end
        tbb_libs = fullfile(tbb_dir, 'lib/intel64/vc12');
        boost_dir = 'D:/boost/1.55.0/VC/11.0';
        boost_libs = fullfile(boost_dir, 'stage/lib');
-       
+
        tbb_incl_opt = ['-I', tbb_incl_dir];
        tbb_lib_opt = ['-L', tbb_libs];
        boost_incl_opt = ['-I', boost_dir];
@@ -267,7 +267,7 @@ end
    addpath(genpath(rigor_path));
    addpath([pwd '/rigor/API']);
   % make
-  	
+
   %  addpath(genpath([pwd '/dependencies']));
    % find locations of files
    code_root_dir = fullfile(fileparts(which(mfilename)), 'rigor/rigor_src');
@@ -275,7 +275,7 @@ end
    extern_dir = fullfile(code_root_dir, 'extern_src');
    boykov_dir = fullfile(code_root_dir, 'boykov_maxflow');
 try
-	
+
   fprintf('eval statements\n');
    % mex code
    eval(sprintf('mex -O %s/intens_pixel_diff_mex.c -output %s/intens_pixel_diff_mex', utils_dir, utils_dir));
@@ -304,7 +304,7 @@ try
        boykov_dir, boykov_dir, boykov_dir, boykov_dir, boykov_dir, ...
        boost_incl_opt, tbb_incl_opt, tbb_lib_opt, boost_lib_opt, ...
        extra_opts, boykov_dir));
-   
+
        fprintf('Compiling RIGOR succesfully finished \n');
 
 catch exc
@@ -330,6 +330,26 @@ try
     fprintf('***************************\n');
 catch exc
     fprintf('Compilation of Geodesic Object Proposals failed\n ');
+    fprintf(exc.message);
+    fprintf('***************************\n');
+    cd(parDir);
+end
+
+%%%%%%%%%%%%%%%%%%
+%% Building LPO %%
+%%%%%%%%%%%%%%%%%%
+try
+    fprintf('Compilation of LPO started\n ');
+    lpoPath = [pwd, '/lpo/matlab'];
+    addpath(genpath(lpoPath));
+    cd(lpoPath);
+    compile();
+    %%system(sprintf('cp %s/gop_mex.mexa64.compiled %s/gop_mex.mexa64',pwd,pwd));
+    cd(parDir);
+    fprintf('Compilation of LPO  successfully finished\n ');
+    fprintf('***************************\n');
+catch exc
+    fprintf('Compilation of LPO failed\n ');
     fprintf(exc.message);
     fprintf('***************************\n');
     cd(parDir);

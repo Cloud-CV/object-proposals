@@ -19,12 +19,12 @@ Generating Proposals
 
 1. Copy over `config.json.example` to `config.json` and set `imageLocation` and `outputLocation`.
 
-1. Initialize path variables.
+2. Initialize path variables.
 ```
 initialize;
 ```
 
-1. Generate proposals, using either of the following commands.
+3. Generate proposals, using either of the following commands.
 ```
 proposals = runObjectProposals('<proposalname>', 'path\to\image.jpg');
 
@@ -34,7 +34,7 @@ im = imread('path\to\image.jpg');
 proposals = runObjectProposals('<proposal name>', im);
 ```
 
-1. For long-running jobs, use the following command.
+4. For long-running jobs, use the following command.
 ```
 runObjectProposals('<proposalname>');
 ```
@@ -52,6 +52,7 @@ This will generate proposals for all the images in `imageLocation` and save the 
 * `selective_search` [8]
 * `rigor` [9]
 * `gop` [10]
+* `lpo` [11]
 
 **Note**
 
@@ -69,13 +70,13 @@ A ground truth file needs to be generated for the dataset. We have provided the 
 testset=load('evaluation-metrics/data/pascal_gt_data.mat');
 ```
 
-1. Generate best recall candidates.
+2. Generate best recall candidates.
 ```
 compute_best_recall_candidates(testset,configjson,'<proposalame>'); 
 ```
 'proposalname' is an optional argument. If not provided, the function works for all the object proposals listed above.
 
-1. Plot RECALL/AUC curves.
+3. Plot RECALL/AUC curves.
 ```
 evaluateMetricForProposal('RECALL','<proposalname>');
 evaluateMetricForProposal('AUC','<proposalname');
@@ -93,12 +94,12 @@ evaluateMetricForProposal('AUC');
 testset=load('evaluation-metrics/data/pascal_gt_data.mat');
 ```
 
-1. Generate best recall candidates.
+2. Generate best recall candidates.
 ```
 compute_abo_candidates(testset,configjson);
 ```
 
-1. Plot ABO curve.
+3. Plot ABO curve.
 ```
 evaluateMetricForProposal('ABO', '<proposalname');
 
@@ -242,7 +243,19 @@ License: [rigor/rigor_src/LICENSE](rigor/rigor_src/LICENSE) (GNU General Public 
 
 License: BSD
 
-[11] Evaluation Metrics:
+[11] Learning to Propose Objects:
+
+    @inproceedings{kk-lpo-15,
+      author    = {Philipp Kr{\"{a}}henb{\"{u}}hl and
+                   Vladlen Koltun},
+      title     = {Learning to Propose Objects},
+      booktitle = {CVPR},
+      year      = {2015},
+    }
+
+License: BSD
+
+[12] Evaluation Metrics:
 
     @inproceedings{HosangBMVC14,
         author = {J. Hosang and R. Benenson and B. Schiele},

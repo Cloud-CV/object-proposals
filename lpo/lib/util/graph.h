@@ -1,5 +1,5 @@
-%{
-    Copyright (c) 2014, Philipp Krähenbühl
+/*
+    Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
 	
     Redistribution and use in source and binary forms, with or without
@@ -23,36 +23,40 @@
 	 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 	 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-%}
-% Usage example:
-% I = imread('peppers.png');
-% os = OverSegmentation( I );
-% p = Proposal('max_iou', 0.8,...
-%              'unary', 130, 5, 'seedUnary()', 'backgroundUnary({0,15})',...
-%              'unary', 0, 5, 'zeroUnary()', 'backgroundUnary({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})'
-%              );
-% props = p.propose( os );
+*/
+#pragma once
+#include <cstdint>
+#include <vector>
+#include <iosfwd>
 
-classdef Proposal
-    properties (SetAccess = private, GetAccess = private)
-        c_p
-    end
-    
-    methods
-        function obj = Proposal( varargin )
-            obj.c_p = gop_mex( 'newProposal', varargin{:} );
-        end
-        function r = propose(this,os)
-            r = gop_mex( 'Proposal_propose', this.c_p, os.c_s );
-        end
-        function sobj = saveobj(this)
-            error( 'You cannot load/save a Proposal object!' );
-        end
-        function loadobj(this, sobj)
-            error( 'You cannot load/save a Proposal object!' );
-        end
-        function delete(this)
-            gop_mex( 'freeProposal', this.c_p );
-        end
-    end
-end
+uint64_t hash_edge( uint32_t a, uint32_t b );
+uint32_t edge_a( uint64_t h );
+uint32_t edge_b( uint64_t h );
+
+struct Edge {
+	int a, b;
+	Edge( int a=0, int b=0, bool ordered=false ):a(a),b(b){
+		if (!ordered && this->b > this->a)
+			std::swap( this->a, this->b );
+	}
+	static Edge fromHash( uint64_t h ){
+		return Edge( edge_a(h), edge_b(h) );
+	}
+	bool operator==(const Edge & o ) const {
+		return a==o.a && b==o.b;
+	}
+	uint64_t hash() const {
+		return hash_edge( a, b );
+	}
+};
+namespace std {
+	template <>
+	struct hash<Edge> {
+		size_t operator () (const Edge &f) const { return f.hash(); }
+	};
+}
+typedef std::vector<Edge> Edges;
+int getN( const Edges & graph );
+
+void saveEdges( std::ostream & s, const Edges & e );
+void loadEdges( std::istream & s, Edges & e );
