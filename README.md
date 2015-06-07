@@ -1,7 +1,14 @@
 Object Proposals
 ================
 
-This is a library/API which can be used to generate bounding box/region proposals using a large number of the existing object proposal approaches.
+This is a library/API which can be used to generate bounding box/region proposals using a large number of the existing object proposal approaches. If you use use our library, please cite our paper:
+
+    @misc{1505.05836,
+        Author = {Neelima Chavali and Harsh Agrawal and Aroma Mahendru and Dhruv Batra},
+        Title = {Object-Proposal Evaluation Protocol is 'Gameable'},
+        Year = {2015},
+        Eprint = {arXiv:1505.05836},
+    }
 
 * It is fully supported on Linux and partially supported on Mac OS.
 * Rigor, Randomized Prim are NOT supported on Mac OS.
