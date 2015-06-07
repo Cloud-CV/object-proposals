@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-
+	
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-
+	
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,7 +34,7 @@ public:
 	virtual const RMatrixXf & unary() const = 0;
 	virtual const RMatrixXf & pairwise() const = 0;
 	virtual const Edges & graph() const = 0;
-
+	
 	virtual ~BinaryCRFFeatures();
 };
 // Binary loss function of the type f(true pos, false pos, false neg, true neg)
@@ -73,7 +73,7 @@ public:
 	VectorXf map( const std::shared_ptr<BinaryCRFFeatures> & f, float * e=0 ) const;
 	RMatrixXf diverseMBest( const std::shared_ptr<BinaryCRFFeatures> & f, int M, const TrainingLoss & loss ) const;
 	float e( const VectorXf & s, const std::shared_ptr<BinaryCRFFeatures> & f ) const;
-
+	
 	// Training functions
 	void train( const std::shared_ptr<BinaryCRFFeatures> & f, const VectorXs & l, const TrainingLoss & loss );
 	void train( const std::vector< std::shared_ptr<BinaryCRFFeatures> > & f, const std::vector<VectorXs> & l, const TrainingLoss & loss );
@@ -82,17 +82,17 @@ public:
 	void train1Slack( const std::vector< std::shared_ptr<BinaryCRFFeatures> > & f, const std::vector<VectorXs> & l, const TrainingLoss & loss );
 	void trainNSlack( const std::vector< std::shared_ptr<BinaryCRFFeatures> > & f, const std::vector<VectorXs> & l, const TrainingLoss & loss );
 	bool isTrained() const;
-
+	
 	// Static CRF functions
 	static VectorXf inference( const VectorXf & u, const Edges & g, const VectorXf & w, float * e=0 );
 	static VectorXf inferenceWithLoss( const VectorXf & u, const Edges & g, const VectorXf & w, const VectorXs & l, const TrainingLoss & loss );
 	static VectorXf inferenceWithIOU( const VectorXf & u, const Edges & g, const VectorXf & w, const VectorXs & l, float k );
 	static float energy( const VectorXf & l, const VectorXf & u, const Edges & g, const VectorXf & w );
-
+	
 	// Save and load
 	void load( std::istream & is );
 	void save( std::ostream & os ) const;
-
+	
 	// Get and set parameters
 	void setUnary( const VectorXf & unary );
 	void setPairwise( const VectorXf & pairwise );

@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,7 +28,7 @@
 #include "util.h"
 
 void rasterize( Ref<RMatrixXf> target, const RMatrixXf & l, int boundary_width ) {
-	rasterize( [&target](int x, int y, RasterType t)->void{ if( 0<=x && x<target.cols() && 0<=y && y<target.rows() ) target(y,x) = t; }, l, boundary_width );
+	rasterize( [&target](int x, int y, RasterType t)->void { if( 0<=x && x<target.cols() && 0<=y && y<target.rows() ) target(y,x) = t; }, l, boundary_width );
 }
 // Positive if CCW, negative otherwise
 float signedArea( const Polygon & polygon ) {
@@ -38,7 +38,7 @@ float signedArea( const Polygon & polygon ) {
 	dy( y.size()-1 )      += y( 0 );
 	dy.tail( y.size()-1 ) -= y.head( y.size()-1 );
 	dy( 0 )               -= y( y.size()-1 );
-	
+
 	return 0.5*( x.dot( dy ) );
 }
 static float nextT( const Vector2f & a, const Vector2f & b, float t ) {
@@ -56,12 +56,12 @@ void rasterize( RasterFunction f, const RMatrixXf & polygon, int boundary_width 
 	RMatrixXf l = polygon;
 	if( signedArea( polygon ) < 0 )
 		l = polygon.colwise().reverse();
-	
+
 	const int x0 = l.col(0).minCoeff()-boundary_width, x1 = l.col(0).maxCoeff()+1+boundary_width;
 	const int y0 = l.col(1).minCoeff()-boundary_width, y1 = l.col(1).maxCoeff()+1+boundary_width;
 	RMatrixXf dist = 10*RMatrixXf::Ones( y1-y0, x1-x0 );
 	RMatrixXi8 label = RMatrixXi8::Zero( y1-y0, x1-x0 );
-	
+
 #define ADD( x, y, p, l ) { const float d=(p[0]-(x))*(p[0]-(x))+(p[1]-(y))*(p[1]-(y)); if( dist((y)-y0,(x)-x0)>d ) { dist((y)-y0,(x)-x0)=d; label((y)-y0,(x)-x0)=l; } }
 	// This algorithm will produce odd results in concave regions with very small angle (smaller than a pixel)
 	for( int k=0; k<l.rows(); k++ ) {
@@ -85,16 +85,13 @@ void rasterize( RasterFunction f, const RMatrixXf & polygon, int boundary_width 
 				if( a[1] > b[1] ) ADD(ip[0]-1,ip[1],p,OUTSIDE_BOUNDARY);
 				if( a[0] > b[0] ) ADD(ip[0],ip[1]+1,p,OUTSIDE_BOUNDARY);
 				if( a[0] < b[0] ) ADD(ip[0],ip[1]-1,p,OUTSIDE_BOUNDARY);
-			}
-			else if( fabs(p[0]-ip[0]) <= EPS ) {
+			} else if( fabs(p[0]-ip[0]) <= EPS ) {
 				ADD(ip[0],(int)p[1]  , p, c_y0);
 				ADD(ip[0],(int)p[1]+1, p, c_y1);
-			}
-			else if( fabs(p[1]-ip[1]) <= EPS ) {
+			} else if( fabs(p[1]-ip[1]) <= EPS ) {
 				ADD((int)p[0]  ,ip[1], p, c_x0);
 				ADD((int)p[0]+1,ip[1], p, c_x1);
-			}
-			else
+			} else
 				eassert("Rasterization failed");
 		}
 	}
@@ -103,7 +100,7 @@ void rasterize( RasterFunction f, const RMatrixXf & polygon, int boundary_width 
 		for( int i=0; i<x1-x0; i++ )
 			if( i && label(j,i) == OUTSIDE && label(j,i-1) == INSIDE )
 				label(j,i) = INSIDE;
-	
+
 	// Dilate the boundary
 	int ks = boundary_width/2;
 	if( ks > 0 ) {
@@ -124,7 +121,7 @@ void rasterize( RasterFunction f, const RMatrixXf & polygon, int boundary_width 
 		for( int j=0; j<ks && j<y1-y0; j++ )
 			for( int i=0; i<x1-x0; i++ )
 				cnt[i] += (tmp(j,i)==OUTSIDE_BOUNDARY);
-		
+
 		// Dilate in x
 		for( int j=0; j<y1-y0; j++ ) {
 			for( int i=0; i<x1-x0; i++ ) {
@@ -135,7 +132,7 @@ void rasterize( RasterFunction f, const RMatrixXf & polygon, int boundary_width 
 			}
 		}
 	}
-	
+
 	// Return the result
 	for( int j=0; j<y1-y0; j++ )
 		for( int i=0; i<x1-x0; i++ )

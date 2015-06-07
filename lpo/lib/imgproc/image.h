@@ -153,7 +153,7 @@ template<int N>
 	operator const RMatrixX<T>() const {
 		if( 1!=C_ )
 			throw std::invalid_argument( "Matrix and Image channels do not match!" );
-		return Map< const RMatrixXf >( data(), H_, W_ );
+		return Map< const RMatrixX<T> >( data(), H_, W_ );
 	}
 	TypedImage<T> & operator=( const RMatrixX<T> & o ) {
 		if( 1!=C_ )

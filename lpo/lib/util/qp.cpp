@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -39,7 +39,7 @@ struct ActiveSet {
 	int n;       // Current size
 	ArrayXb in; // in(i) : Is variable i in the active set
 	ArrayXi A;  // All variables in the active set
-	ActiveSet( int max_n=0 ):n(0),in(ArrayXb::Zero(max_n)),A(-ArrayXi::Ones(max_n)){}
+	ActiveSet( int max_n=0 ):n(0),in(ArrayXb::Zero(max_n)),A(-ArrayXi::Ones(max_n)) {}
 	int add( int i ) { // Add variable i to the active set
 		eassert( !in[i] );
 		in[i] = true;
@@ -77,12 +77,11 @@ bool addConstraint( RMatrixX<T> & R, RMatrixX<T> & J, VectorX<T> d, ActiveSet & 
 		d[j] = 0;
 		ss /= h;
 		cc /= h;
-		if( cc < 0 ){
+		if( cc < 0 ) {
 			cc =-cc;
 			ss =-ss;
 			d[j-1] = -h;
-		}
-		else
+		} else
 			d[j-1] = h;
 		T xny = ss / (1. + cc);
 		RowVectorX<T> t1 = J.row(j-1);
@@ -106,12 +105,12 @@ void deleteConstraint( RMatrixX<T> & R, RMatrixX<T> & J, VectorX<T> & u, ActiveS
 	// Find the element to remove
 	int qq = -1;
 	for( int i=0; i<n; i++ )
-		if( active_set.A[i] == l ){
+		if( active_set.A[i] == l ) {
 			qq = i;
 			break;
 		}
 	eassert( qq >= 0 );
-	
+
 	// Move all elements that follow down by ones and update the QR factorization
 	for( int i=qq; i < n-1; i++ ) {
 		u[i] = u[i+1];
@@ -132,12 +131,11 @@ void deleteConstraint( RMatrixX<T> & R, RMatrixX<T> & J, VectorX<T> & u, ActiveS
 		R(j+1,j) = 0;
 		ss /= h;
 		cc /= h;
-		if( cc < 0 ){
+		if( cc < 0 ) {
 			cc =-cc;
 			ss =-ss;
 			R(j,j) = -h;
-		}
-		else
+		} else
 			R(j,j) = h;
 		T xny = ss / (1. + cc);
 		const int nr = n-j-1;
@@ -166,23 +164,23 @@ VectorX<T> qp( const RMatrixX<T> & Q, const VectorX<T> & c, const RMatrixX<T> & 
 #endif
 	const int n = c.size(), m = b.size();
 	const T inf = std::numeric_limits<T>::infinity();
-	
+
 	if( Q.cols() != n || Q.rows() != n )
 		throw std::invalid_argument( "Expected quadratic matrix Q of size n x n, where n=|c|!" );
 	if( A.cols() != n || A.rows() != m )
 		throw std::invalid_argument( "Expected inequality constraint matrix A of size |b| x n!" );
-	
+
 	RMatrixX<T> R = RMatrixX<T>::Zero(n,n), J = RMatrixX<T>::Zero(n,n);
 	ActiveSet active_set(m);
 	VectorX<T> x = VectorX<T>::Zero(n), s = VectorX<T>::Zero(m), u = VectorX<T>::Zero(m);
-	
+
 	/*
 	 * Preprocessing phase
 	 */
-	
+
 	/* decompose the matrix Q in the form LL^T */
 	LLT<RMatrixX<T>,Lower> chol(Q);
-	
+
 	/* compute the inverse of the factorized matrix Q^-1, this is the initial value for J */
 	// J = L^-1
 	J = chol.matrixL().solve(RMatrixX<T>::Identity(n,n));
@@ -193,30 +191,30 @@ VectorX<T> qp( const RMatrixX<T> & Q, const VectorX<T> & c, const RMatrixX<T> & 
 	 */
 	x = -chol.solve(c);
 	for( int iter=0; iter < MAX_ITER; iter++ ) {
-		
+
 		/* step 1: choose a violated constraint */
-		
+
 		/* compute s(x) = - A * x + b for all elements of K \ A */
 		s = -A * x + b;
-		
+
 #ifdef VERBOSE
 		printf("Iteration %d   %f %f\n", iter, std::abs(s.array().min(0.f).sum())/m, std::numeric_limits<T>::epsilon() );
 #endif
-		
+
 		/* Are there any more infeasibilities? |s|_1 < EPS*cond*100 */
 		if ( -s.minCoeff() <= 100*std::numeric_limits<T>::epsilon() )
 			return x;
-		
+
 		/* Step 2: check for feasibility and determine a new S-pair */
 		int new_constraint = 0;
 		T ss = VectorX<T>(s.array() * ((T)1-active_set.in.cast<T>())).minCoeff( &new_constraint );
-		
+
 		/* Are all constraints feasible? */
 		if (ss >= 0.0) return x;
-		
+
 		/* Get the new constraint */
 		VectorX<T> np = -A.row(new_constraint).transpose();
-		
+
 #ifdef VERBOSE
 		printf("New constraint %d / %d\n", new_constraint, m);
 #endif
@@ -226,13 +224,13 @@ VectorX<T> qp( const RMatrixX<T> & Q, const VectorX<T> & c, const RMatrixX<T> & 
 		while(1) {
 			/* Get the number of active constraints */
 			const int nA = active_set.n;
-			
+
 			VectorX<T> d = J * np;
 			VectorX<T> z = J.bottomRows(d.size()-nA).transpose() * d.tail(d.size()-nA);
-			
+
 			/* compute N* np (if q > 0): the negative of the step direction in the dual space */
 			VectorX<T> r = R.topLeftCorner(nA,nA).template triangularView<Upper>().solve(d.head(nA));
-			
+
 			/* Step 2b: compute step length t1 before violating dual feasibility */
 			int l = -1;
 			T t1 = inf;
@@ -240,15 +238,15 @@ VectorX<T> qp( const RMatrixX<T> & Q, const VectorX<T> & c, const RMatrixX<T> & 
 				t1 = (r.array() > 0).select( u.head(nA).array() / r.array(), inf ).minCoeff( &l );
 				l = active_set.A[l];
 			}
-			
+
 			/* Compute t2: full step length (minimum step in primal space such that the constraint ip becomes feasible */
 			T t2 = inf;
 			if (std::abs(z.dot(z)) > std::numeric_limits<T>::epsilon()) // i.e. z != 0
 				t2 = -ss / z.dot(np);
-			
+
 			/* the step is chosen as the minimum of t1 and t2 */
 			T t = std::min<T>(t1, t2);
-			
+
 // #ifdef VERBOSE
 // 			printf("  t = %f  %f %f    l = %d\n", t, t1, t2, l );
 // 			std::cout<<"  ss = "<<ss<<"  z'np = "<<z.dot(np)<<std::endl;
@@ -262,23 +260,23 @@ VectorX<T> qp( const RMatrixX<T> & Q, const VectorX<T> & c, const RMatrixX<T> & 
 // 			std::cout<<"  R = "<<R.topLeftCorner(nA,nA)<<std::endl;
 // 			std::cout<<"  J = "<<J<<std::endl;
 // #endif
-			
+
 			/* Step 2c: determine new S-pair and take step: */
-			
+
 			/* case (i): no step in primal or dual space */
 			if (t >= inf) /* QPP is infeasible */
 				return VectorX<T>::Constant( n, inf );
-			
+
 			// Dual step
 			u.head(nA) -= t * r;
 			unA += t;
-			
+
 			// Primal step
 			if( t2 < inf ) {
 				x += t * z;
 				ss = -A.row(new_constraint) * x + b(new_constraint);
 			}
-			
+
 			/* case (ii): a patial step has taken */
 			if (t2 > t1) {
 #ifdef VERBOSE
@@ -286,8 +284,7 @@ VectorX<T> qp( const RMatrixX<T> & Q, const VectorX<T> & c, const RMatrixX<T> & 
 #endif
 				/* drop constraint l from the active set A */
 				deleteConstraint<T>(R, J, u, active_set, l);
-			}
-			else 
+			} else
 				break;
 		}
 		/* case (iii): step in primal and dual space */

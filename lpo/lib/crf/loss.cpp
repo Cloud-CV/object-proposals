@@ -26,7 +26,7 @@
 */
 #include "loss.h"
 
-HammingLoss::HammingLoss( float w_pos, float w_neg ):w_pos_(w_pos),w_neg_(w_neg){
+HammingLoss::HammingLoss( float w_pos, float w_neg ):w_pos_(w_pos),w_neg_(w_neg) {
 }
 bool HammingLoss::isLinear() const {
 	return true;

@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -110,18 +110,17 @@ template<> const std::string ImageTypeStr<float>::s = "f4";
 template<typename IM>
 struct Image_indexing_suite: def_visitor<Image_indexing_suite<IM> > {
 	typedef typename IM::value_type value_type;
-	
-	struct Image_pickle_suite : pickle_suite
-	{
+
+	struct Image_pickle_suite : pickle_suite {
 		static tuple getinitargs(const IM& im) {
 			return make_tuple( im.W(), im.H(), im.C() );
 		}
-		
+
 		static object getstate(const IM& im) {
 			const int N = im.W()*im.H()*im.C()*sizeof(value_type);
 			return object( handle<>( PyBytes_FromStringAndSize( (const char*)im.data(), N ) ) );
 		}
-		
+
 		static void setstate(IM& im, const object & state) {
 			if(!PyBytes_Check(state.ptr()))
 				throw std::invalid_argument("Failed to unpickle, unexpected type!");
@@ -131,7 +130,7 @@ struct Image_indexing_suite: def_visitor<Image_indexing_suite<IM> > {
 			memcpy( im.data(), PyBytes_AS_STRING(state.ptr()), N );
 		}
 	};
-	
+
 	template <class classT>	void visit(classT& c) const {
 		c
 		.def("__init__",make_constructor(&Image_indexing_suite::init1))
@@ -154,7 +153,7 @@ struct Image_indexing_suite: def_visitor<Image_indexing_suite<IM> > {
 	// TODO: Implement properly
 //	static IM * init3( const np::ndarray & d ) {
 //		checkArray( d, value_type, 2, 3, true );
-//	
+//
 //		IM* r = new IM(d.shape(1),d.shape(0),d.get_nd()>2?d.shape(2):1);
 //		memcpy( r->data(), d.get_data(), r->W()*r->H()*r->C()*sizeof(value_type) );
 //		return r;
@@ -202,17 +201,17 @@ void defineImgProc() {
 	def("downsample", (RMatrixXf(*)( const RMatrixXf &, int, int ))downsample);
 	def("downsample", (Image(*)( const Image &, int, int ))downsample);
 	def("padIm",(Image(*)(const Image &, int))padIm);
-	
+
 	// Patch extraction
 	def("extractPatches",static_cast<std::vector<RMatrixXb>(*)(const RMatrixXb&,const RMatrixXi&,int,int)>(&extractPatches));
 	def("extractPatches",static_cast<std::vector<RMatrixXs>(*)(const RMatrixXs&,const RMatrixXi&,int,int)>(&extractPatches));
 	def("extractPatches",static_cast<std::vector<RMatrixXb>(*)(const std::vector<RMatrixXb>&,const RMatrixXi&,int,int)>(&extractPatches));
 	def("extractPatches",static_cast<std::vector<RMatrixXs>(*)(const std::vector<RMatrixXs>&,const RMatrixXi&,int,int)>(&extractPatches));
-	
+
 	// Image and Image8u
 	def("imread",imread);
 	def("imwrite",imwrite);
-	
+
 	class_<Image,std::shared_ptr<Image> >("Image")
 	.def(Image_indexing_suite<Image>())
 	.def("toImage8u",convertImage<Image,Image8u>);

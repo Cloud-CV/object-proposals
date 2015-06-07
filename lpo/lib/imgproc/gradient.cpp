@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,7 +32,7 @@
 #include <Eigen/Core>
 using namespace Eigen;
 
-static const float * acosTable(){
+static const float * acosTable() {
 	static float table[2001];
 	static bool init = false;
 	float * r = table+1000;
@@ -47,15 +47,21 @@ static void computeGradientOriAndMag( float * g, float * o, const float * gx, co
 	const float * acost = acosTable();
 	RArrayXXf mag( N, C );
 	float * pm = mag.data();
-	
+
 	// mag = gx**2 + gy**2
 	int i=0;
-	for( ; i+3<N*C; i+=4 ){ __m128 dx = _mm_loadu_ps(gx+i); __m128 dy = _mm_loadu_ps(gy+i); _mm_storeu_ps( pm+i, dx*dx+dy*dy ); }
-	for( ; i<N*C; i++ ){ pm[i] = gx[i]*gx[i]+gy[i]*gy[i]; }
-	
+	for( ; i+3<N*C; i+=4 ) {
+		__m128 dx = _mm_loadu_ps(gx+i);
+		__m128 dy = _mm_loadu_ps(gy+i);
+		_mm_storeu_ps( pm+i, dx*dx+dy*dy );
+	}
+	for( ; i<N*C; i++ ) {
+		pm[i] = gx[i]*gx[i]+gy[i]*gy[i];
+	}
+
 	i=0;
 	for( ; i+3<N; i+=4 ) {
-		int j[4]={0};
+		int j[4]= {0};
 		__m128 gm;
 		gm[0] = mag.row(i+0).maxCoeff(&j[0]);
 		gm[1] = mag.row(i+1).maxCoeff(&j[1]);
@@ -67,7 +73,7 @@ static void computeGradientOriAndMag( float * g, float * o, const float * gx, co
 		// Change the sign
 		cm = _mm_xor_ps( cm, _mm_and_ps( _mm_set1_ps(-0.f),_mm_cmple_ps( _mm_set_ps( gy[j[3]+(i+3)*C], gy[j[2]+(i+2)*C], gy[j[1]+(i+1)*C], gy[j[0]+(i+0)*C] ), _mm_set1_ps(-0.f) ) ) );
 		cm = _mm_max_ps( _mm_set1_ps(-1), _mm_min_ps( cm, _mm_set1_ps(1.f) ) );
-		
+
 		o[i+0] = acost[(int)(cm[0]*1000)];
 		o[i+1] = acost[(int)(cm[1]*1000)];
 		o[i+2] = acost[(int)(cm[2]*1000)];
@@ -85,7 +91,7 @@ static void computeGradientOriAndMag( float * g, float * o, const float * gx, co
 		if( gy[i*C+j] <= -0 ) cm = -cm;
 		if( cm > 1 )  cm = 1;
 		if( cm < -1 ) cm = -1;
-		
+
 		o[i] = acost[(int)(cm*1000)];
 		g[i] = gm;
 	}
@@ -98,15 +104,21 @@ static void computeGradientOriAndMag( float * g, float * o, const float * gx, co
 static void computeGradientMag( float * g, const float * gx, const float * gy, int N, int C ) {
 	RArrayXXf mag( N, C );
 	float * pm = mag.data();
-	
+
 	// mag = gx**2 + gy**2
 	int i=0;
-	for( ; i+3<N*C; i+=4 ){ __m128 dx = _mm_loadu_ps(gx+i); __m128 dy = _mm_loadu_ps(gy+i); _mm_storeu_ps( pm+i, dx*dx+dy*dy ); }
-	for( ; i<N*C; i++ ){ pm[i] = gx[i]*gx[i]+gy[i]*gy[i]; }
-	
+	for( ; i+3<N*C; i+=4 ) {
+		__m128 dx = _mm_loadu_ps(gx+i);
+		__m128 dy = _mm_loadu_ps(gy+i);
+		_mm_storeu_ps( pm+i, dx*dx+dy*dy );
+	}
+	for( ; i<N*C; i++ ) {
+		pm[i] = gx[i]*gx[i]+gy[i]*gy[i];
+	}
+
 	i=0;
 	for( ; i+3<N; i+=4 ) {
-		int j[4]={0};
+		int j[4]= {0};
 		__m128 gm;
 		gm[0] = mag.row(i+0).maxCoeff(&j[0]);
 		gm[1] = mag.row(i+1).maxCoeff(&j[1]);
@@ -135,7 +147,7 @@ static void computeGradHist( Image & hist, const RMatrixXf & gm, const RMatrixXf
 	hist = 0;
 	int *o0 = (int*)_mm_malloc( (W+4)*sizeof(int), 16 ), *o1 = (int*)_mm_malloc( (W+4)*sizeof(int), 16 );
 	float *v0 = (float*)_mm_malloc( (W+4)*sizeof(float), 16 ), *v1 = (float*)_mm_malloc( (W+4)*sizeof(float), 16 );
-	for(int j = 0; j < H0; j++){
+	for(int j = 0; j < H0; j++) {
 		float * phist = hist.data() + (j/BINS)*Wb*nori;
 		const float * pgm = gm.data()+j*W;
 		const float * pgo = go.data()+j*W;
@@ -143,39 +155,39 @@ static void computeGradHist( Image & hist, const RMatrixXf & gm, const RMatrixXf
 		int i=0;
 		for( ; i+3<W; i+=4 ) {
 			__m128 o = _mm_loadu_ps( pgo+i ) * _mm_set1_ps(nori / M_PI);
-			
+
 			*(__m128i*)(o0+i) = _mm_cvttps_epi32( o );
 			__m128 w = o - _mm_cvtepi32_ps( *(__m128i*)(o0+i) );
-			
+
 // 			if( o0[i] >= nori ) o0[i] = 0;
 			*(__m128i*)(o0+i) = _mm_and_si128( *(__m128i*)(o0+i), _mm_cmplt_epi32( *(__m128i*)(o0+i), _mm_set1_epi32(nori) ) );
-			
+
 // 			o1[i] = o0[i]+1;
 			*(__m128i*)(o1+i) = *(__m128i*)(o0+i) + _mm_set1_epi32(1);
 // 			if( o1[i] >= nori ) o1[i] = 0;
 			*(__m128i*)(o1+i) = _mm_and_si128( *(__m128i*)(o1+i), _mm_cmplt_epi32( *(__m128i*)(o1+i), _mm_set1_epi32(nori) ) );
-			
+
 			__m128 v = _mm_loadu_ps( pgm+i ) * _mm_set1_ps( 1.0 / (BINS*BINS) );
 			*(__m128*)(v0+i) = (_mm_set1_ps(1.f)-w)*v;
 			*(__m128*)(v1+i) = w*v;
 		}
 		for( ; i<W; i++ ) {
 			float o = pgo[i] / M_PI * nori;
-			
+
 			o0[i] = o;
 			float w = o - o0[i];
 			if( o0[i] >= nori ) o0[i] = 0;
-			
+
 			o1[i] = o0[i]+1;
 			if( o1[i] >= nori ) o1[i] = 0;
-			
+
 			v0[i] = (1-w)*pgm[i] / (BINS*BINS);
 			v1[i] = w*pgm[i] / (BINS*BINS);
 		}
-		
+
 		// Add the bin
-		for(int i = 0; i < W0; phist+=nori){
-			for(int k = 0; k < BINS && i<W; i++, k++){
+		for(int i = 0; i < W0; phist+=nori) {
+			for(int k = 0; k < BINS && i<W; i++, k++) {
 				phist[o0[i]] += v0[i];
 				phist[o1[i]] += v1[i];
 			}
@@ -187,16 +199,25 @@ static void computeGradHist( Image & hist, const RMatrixXf & gm, const RMatrixXf
 	_mm_free( v1 );
 }
 void gradientHist( Image & hist, const RMatrixXf & gm, const RMatrixXf & go, int nori, int nbins) {
-	switch(nbins){
-		case 1: return computeGradHist<1>(hist, gm, go, nori);
-		case 2: return computeGradHist<2>(hist, gm, go, nori);
-		case 3: return computeGradHist<3>(hist, gm, go, nori);
-		case 4: return computeGradHist<4>(hist, gm, go, nori);
-		case 5: return computeGradHist<5>(hist, gm, go, nori);
-		case 6: return computeGradHist<6>(hist, gm, go, nori);
-		case 7: return computeGradHist<7>(hist, gm, go, nori);
-		case 8: return computeGradHist<8>(hist, gm, go, nori);
-		default: throw std::invalid_argument("Bin size too large!");
+	switch(nbins) {
+	case 1:
+		return computeGradHist<1>(hist, gm, go, nori);
+	case 2:
+		return computeGradHist<2>(hist, gm, go, nori);
+	case 3:
+		return computeGradHist<3>(hist, gm, go, nori);
+	case 4:
+		return computeGradHist<4>(hist, gm, go, nori);
+	case 5:
+		return computeGradHist<5>(hist, gm, go, nori);
+	case 6:
+		return computeGradHist<6>(hist, gm, go, nori);
+	case 7:
+		return computeGradHist<7>(hist, gm, go, nori);
+	case 8:
+		return computeGradHist<8>(hist, gm, go, nori);
+	default:
+		throw std::invalid_argument("Bin size too large!");
 	}
 }
 
@@ -255,7 +276,7 @@ RMatrixXf gradientMag( const Image & im, int norm_rad, float norm_const ) {
 	}
 	_mm_free( gx );
 	_mm_free( gy );
-	
+
 	if( norm_rad>0 ) {
 		RMatrixXf tmp_m(H,W);
 		float * tmp = tmp_m.data();

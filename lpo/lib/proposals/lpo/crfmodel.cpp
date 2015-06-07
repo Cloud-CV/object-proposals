@@ -25,7 +25,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "crfmodel.h"
-#include "crf/crf_features.h"
+#include "crf/crffeatures.h"
 #include "crf/loss.h"
 #include "segmentation/segmentation.h"
 #include "util/util.h"
@@ -47,7 +47,8 @@ BinaryCRF paramToCRF( const VectorXf & p ) {
 VectorXf CRFToParam( const BinaryCRF & crf ) {
 	const int n_u = crf.unary().size(), n_p = crf.pairwise().size();
 	VectorXf r( 2+n_u+n_p );
-	r[0] = n_u; r[1] = n_p;
+	r[0] = n_u;
+	r[1] = n_p;
 	r.segment(2,n_u) = crf.unary();
 	r.segment(n_u+2,n_p) = crf.pairwise();
 	return r;
@@ -68,7 +69,7 @@ void CRFModel::save(std::ostream& os) const {
 std::shared_ptr< LPOModelTrainer > CRFModel::makeTrainer(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< std::vector<Polygons> > & gt) const {
 	eassert( ios.size() == gt.size() );
 	std::vector< SegmentationOverlap > gt_overlap( ios.size() );
-#pragma omp parallel for
+	#pragma omp parallel for
 	for( int i=0; i<ios.size(); i++ )
 		gt_overlap[i] = SegmentationOverlap( ios[i]->s(), gt[i] );
 	return makeTrainerFromOverlap( ios, gt_overlap );
@@ -76,7 +77,7 @@ std::shared_ptr< LPOModelTrainer > CRFModel::makeTrainer(const std::vector< std:
 std::shared_ptr< LPOModelTrainer > CRFModel::makeTrainer(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector<RMatrixXs> & gt ) const {
 	eassert( ios.size() == gt.size() );
 	std::vector< SegmentationOverlap > gt_overlap( ios.size() );
-#pragma omp parallel for
+	#pragma omp parallel for
 	for( int i=0; i<ios.size(); i++ )
 		gt_overlap[i] = SegmentationOverlap( ios[i]->s(), gt[i] );
 	return makeTrainerFromOverlap( ios, gt_overlap );
@@ -101,7 +102,7 @@ public:
 				sample_to_im_id_.resize( 2*(k+n), -1 );
 				sample_to_seg_id_.resize( 2*(k+n), -1 );
 			}
-			for( int j=0; j<n; j++,k++ ){
+			for( int j=0; j<n; j++,k++ ) {
 				sample_to_im_id_[k] = i;
 				sample_to_seg_id_[k] = j;
 			}
@@ -116,9 +117,9 @@ class GlobalCRFTrainer: public CRFTrainer {
 protected:
 	std::vector< std::shared_ptr<StaticBinaryCRFFeatures> > features_;
 public:
-    GlobalCRFTrainer(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< SegmentationOverlap >& gt, const TrainingLoss& loss = default_training_loss): CRFTrainer( gt, loss ) {
+	GlobalCRFTrainer(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< SegmentationOverlap >& gt, const TrainingLoss& loss = default_training_loss): CRFTrainer( gt, loss ) {
 		features_.resize( ios.size() );
-#pragma omp parallel for
+		#pragma omp parallel for
 		for( int i=0; i<ios.size(); i++ )
 			features_[i] = std::make_shared<StaticBinaryCRFFeatures>( *ios[i] );
 	}
@@ -167,7 +168,7 @@ public:
 
 		// Propose like there is no tomorrow
 		VectorXf r( n_obj );
-#pragma omp parallel for
+		#pragma omp parallel for
 		for( int im_id=0; im_id<gt_.size(); im_id++ ) {
 			int n_seg = gt_[ im_id ].nObjects();
 			// Generate the proposals
@@ -191,12 +192,12 @@ public:
 GlobalCRFModel::GlobalCRFModel() {
 }
 std::vector<Proposals> GlobalCRFModel::propose(const ImageOverSegmentation& ios) const {
-    std::shared_ptr<BinaryCRFFeatures> f = std::make_shared<StaticBinaryCRFFeatures>( ios );
-    const int N = crfs_.size();
+	std::shared_ptr<BinaryCRFFeatures> f = std::make_shared<StaticBinaryCRFFeatures>( ios );
+	const int N = crfs_.size();
 	RMatrixXb r( N, ios.Ns() );
-    for( int i=0; i<N; i++ )
-        r.row( i ) = crfs_[i].map( f ).transpose().array()>0.5;
-    return std::vector<Proposals>( 1, Proposals( ios.s(), r ) );
+	for( int i=0; i<N; i++ )
+		r.row( i ) = crfs_[i].map( f ).transpose().array()>0.5;
+	return std::vector<Proposals>( 1, Proposals( ios.s(), r ) );
 }
 std::shared_ptr< LPOModelTrainer > GlobalCRFModel::makeTrainerFromOverlap(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< SegmentationOverlap > & gt) const {
 	eassert( ios.size() == gt.size() );
@@ -213,15 +214,15 @@ protected:
 	std::vector< std::shared_ptr<CachedSeedBinaryCRFFeatures> > features_;
 	std::vector< std::shared_ptr<ImageOverSegmentation> > ios_;
 public:
-    SeedCRFTrainer(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< SegmentationOverlap >& gt, const std::shared_ptr<SeedFunction> & seed, int max_seed, const TrainingLoss& loss = default_training_loss): CRFTrainer( gt, loss ), ios_(ios) {
-    	seeds_.resize( ios.size() );
+	SeedCRFTrainer(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< SegmentationOverlap >& gt, const std::shared_ptr<SeedFunction> & seed, int max_seed, const TrainingLoss& loss = default_training_loss): CRFTrainer( gt, loss ), ios_(ios) {
+		seeds_.resize( ios.size() );
 		features_.resize( ios.size() );
 		int n_seed = 0;
-#pragma omp parallel for
+		#pragma omp parallel for
 		for( int i=0; i<ios.size(); i++ ) {
 			// Compute the seeds
 			VectorXi seeds = seed->compute( *ios[i], max_seed );
-#pragma omp atomic
+			#pragma omp atomic
 			n_seed += seeds.size();
 
 			// Only keep seeds that are close to/in a ground truth segment
@@ -257,11 +258,11 @@ public:
 		std::vector<int> gt_seed;
 		for( int it=0; it<5 && gt_seed.size() == 0; it++ ) {
 			// See if there is any seed inside the object
-			for( int i=0; i<seeds_[im_id].size(); i++ ){
+			for( int i=0; i<seeds_[im_id].size(); i++ ) {
 				if (gt[seeds_[im_id][i]]>0)
 					gt_seed.push_back( seeds_[im_id][i] );
 			}
-			if( gt_seed.size() == 0 ){
+			if( gt_seed.size() == 0 ) {
 				VectorXs gt2 = gt;
 				// Dilate the object mask
 				for( Edge e: ios_[im_id]->edges() )
@@ -331,7 +332,7 @@ public:
 
 		// Propose like there is no tomorrow
 		VectorXf r( n_obj );
-#pragma omp parallel for
+		#pragma omp parallel for
 		for( int im_id=0; im_id<gt_.size(); im_id++ ) {
 			int n_seg = gt_[ im_id ].nObjects();
 			VectorXf best_iou = -VectorXf::Ones( n_seg );
@@ -367,26 +368,26 @@ public:
 SeedCRFModel::SeedCRFModel(const std::shared_ptr<SeedFunction> & seed, int max_seed):seed_(seed),max_seed_(max_seed) {
 }
 std::vector<Proposals> SeedCRFModel::propose(const ImageOverSegmentation& ios) const {
-    std::shared_ptr<SeedBinaryCRFFeatures> f = std::make_shared<SeedBinaryCRFFeatures>( ios );
-    VectorXi seeds = seed_->compute( ios, max_seed_ );
-    const int N = crfs_.size();
+	std::shared_ptr<SeedBinaryCRFFeatures> f = std::make_shared<SeedBinaryCRFFeatures>( ios );
+	VectorXi seeds = seed_->compute( ios, max_seed_ );
+	const int N = crfs_.size();
 	RMatrixXb r( N*seeds.size(), ios.Ns() );
 	for( int j=0,k=0; j<seeds.size(); j++ ) {
 		f->update( seeds[j] );
-	    for( int i=0; i<N; i++, k++ )
-    	    r.row( k ) = crfs_[i].map( f ).array().transpose()>0.5;
-    }
-    return std::vector<Proposals>( 1, Proposals( ios.s(), r ) );
+		for( int i=0; i<N; i++, k++ )
+			r.row( k ) = crfs_[i].map( f ).array().transpose()>0.5;
+	}
+	return std::vector<Proposals>( 1, Proposals( ios.s(), r ) );
 }
 void SeedCRFModel::load(std::istream& is) {
 	CRFModel::load( is );
-    seed_ = loadSeed( is );
-    is.read( (char *)&max_seed_, sizeof(max_seed_) );
+	seed_ = loadSeed( is );
+	is.read( (char *)&max_seed_, sizeof(max_seed_) );
 }
 void SeedCRFModel::save(std::ostream& os) const {
 	CRFModel::save( os );
-    saveSeed( os, seed_ );
-    os.write( (char *)&max_seed_, sizeof(max_seed_) );
+	saveSeed( os, seed_ );
+	os.write( (char *)&max_seed_, sizeof(max_seed_) );
 }
 std::shared_ptr< LPOModelTrainer > SeedCRFModel::makeTrainerFromOverlap(const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< SegmentationOverlap > & gt) const {
 	eassert( ios.size() == gt.size() );

@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -45,8 +45,7 @@
 #endif
 
 
-struct Edge_pickle : pickle_suite
-{
+struct Edge_pickle : pickle_suite {
 	static tuple getinitargs(const Edge& e) {
 		return make_tuple(e.a,e.b);
 	}
@@ -55,17 +54,39 @@ struct Edge_pickle : pickle_suite
 template <typename SCALAR>
 struct NumpyEquivalentType {};
 
-template <> struct NumpyEquivalentType<double> {enum { type_code = NPY_DOUBLE };};
-template <> struct NumpyEquivalentType<float> {enum { type_code = NPY_FLOAT };};
-template <> struct NumpyEquivalentType<int64_t> {enum { type_code = NPY_INT64 };};
-template <> struct NumpyEquivalentType<uint64_t> {enum { type_code = NPY_UINT64 };};
-template <> struct NumpyEquivalentType<int32_t> {enum { type_code = NPY_INT32 };};
-template <> struct NumpyEquivalentType<uint32_t> {enum { type_code = NPY_UINT32 };};
-template <> struct NumpyEquivalentType<int16_t> {enum { type_code = NPY_INT16 };};
-template <> struct NumpyEquivalentType<uint16_t> {enum { type_code = NPY_UINT16 };};
-template <> struct NumpyEquivalentType<int8_t> {enum { type_code = NPY_INT8 };};
-template <> struct NumpyEquivalentType<uint8_t> {enum { type_code = NPY_UINT8  };};
-template <> struct NumpyEquivalentType<bool> {enum { type_code = NPY_BOOL  };};
+template <> struct NumpyEquivalentType<double> {
+	enum { type_code = NPY_DOUBLE };
+};
+template <> struct NumpyEquivalentType<float> {
+	enum { type_code = NPY_FLOAT };
+};
+template <> struct NumpyEquivalentType<int64_t> {
+	enum { type_code = NPY_INT64 };
+};
+template <> struct NumpyEquivalentType<uint64_t> {
+	enum { type_code = NPY_UINT64 };
+};
+template <> struct NumpyEquivalentType<int32_t> {
+	enum { type_code = NPY_INT32 };
+};
+template <> struct NumpyEquivalentType<uint32_t> {
+	enum { type_code = NPY_UINT32 };
+};
+template <> struct NumpyEquivalentType<int16_t> {
+	enum { type_code = NPY_INT16 };
+};
+template <> struct NumpyEquivalentType<uint16_t> {
+	enum { type_code = NPY_UINT16 };
+};
+template <> struct NumpyEquivalentType<int8_t> {
+	enum { type_code = NPY_INT8 };
+};
+template <> struct NumpyEquivalentType<uint8_t> {
+	enum { type_code = NPY_UINT8  };
+};
+template <> struct NumpyEquivalentType<bool> {
+	enum { type_code = NPY_BOOL  };
+};
 
 template< typename T >
 void copyMat( T * dst, const T* src, int cols, int rows, bool transpose ) {
@@ -92,8 +113,7 @@ struct EigenMatrixToPython {
 		if( MatType::ColsAtCompileTime==1 || MatType::RowsAtCompileTime==1 ) {
 			npy_intp shape[1] = { mat.rows()*mat.cols() };
 			python_array = PyArrayObject_New(1, shape, NumpyEquivalentType<T>::type_code);
-		}
-		else {
+		} else {
 			npy_intp shape[2] = { mat.rows(), mat.cols() };
 			python_array = PyArrayObject_New(2, shape, NumpyEquivalentType<T>::type_code);
 		}
@@ -119,8 +139,7 @@ struct EigenMatrixFromPython {
 				return 0;
 			if ( PyArray_NDIM(array)==1 && R*C > 0 && R*C != PyArray_DIMS(array)[0] )
 				return 0;
-		}
-		else if ( R > 1 && PyArray_DIMS(array)[0] != R )
+		} else if ( R > 1 && PyArray_DIMS(array)[0] != R )
 			return 0;
 		else if ( C > 1 && PyArray_NDIM(array)<2 && PyArray_DIMS(array)[1] != C )
 			return 0;
@@ -129,30 +148,29 @@ struct EigenMatrixFromPython {
 	static void construct(PyObject* obj_ptr, converter::rvalue_from_python_stage1_data* data) {
 		const int R = MatType::RowsAtCompileTime;
 		const int C = MatType::ColsAtCompileTime;
-		
+
 		PyArrayObject *array = reinterpret_cast<PyArrayObject*>(obj_ptr);
 		int flags = PyArray_FLAGS(array);
 		if (!(flags & NPY_ARRAY_C_CONTIGUOUS) || !(flags & NPY_ARRAY_ALIGNED))
 			throw std::invalid_argument("Contiguous and aligned array required!");
 		const int ndims = PyArray_NDIM(array);
-		
+
 		const int dtype_size = (PyArray_DESCR(array))->elsize;
 		const int s1 = PyArray_STRIDE(array, 0), s2 = ndims > 1 ? PyArray_STRIDE(array, 1) : 0;
-		
+
 		int nrows=1, ncols=1;
 		if( R==1 || C==1 ) { // Vector
 			nrows = R==1 ? 1 : PyArray_SIZE2(array);
 			ncols = C==1 ? 1 : PyArray_SIZE2(array);
-		}
-		else {
+		} else {
 			nrows = (R == Dynamic) ? PyArray_DIMS(array)[0] : R;
 			if ( ndims > 1 )
 				ncols = (R == Dynamic) ? PyArray_DIMS(array)[1] : R;
 		}
 		T* raw_data = reinterpret_cast<T*>(PyArray_DATA(array));
-		
+
 		typedef Map< Matrix<T,Dynamic,Dynamic,RowMajor>,Aligned,Stride<Dynamic, Dynamic> > MapType;
-		
+
 		void* storage=((converter::rvalue_from_python_storage<MatType>*)(data))->storage.bytes;
 		new (storage) MatType;
 		MatType* emat = (MatType*)storage;
@@ -224,9 +242,13 @@ void translateAssertException(const AssertException& e) {
 }
 
 #if PY_MAJOR_VERSION >= 3
-int init_numpy() { import_array(); }
+int init_numpy() {
+	import_array();
+}
 #else
-void init_numpy() { import_array(); }
+void init_numpy() {
+	import_array();
+}
 #endif
 
 BOOST_PYTHON_FUNCTION_OVERLOADS(rasterize1,rasterize,1,2)
@@ -235,23 +257,23 @@ void defineUtil() {
 	// NOTE: This file has a ton of macros and templates, so it's going to take a while to compile ...
 	init_numpy();
 	boost::python::numeric::array::set_module_and_type("numpy", "ndarray");
-	
+
 	register_exception_translator<AssertException>(&translateAssertException);
-	
+
 	ADD_MODULE(util);
 	class_<Edge>("Edge")
 	.def(init<int,int>())
 	.def_readonly( "a", &Edge::a )
 	.def_readonly( "b", &Edge::b )
 	.def_pickle(Edge_pickle());
-	
+
 	class_< Edges >("Edges")
 	.def(init<Edges>())
 	.def(vector_indexing_suite<Edges>());
-	
+
 	def("qp",static_cast<VectorXf(*)(const RMatrixXf &, const VectorXf &, const RMatrixXf &, const VectorXf &)>(&qp));
 	def("qp",static_cast<VectorXd(*)(const RMatrixXd &, const VectorXd &, const RMatrixXd &, const VectorXd &)>(&qp));
-	
+
 	// NOTE: When overloading functions always make sure to put the array/matrix function before the vector one
 	MAT_CONV( MatrixX );
 	MAT_CONV( RMatrixX );
@@ -259,28 +281,28 @@ void defineUtil() {
 	MAT_CONV( ArrayXX );
 	MAT_CONV( RArrayXX );
 	MAT_CONV( ArrayX );
-	
+
 	// Defien some std::vectors
 	MAT_VEC( RMatrixX );
 	MAT_VEC( VectorX );
-	
+
 	class_< std::vector< std::vector<RMatrixXb> > >("VecVecRMatrixXb")
 	.def( vector_indexing_suite< std::vector< std::vector<RMatrixXb> >, true >() )
 	.def( VectorInitSuite< std::vector< std::vector<RMatrixXb> > >() );
-	
+
 	// Datastructures
 	class_< std::vector<int> >("VecInt").def( vector_indexing_suite< std::vector<int> >() ).def( VectorInitSuite< std::vector<int> >() );
 	class_< std::vector<float> >("VecFloat").def( vector_indexing_suite< std::vector<float> >() ).def( VectorInitSuite< std::vector<float> >() );
 	class_< std::vector<std::string> >("VecStr").def( vector_indexing_suite< std::vector<std::string> >() ).def( VectorInitSuite< std::vector<std::string> >() );
-	
+
 //	class_<Polygons>("Polygons").def( vector_indexing_suite<Polygons,true >() );
 	class_< std::vector<Polygons> >("VecPolygons").def( vector_indexing_suite< std::vector<Polygons> >() )
 	.def_pickle(VecPolygons_pickle_suite());
-	
+
 	// Rasterize
 	def("rasterize",static_cast<RMatrixXf(*)(const Polygon &,int)>(&rasterize),rasterize1());
 	def("rasterize",static_cast<RMatrixXf(*)(const Polygons &,int)>(&rasterize),rasterize2());
-	
+
 	// Facility location
 	class_<Floc>("Floc")
 	.def("energy",Floc::energy)
@@ -297,7 +319,7 @@ void defineUtil() {
 	.staticmethod("scaledLocal")
 	.def("tabu",Floc::tabu)
 	.staticmethod("tabu");
-	
+
 	// Geodesic distance
 	class_<GeodesicDistance>("GeodesicDistance",init<Edges,VectorXf>())
 	.def("compute",static_cast<VectorXf (GeodesicDistance::*)(int)const>( &GeodesicDistance::compute ))

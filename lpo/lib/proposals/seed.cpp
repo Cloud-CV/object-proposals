@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,8 +44,7 @@ void SeedFunction::load(std::istream &s) {
 VectorXi ImageSeedFunction::compute(const OverSegmentation &os, int M) const {
 	try {
 		return computeImageOverSegmentation( dynamic_cast<const ImageOverSegmentation&>( os ), M );
-	}
-	catch (std::bad_cast e) {
+	} catch (std::bad_cast e) {
 		throw std::invalid_argument("Image seed function not supported for ImageOverSegmentation.");
 	}
 }
@@ -102,7 +101,7 @@ VectorXi RandomSeed::compute( const OverSegmentation & os, int M ) const {
 LearnedSeed::LearnedSeed() {
 }
 LearnedSeed::LearnedSeed(const std::string& fn) {
-    load( fn );
+	load( fn );
 }
 void LearnedSeed::train( const std::vector< std::shared_ptr<ImageOverSegmentation> > &ios, const std::vector<VectorXs> & lbl, int max_feature, int n_seed_per_obj ) {
 	f_.train( ios, lbl );
@@ -122,7 +121,7 @@ public:
 		for( int i=0; i<(int)active.size(); i++ )
 			if( active[i] )
 				ids_.push_back( i );
-		
+
 		const int N = f_[0].cols();
 		initial_guess_ = VectorXf::Zero( N );
 	}
@@ -137,7 +136,7 @@ public:
 		e = 0;
 		double se = 0;
 		VectorXf g = 0*x;
-#pragma omp parallel for
+		#pragma omp parallel for
 		for( int i=0; i<(int)ids_.size(); i++ ) {
 			int id = ids_[i];
 			// Compute the response
@@ -148,21 +147,21 @@ public:
 			fm.rowwise() -= fm.colwise().mean();
 			fm.rowwise() -= fm.colwise().mean();
 			VectorXf fx = fm * x;
-			
+
 			// Compute the positive prob dist
 			int n_pos = l_[id].array().cast<int>().sum();
 			VectorXf fx_pos( n_pos );
 			for( int j=0,k=0; j<fx.size(); j++ )
 				if( l_[id][j] )
 					fx_pos[k++] = fx[j];
-			
+
 			// Compute the distribution
 			float mx = fx.maxCoeff(), mx_pos = fx_pos.maxCoeff();
 			VectorXf efx = (fx.array()-mx).exp(), efx_pos = (fx_pos.array()-mx_pos).exp();
 			// Update the energy
-#pragma omp atomic
+			#pragma omp atomic
 			se -= log(efx_pos.array().sum())+mx_pos - (log(efx.array().sum())+mx);
-			
+
 			// Update the gradient
 			efx.array() /= efx.array().sum();
 			efx_pos.array() /= efx_pos.array().sum();
@@ -171,8 +170,8 @@ public:
 				if( l_[id][j] )
 					d[j] -= efx_pos[k++];
 			VectorXf gg = -(d*fm).transpose();
-			
-#pragma omp critical
+
+			#pragma omp critical
 			g -= gg;
 		}
 		e = se + 0.5*L2_norm*x.squaredNorm();
@@ -209,11 +208,11 @@ void LearnedSeed::trainFromFeatures(std::vector< SeedFeature > &f, const std::ve
 				trainer.setInitialGuess( new_w );
 				new_w = minimizeLBFGS( trainer, e, 0 );
 			}
-			
+
 			int n_got = 0;
 			// Update the seeds and features
 			for( int i=0; i<lbl.size(); i++ )
-				if( active[i] ){
+				if( active[i] ) {
 					// Compute the response
 // 					VectorXf fw = f[i]*new_w;
 					RMatrixXf fm = ((RMatrixXf)f[i]);
@@ -222,10 +221,10 @@ void LearnedSeed::trainFromFeatures(std::vector< SeedFeature > &f, const std::ve
 					fm.rowwise() -= fm.colwise().mean();
 					fm.rowwise() -= fm.colwise().mean();
 					VectorXf fw = fm*new_w;
-					
+
 					int mx=0;
 					fw.maxCoeff( &mx );
-					
+
 					// Remove the current segment (or part of it)
 					if( l[i][mx] )
 						n_got++;
@@ -239,7 +238,7 @@ void LearnedSeed::trainFromFeatures(std::vector< SeedFeature > &f, const std::ve
 		int n_got = 0, n_active = 0;
 		// Update the seeds and features
 		for( int i=0; i<lbl.size(); i++ )
-			if( active[i] ){
+			if( active[i] ) {
 				// Compute the response
 				RMatrixXf fm = ((RMatrixXf)f[i]);
 				// Subtract the colwise mean (to make things more numerically stable) [might need to do it a few times]
@@ -250,10 +249,10 @@ void LearnedSeed::trainFromFeatures(std::vector< SeedFeature > &f, const std::ve
 // 				VectorXf fw = f[i]*best_w;
 				int mx=0;
 				fw.maxCoeff( &mx );
-				
+
 				// Update the feature
 				f[i].update( mx );
-				
+
 				n_active += active[i];
 				// Remove the current segment (or part of it)
 				if( l[i][mx] ) {
@@ -269,9 +268,9 @@ void LearnedSeed::trainFromFeatures(std::vector< SeedFeature > &f, const std::ve
 						n_got++;
 					}
 				}
-		}
-		
-		
+			}
+
+
 		// Add the learned feature
 		w_.push_back( best_w );
 		n_got_tot += n_got;
@@ -292,7 +291,7 @@ VectorXi LearnedSeed::computeImageOverSegmentation( const ImageOverSegmentation 
 			used[mx] = 1;
 			r.push_back( mx );
 		}
-		
+
 		f.update( mx );
 	}
 	return VectorXi::Map( r.data(), r.size() );
@@ -318,10 +317,10 @@ void LearnedSeed::save(const std::string &s) const {
 	save(os);
 }
 enum SeedType {
-	REGULAR=0,
-	RANDOM,
-	GEODESIC,
-	LEARNED
+    REGULAR=0,
+    RANDOM,
+    GEODESIC,
+    LEARNED
 };
 void saveSeed(std::ostream & os, const std::shared_ptr< SeedFunction >& s) {
 	int id = -1;

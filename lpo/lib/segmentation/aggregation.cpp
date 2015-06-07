@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,50 +35,50 @@ struct ClonableAggregationFunction:public AggregationFunction {
 };
 struct MaxFunction: public ClonableAggregationFunction<MaxFunction> {
 	float v_=0;
-	virtual void add( float v, float w=1 ){
+	virtual void add( float v, float w=1 ) {
 		if(w>0)
 			v_ = std::max( v_, v );
 	}
-	virtual float get() const{
+	virtual float get() const {
 		return v_;
 	}
 };
 struct MinFunction: public ClonableAggregationFunction<MinFunction> {
 	float v_=std::numeric_limits<float>::infinity();
-	virtual void add( float v, float w=1 ){
+	virtual void add( float v, float w=1 ) {
 		if(w>0)
 			v_ = std::min( v_, v );
 	}
-	virtual float get() const{
+	virtual float get() const {
 		return v_;
 	}
 };
 struct AvgFunction: public ClonableAggregationFunction<AvgFunction> {
 	float v_=0, n_=0;
-	virtual void add( float v, float w=1 ){
+	virtual void add( float v, float w=1 ) {
 		v_ += w*v;
 		n_ += w;
 	}
-	virtual float get() const{
+	virtual float get() const {
 		return v_ / (n_+1e-10);
 	}
 };
 struct PercentileFunction: public ClonableAggregationFunction<PercentileFunction> {
-	PercentileFunction( float p ):p_(p){
+	PercentileFunction( float p ):p_(p) {
 	}
 	float p_;
 	std::vector<float> v_;
-	virtual void add( float v, float w=1 ){
+	virtual void add( float v, float w=1 ) {
 		v_.push_back( v );
 	}
-	virtual float get() const{
+	virtual float get() const {
 		return quickSelect( v_, p_*(v_.size()-1)+0.5 );
 	}
 };
 std::shared_ptr< AggregationFunction > AggregationFunction::create(const std::string &name) {
 	std::string lname = name;
 	std::transform( lname.begin(), lname.end(), lname.begin(), tolower );
-	
+
 	if( lname == "mean" || lname == "avg" )
 		return std::make_shared<AvgFunction>();
 	else if( lname == "min" )

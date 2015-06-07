@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,22 +32,29 @@ class LPO {
 protected:
 	std::vector< std::shared_ptr<LPOModel> > models_;
 	void train(const std::vector< std::shared_ptr<LPOModelTrainer> >& trainers, int n_samples, const float f0=0.1 );
+	bool box_nms_;
+	float max_iou_;
 public:
+	LPO();
 	// Model setup
 	void addGlobal();
 	void addSeed( std::shared_ptr<SeedFunction> seed, int max_seed );
 	void addGBS(const std::string & color_space, const std::vector<float> & params, int max_size=1000 );
-	
+
 	// Proposal generation
-	std::vector<Proposals> propose( const ImageOverSegmentation & ios, float max_iou=0.9, int model_id=-1, bool box_nms=false ) const;
-	
+	std::vector<Proposals> propose( const ImageOverSegmentation & ios, float max_iou=-1, int model_id=-1, int box_nms=-1 ) const;
+
 	// Training functions
 	void train( const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector<RMatrixXs> & gt, const float f0=0.1 );
 	void train( const std::vector< std::shared_ptr<ImageOverSegmentation> > & ios, const std::vector< std::vector<Polygons> > & gt, const float f0=0.1 );
-	
+
 	int nModels() const;
 	std::vector<std::string> modelTypes() const;
-	
+
+	// Set box nms and max_iou
+	void setBoxNMS(bool v);
+	void setMaxIOU(float v);
+
 	// Saving and loading functions
 	void save( std::ostream & os ) const;
 	void load( std::istream & is );

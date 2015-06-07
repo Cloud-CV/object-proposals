@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -29,12 +29,12 @@
 #include <vector>
 
 template<int C>
-static void downsample2( float *res, const float *im, int W, int H, int NW, int NH ){
+static void downsample2( float *res, const float *im, int W, int H, int NW, int NH ) {
 	const int h_nbrs = H/NH, w_nbrs = W/NW;
 	eassert( h_nbrs == 2 && w_nbrs == 2 );
 	bool use_sse = 1 < C && C <= 4;
-	for(int nj = 0; nj < NH; nj++){
-		for(int ni = 0; ni < NW; ni++){
+	for(int nj = 0; nj < NH; nj++) {
+		for(int ni = 0; ni < NW; ni++) {
 			float * pres = res + (nj*NW+ni)*C;
 			int id = ((2*ni) + (2*nj)*W)*C;
 			if( use_sse ) {
@@ -49,8 +49,7 @@ static void downsample2( float *res, const float *im, int W, int H, int NW, int 
 				sm *= _mm_set1_ps(0.25f);
 				for(int c = 0; c < C; c++)
 					pres[c] = sm[c];
-			}
-			else {
+			} else {
 				for(int c = 0; c < C; c++ )
 					pres[c] = im[id+c];
 				if( 2*ni+1 < W )
@@ -66,13 +65,13 @@ static void downsample2( float *res, const float *im, int W, int H, int NW, int 
 	}
 }
 template<int C>
-static void downsample( float *res, const float *im, int W, int H, int NW, int NH ){
+static void downsample( float *res, const float *im, int W, int H, int NW, int NH ) {
 	const int h_nbrs = H/NH, w_nbrs = W/NW;
- 	if( h_nbrs == 2 && w_nbrs == 2 )
- 		return downsample2<C>( res, im, W, H, NW, NH );
+	if( h_nbrs == 2 && w_nbrs == 2 )
+		return downsample2<C>( res, im, W, H, NW, NH );
 	memset( res, 0, NW*NH*C*sizeof(float));
-	for(int j = 0; j < H; j++){
-		for(int i = 0; i < W; i++){
+	for(int j = 0; j < H; j++) {
+		for(int i = 0; i < W; i++) {
 			const int ni = i*NW/W, nj = j*NH/H;
 			for(int c = 0; c < C; c++)
 				res[nj*NW*C + ni*C + c] += im[j*W*C + i*C + c] / (h_nbrs*w_nbrs);
@@ -102,11 +101,11 @@ Image downsample( const Image & image, int NW, int NH ) {
 	return res;
 }
 template<typename T>
-static void resize( T *res, const T *im, int W, int H, int NW, int NH, int C ){
+static void resize( T *res, const T *im, int W, int H, int NW, int NH, int C ) {
 	const float dy = 1.0*(H-1)/(NH-1), dx = 1.0*(W-1)/(NW-1);
 	memset( res, 0, NW*NH*C*sizeof(T));
-	for(int j = 0; j < NH; j++){
-		for(int i = 0; i < NW; i++){
+	for(int j = 0; j < NH; j++) {
+		for(int i = 0; i < NW; i++) {
 			const int i0 = i*dx       , j0 = j*dy;
 			const int i1 = i0+(i0<W-1), j1 = j0+(j0<H-1);
 			const float wi = i*dx-i0  , wj = j*dy-j0;

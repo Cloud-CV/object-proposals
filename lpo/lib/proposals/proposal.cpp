@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -46,7 +46,7 @@ void Proposals::save(std::ostream& os) const {
 bool Proposals::operator==(const Proposals& o) const {
 	return s == o.s && p == o.p;
 }
-RMatrixXi Proposals::toBoxes() const{
+RMatrixXi Proposals::toBoxes() const {
 	return maskToBox( s, p );
 }
 
@@ -79,40 +79,40 @@ std::vector<Proposals> nms( const std::vector<Proposals> & proposals, const std:
 	}
 	const RMatrixXi ms = mergeOverSegmentations(s);
 	const int Nms = ms.maxCoeff()+1;
-	
+
 	VectorXu ms_area = VectorXu::Zero( Nms );
 	for( int j=0; j<ms.rows(); j++ )
 		for( int i=0; i<ms.cols(); i++ )
 			ms_area[ ms(j,i) ]++;
-	
+
 	std::vector<IOUSet> iou_set;
 	std::vector<VectorXs> ids;
 	for( int i=0; i<s.size(); i++ ) {
 		iou_set.push_back( s[i] );
 		ids.push_back( map_id( ms, s[i] ) );
 	}
-	
+
 	std::vector<int> pb;
 	pb.reserve( Nms );
-	
+
 	std::vector< std::vector< VectorXb > > r( proposals.size() );
 	for( int i: order ) {
 		VectorXb p = proposals[ s_id[i] ].p.row( p_id[i] );
 		// Run NMS
 		if( !p.any() || iou_set[ s_id[i] ].intersects(p,max_iou) )
 			continue;
-		
+
 		Vector4s bbox = iou_set[ s_id[i] ].computeBBox( p );
-		
+
 		// Project each segmentation onto the common OS
 		pb.clear();
 		for( int j=0; j<Nms; j++ )
 			if( p[ ids[ s_id[i] ][j] ] )
 				pb.push_back( j );
-		
+
 		bool intersects = false;
-		for( int k=0; !intersects && k<iou_set.size(); k++ ) 
-			if( s_id[i] != k ){
+		for( int k=0; !intersects && k<iou_set.size(); k++ )
+			if( s_id[i] != k ) {
 				// Reproject the common OS to the current os
 				VectorXu p_area = VectorXu::Zero( Ns[k] );
 				for( int j: pb )
@@ -126,8 +126,8 @@ std::vector<Proposals> nms( const std::vector<Proposals> & proposals, const std:
 			r[ s_id[i] ].push_back( p );
 		}
 	}
-	
-	
+
+
 	std::vector<Proposals> res( proposals.size() );
 	for( int i=0; i<proposals.size(); i++ ) {
 		res[i].s = proposals[i].s;
@@ -154,21 +154,21 @@ std::vector<Proposals> boxNms( const std::vector<Proposals> & proposals, const s
 	std::multimap<float,int> area_map;
 	area_map.insert(std::make_pair(0.f,-1));
 	area_map.insert(std::make_pair(1e6f,-1));
-	
+
 	std::vector<Vector4i> boxes;
 	for( const Proposals & p: proposals ) {
 		RMatrixXi b = maskToBox( p.s, p.p );
 		for( int i=0; i<b.rows(); i++ )
 			boxes.push_back( b.row(i) );
 	}
-	
+
 	std::vector<bool> is_good( boxes.size() );
 	for( int i: order ) {
 		Vector4i b = boxes[i];
 		float ba = boxArea(b);
 		if (min_box_size > ba)
 			continue;
-		
+
 		bool overlaps = false;
 		auto i0 = area_map.upper_bound(ba);
 		auto i1 = i0--;
@@ -176,12 +176,10 @@ std::vector<Proposals> boxNms( const std::vector<Proposals> & proposals, const s
 			if( i1->second >= 0 && ba*ba > i1->first*i0->first && ba > max_iou*i1->first ) {
 				overlaps = boxIou(boxes[i1->second],b) >= max_iou;
 				++i1;
-			}
-			else if( i0->second >= 0 && ba * max_iou < i0->first ) {
+			} else if( i0->second >= 0 && ba * max_iou < i0->first ) {
 				overlaps = boxIou(boxes[i0->second],b) >= max_iou;
 				--i0;
-			}
-			else
+			} else
 				break;
 		}
 		is_good[i] = !overlaps;
@@ -195,7 +193,7 @@ std::vector<Proposals> boxNms( const std::vector<Proposals> & proposals, const s
 		for( int j=0; j<proposals[i].p.rows(); j++,k++ )
 			if( is_good[k] )
 				good_p.push_back( proposals[i].p.row(j) );
-		
+
 		res[i].p = RMatrixXb( good_p.size(), proposals[i].p.cols() );
 		for( int j=0; j<good_p.size(); j++ )
 			res[i].p.row(j) = good_p[j];
@@ -218,7 +216,7 @@ std::vector<Proposals> boxNms( const std::vector<Proposals> & proposals, float m
 
 Proposals nms( const Proposals & proposals, const std::vector<int> & order, float max_iou ) {
 	IOUSet iou_set( proposals.s );
-	
+
 	std::vector< VectorXb > r;
 	for( int i: order ) {
 		VectorXb p = proposals.p.row( i );
@@ -226,7 +224,7 @@ Proposals nms( const Proposals & proposals, const std::vector<int> & order, floa
 		if( p.any() && iou_set.addIfNotIntersects(p,max_iou) )
 			r.push_back( p );
 	}
-	
+
 	Proposals res;
 	res.s = proposals.s;
 	res.p = RMatrixXb( r.size(), proposals.p.cols() );

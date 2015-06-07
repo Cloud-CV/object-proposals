@@ -42,8 +42,8 @@ classdef LpoProposal
         function obj = LpoProposal( varargin )
             obj.c_p = lpo_mex( 'newProposal', varargin{:} );
         end
-        function r = propose(this,os)
-            r = lpo_mex( 'Proposal_propose', this.c_p, os.c_s );
+        function [seg,prop] = propose(this,os)
+            [seg,prop] = lpo_mex( 'Proposal_propose', this.c_p, os.c_s );
         end
         function sobj = saveobj(this)
             error( 'You cannot load/save a Proposal object!' );

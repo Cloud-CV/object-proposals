@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -74,7 +74,7 @@ static Image8u crop( const Image8u & a, int x, int y, int W, int H ) {
 	if( x>=0 && y>=0 && W>0 && H>0 ) {
 		const int C = a.C();
 		Image8u r(W,H,C);
-		
+
 		for( int i=0; i<H; i++ )
 			memcpy( r.data() + i*W*C, a.data()+(i+y)*a.W()*C+x*C, W*C*sizeof(uint8_t) );
 		return r;
@@ -105,14 +105,14 @@ static dict loadEntry( const std::string & name, const std::vector<short> & clas
 	const std::string NYU_LABELS = nyu_dir + "/%s_lbl.png";
 	const std::string NYU_INSTANCES = nyu_dir + "/%s_ins.png";
 	const std::string NYU_INFO   = nyu_dir + "/%s_info.png";
-	
+
 	dict r;
 	char buf[1024];
 	sprintf( buf, NYU_LABELS.c_str(), name.c_str() );
 	np::ndarray clbl = readIPNG( buf, 16 );
 	if( !clbl.get_nd() )
 		return dict();
-	
+
 	sprintf( buf, NYU_INSTANCES.c_str(), name.c_str() );
 	np::ndarray olbl = readIPNG( buf, 16 );
 	if( !olbl.get_nd() )
@@ -123,35 +123,38 @@ static dict loadEntry( const std::string & name, const std::vector<short> & clas
 	remapClass( clbl, class_set );
 	r["class"] = clbl;
 	r["segmentation"] = olbl;
-	
+
 	sprintf( buf, NYU_IMAGES.c_str(), name.c_str() );
 	std::shared_ptr<Image8u> im = imreadShared( buf );
 	if( !im || im->empty() )
 		return dict();
 	r["image"] = crop( *im, x, y, W, H );
-	
+
 	sprintf( buf, NYU_DEPTHS.c_str(), name.c_str() );
 	np::ndarray d = toNumpy( RMatrixXf(readPNG16( buf ).cast<float>().array() / DEPTH_SCALE) );
 	if( !d.get_nd() )
 		return dict();
 	r["depth"] = crop( d, x, y, W, H );
-	
+
 	sprintf( buf, NYU_INFO.c_str(), name.c_str() );
 	std::ifstream is( buf );
 	std::string tmp;
-	std::getline( is, tmp ); r["type"] = tmp;
-	std::getline( is, tmp ); r["scene"] = tmp;
-	std::getline( is, tmp ); r["accel"] = tmp;
-	
+	std::getline( is, tmp );
+	r["type"] = tmp;
+	std::getline( is, tmp );
+	r["scene"] = tmp;
+	std::getline( is, tmp );
+	r["accel"] = tmp;
+
 	r["name"] = name;
 	return r;
 }
 static list loadDataset( bool train, bool valid, bool test, const std::vector<short> & class_set, int x=-1, int y=-1, int W=-1, int H=-1 ) {
-	bool read[3]={train,valid,test};
-	std::string fn[3]={"/train.txt","","/test.txt"};
+	bool read[3]= {train,valid,test};
+	std::string fn[3]= {"/train.txt","","/test.txt"};
 	list r;
-	for( int i=0; i<3; i++ ) 
-		if( read[i] ){
+	for( int i=0; i<3; i++ )
+		if( read[i] ) {
 			std::ifstream is(nyu_dir+"/"+fn[i]);
 			while(is.is_open() && !is.eof()) {
 				std::string l;

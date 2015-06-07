@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -76,26 +76,33 @@ static const int N_OBJ_F = (N_OBJ_CONTEXT+1)*(N_OBJ_EDGE+N_OBJ_COL+N_OBJ_COL_DIF
 static const int N_DYNAMIC_HAS_SEED = 0, N_DYNAMIC_COL = 11, N_DYNAMIC_GEO = sizeof(EDGE_P)/sizeof(EDGE_P[0]);
 static const int N_STATIC_F = N_STATIC_POS + N_STATIC_GEO + N_STATIC_EDGE + (N_OBJ_F>1);
 static const int N_DYNAMIC_F = N_DYNAMIC_HAS_SEED + N_DYNAMIC_COL + N_DYNAMIC_GEO;
-	
+
 SeedFeature::SeedFeature( const ImageOverSegmentation & ios, const VectorXf & obj_param ) {
 	Image rgb_im = ios.image();
 	const RMatrixXs & s = ios.s();
 	const int Ns = ios.Ns(), W = rgb_im.W(), H = rgb_im.H();
-	
+
 	// Initialize various values
-	VectorXf area  = bin( s, 1, [&](int x, int y){ return 1.f; } );
+	VectorXf area  = bin( s, 1, [&](int x, int y) {
+		return 1.f;
+	} );
 	VectorXf norm = (area.array()+1e-10).cwiseInverse();
-	pos_ = norm.asDiagonal() * bin( s, 6, [&](int i, int j){ float x=1.0*i/(W-1)-0.5,y=1.0*j/(H-1)-0.5; return makeArray<6>( x, y, x*x, y*y, fabs(x), fabs(y) ); } );
+	pos_ = norm.asDiagonal() * bin( s, 6, [&](int i, int j) {
+		float x=1.0*i/(W-1)-0.5,y=1.0*j/(H-1)-0.5;
+		return makeArray<6>( x, y, x*x, y*y, fabs(x), fabs(y) );
+	} );
 	if (N_DYNAMIC_COL) {
 		Image lab_im;
 		rgb2lab( lab_im, rgb_im );
-		col_ = norm.asDiagonal() * bin( s, 6, [&](int x, int y){ return makeArray<6>( rgb_im(y,x, 0), rgb_im(y,x,1), rgb_im(y,x,2), lab_im(y,x,0), lab_im(y,x,1), lab_im(y,x,2) ); } );
+		col_ = norm.asDiagonal() * bin( s, 6, [&](int x, int y) {
+			return makeArray<6>( rgb_im(y,x, 0), rgb_im(y,x,1), rgb_im(y,x,2), lab_im(y,x,0), lab_im(y,x,1), lab_im(y,x,2) );
+		} );
 	}
-	
+
 	const int N_GEO = sizeof(EDGE_P)/sizeof(EDGE_P[0]);
 	for( int i=0; i<N_GEO; i++ )
 		gdist_.push_back( GeodesicDistance(ios.edges(),ios.edgeWeights().array().pow(EDGE_P[i])+1e-3) );
-	
+
 	// Compute the static features
 	static_f_ = RMatrixXf::Zero( Ns, N_STATIC_F );
 	int o=0;
@@ -128,7 +135,7 @@ SeedFeature::SeedFeature( const ImageOverSegmentation & ios, const VectorXf & ob
 	}
 	if( N_OBJ_F>1 )
 		static_f_.col(o++) = (computeObjFeatures(ios)*obj_param).transpose();
-	
+
 	// Initialize the dynamic features
 	dynamic_f_ = RMatrixXf::Zero( Ns, N_DYNAMIC_F );
 	n_ = 0;
@@ -140,23 +147,27 @@ RMatrixXf SeedFeature::computeObjFeatures( const ImageOverSegmentation & ios ) {
 	const RMatrixXs & s = ios.s();
 	const Edges & g = ios.edges();
 	const int Ns = ios.Ns();
-	
+
 	RMatrixXf r = RMatrixXf::Zero( Ns, N_OBJ_F );
 	if( N_OBJ_F<=1 ) return r;
-	VectorXf area  = bin( s, 1, [&](int x, int y){ return 1.f; } );
+	VectorXf area  = bin( s, 1, [&](int x, int y) {
+		return 1.f;
+	} );
 	VectorXf norm = (area.array()+1e-10).cwiseInverse();
-	
+
 	r.col(0).setOnes();
 	int o = 1;
 	if (N_OBJ_COL>=6) {
 		Image lab_im;
 		rgb2lab( lab_im, rgb_im );
-		r.middleCols(o,6) = norm.asDiagonal() * bin( s, 6, [&](int x, int y){ return makeArray<6>( lab_im(y,x,0), lab_im(y,x,1), lab_im(y,x,2), lab_im(y,x,0)*lab_im(y,x,0), lab_im(y,x,1)*lab_im(y,x,1), lab_im(y,x,2)*lab_im(y,x,2) ); } );
+		r.middleCols(o,6) = norm.asDiagonal() * bin( s, 6, [&](int x, int y) {
+			return makeArray<6>( lab_im(y,x,0), lab_im(y,x,1), lab_im(y,x,2), lab_im(y,x,0)*lab_im(y,x,0), lab_im(y,x,1)*lab_im(y,x,1), lab_im(y,x,2)*lab_im(y,x,2) );
+		} );
 		RMatrixXf col = r.middleCols(o,3);
 		if( N_OBJ_COL >= 9)
 			r.middleCols(o+6,3) = col.array().square();
 		o += N_OBJ_COL;
-		
+
 		// Add color difference features
 		if( N_OBJ_COL_DIFF ) {
 			RMatrixXf bcol = RMatrixXf::Ones( col.rows(), col.cols()+1 );
@@ -175,7 +186,9 @@ RMatrixXf SeedFeature::computeObjFeatures( const ImageOverSegmentation & ios ) {
 		}
 	}
 	if( N_OBJ_POS >= 2 ) {
-		RMatrixXf xy = norm.asDiagonal() * bin( s, 2, [&](int x, int y){ return makeArray<2>( 1.0*x/(s.cols()-1)-0.5, 1.0*y/(s.rows()-1)-0.5 ); } );
+		RMatrixXf xy = norm.asDiagonal() * bin( s, 2, [&](int x, int y) {
+			return makeArray<2>( 1.0*x/(s.cols()-1)-0.5, 1.0*y/(s.rows()-1)-0.5 );
+		} );
 		r.middleCols(o,2) = xy;
 		o+=2;
 		if( N_OBJ_POS >=4 ) {
@@ -221,13 +234,13 @@ void SeedFeature::update( int n ) {
 	if( N_DYNAMIC_GEO>=gdist_.size() )
 		for( int i=0; i<gdist_.size(); i++ )
 			dynamic_f_.col(o++) = gdist_[i].update( n ).d();
-	
+
 	if( N_DYNAMIC_COL ) {
 		RowVectorXf col = col_.row(n);
 		for( int i=0; i<col_.rows(); i++ ) {
 			RowVectorXf cd = (col_.row(i)-col).array().square().matrix();
 			var_.row(i) += cd;
-			
+
 			if( N_DYNAMIC_COL >= 11 ) {
 				float c1 = sqrt(cd.head(3).sum()), c2 = sqrt(cd.tail(3).sum()), d = (pos_.row(n).head(2)-pos_.row(i).head(2)).norm();
 				min_dist_(i,0) = std::min( min_dist_(i,0), c1 );
@@ -278,24 +291,24 @@ void SeedFeatureFactory::train( const std::vector< std::shared_ptr<ImageOverSegm
 		n_pos += (l.array()>=0).cast<int>().sum();
 		n_neg += (l.array()==-1).cast<int>().sum();
 	}
-	
+
 	// Collect training examples
 	float sampling_freq[] = {0.5f*N_SAMPLES / n_neg, 0.5f*N_SAMPLES / n_pos};
 	std::vector<RowVectorXf> f;
 	std::vector<float> l;
-#pragma omp parallel for
+	#pragma omp parallel for
 	for( int i=0; i<ios.size(); i++ ) {
 		RMatrixXf ftr = SeedFeature::computeObjFeatures( *ios[i] );
 		for( int j=0; j<ios[i]->Ns(); j++ )
 			if( lbl[i][j] >= -1 && rand() < rand.max()*sampling_freq[ lbl[i][j]>=0 ] ) {
-#pragma omp critical
+				#pragma omp critical
 				{
 					l.push_back( lbl[i][j]>=0 );
 					f.push_back( ftr.row(j) );
 				}
 			}
 	}
-	
+
 	printf("    - Computing parameters\n");
 	// Fit the ranking functions
 	RMatrixXf A( f.size(), f[0].size() );
@@ -304,7 +317,7 @@ void SeedFeatureFactory::train( const std::vector< std::shared_ptr<ImageOverSegm
 		A.row(i) = f[i];
 		b[i] = l[i];
 	}
-	
+
 	// Solve A*x = b
 	param_ = A.colPivHouseholderQr().solve(b);
 	printf("    - done %f\n",(A*param_-b).array().abs().mean());
@@ -316,9 +329,9 @@ void SeedFeatureFactory::save( std::ostream & os ) const {
 	saveMatrixX( os, param_ );
 }
 SeedFeature::operator RMatrixXf() const {
-    RMatrixXf r(static_f_.rows(), static_f_.cols()+dynamic_f_.cols());
-    r.leftCols( static_f_.cols() ) = static_f_;
-    r.rightCols( dynamic_f_.cols() ) = dynamic_f_;
-    return r;
+	RMatrixXf r(static_f_.rows(), static_f_.cols()+dynamic_f_.cols());
+	r.leftCols( static_f_.cols() ) = static_f_;
+	r.rightCols( dynamic_f_.cols() ) = dynamic_f_;
+	return r;
 }
 

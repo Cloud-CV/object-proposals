@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -43,12 +43,12 @@ template<bool typed=false>
 static std::vector<char> readChunk( std::ifstream & is, std::string & type ) {
 	uint32_t len , crc;
 	auto pos = is.tellg();
-	
+
 	is.read( (char*)&len, 4 );
 	len = ntohl( len );
 	if( len <= 0 )
 		return std::vector<char>();
-	
+
 	char tag[5] = {0};
 	is.read( tag, 4 );
 	if( typed && type != tag ) {
@@ -56,11 +56,11 @@ static std::vector<char> readChunk( std::ifstream & is, std::string & type ) {
 		return std::vector<char>();
 	}
 	type = tag;
-	
+
 	std::vector<char> buf( len );
 	is.read( (char*)buf.data(), len );
 	is.read( (char*)&crc, 4 );
-	
+
 	if( CHECK_CRC ) {
 		uint32_t check_crc = 0L;
 		check_crc = crc32(check_crc, (const Bytef*)type.data(), 4);
@@ -70,7 +70,7 @@ static std::vector<char> readChunk( std::ifstream & is, std::string & type ) {
 		if( crc != check_crc )
 			printf("CRC failed!\n");
 	}
-	
+
 	return buf;
 }
 static void writeChunk( std::ofstream & os, const std::string & type, const std::vector<char> & data ) {
@@ -125,20 +125,20 @@ static std::vector<char> readDat( std::ifstream & is ) {
 	if (type == "IDAT" || type == "fdAT") {
 		int o = 4*(type == "fdAT");
 		Bytef buf[8192];
-		
+
 		z_stream d_stream; /* compression stream */
 		int err;
-		
+
 		d_stream.zalloc = (alloc_func)0;
 		d_stream.zfree = (free_func)0;
 		d_stream.opaque = (voidpf)0;
-		
+
 		d_stream.next_in  = (Bytef*)(data.data()+o);
 		d_stream.avail_in = data.size()-o;
-		
+
 		err = inflateInit(&d_stream);
 		CHECK_ERR(err, "inflateInit");
-		
+
 		for (;;) {
 			d_stream.next_out = buf;            /* discard the output */
 			d_stream.avail_out = (uInt)sizeof(buf);
@@ -218,16 +218,16 @@ std::vector<RMatrixXu8> readAPNG( const std::string & filename ) {
 	std::ifstream is( filename.c_str(), std::fstream::in | std::fstream::binary );
 	if( !is.is_open() )
 		return std::vector<RMatrixXu8>();
-	char magic[9]={0};
+	char magic[9]= {0};
 	is.read( magic, 8 );
 	if ((std::string)magic != "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A")
 		printf("PNG bad magic!\n");
-	
+
 	int W=0, H=0;
 	while(!readHDR( is, W, H ) && !is.eof());
-	
+
 	std::vector<RMatrixXu8> r;
-	while(!is.eof() && is.is_open()){
+	while(!is.eof() && is.is_open()) {
 		std::vector<char> d = readDat( is );
 		if(d.size())
 			r.push_back( RMatrixXu8::Map( reinterpret_cast<uint8_t*>(d.data()), H, W+1 ).rightCols( W ) );
@@ -237,7 +237,7 @@ std::vector<RMatrixXu8> readAPNG( const std::string & filename ) {
 void writeAPNG( const std::string & filename, const std::vector<RMatrixXu8> & labels ) {
 	eassert( labels.size()>0 );
 	int N=labels.size(),W=labels[0].cols(),H=labels[0].rows();
-	
+
 	std::ofstream os( filename.c_str(), std::fstream::out | std::fstream::binary );
 	char magic[9]="\x89\x50\x4E\x47\x0D\x0A\x1A\x0A";
 	os.write( magic, 8 );
@@ -260,17 +260,17 @@ RMatrixX<T> readIPNG_T( const std::string & filename ) {
 	std::ifstream is( filename.c_str(), std::fstream::in | std::fstream::binary );
 	if( !is.is_open() )
 		return RMatrixX<T>();
-	char magic[9]={0};
+	char magic[9]= {0};
 	is.read( magic, 8 );
 	if ((std::string)magic != "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A")
 		printf("PNG bad magic!\n");
-	
+
 	int W=0, H=0;
 	while(!readHDR( is, W, H ) && !is.eof());
-	
+
 	std::vector< T > data;
 	std::vector< uint16_t > lbl_map;
-	while(!is.eof() && is.is_open()){
+	while(!is.eof() && is.is_open()) {
 		if( lbl_map.size() == 0 )
 			lbl_map = readRemap( is );
 		std::vector<char> d = readDat( is );
@@ -296,16 +296,16 @@ RMatrixXus readPNG16(const std::string &filename) {
 	std::ifstream is( filename.c_str(), std::fstream::in | std::fstream::binary );
 	if( !is.is_open() )
 		return RMatrixXus();
-	char magic[9]={0};
+	char magic[9]= {0};
 	is.read( magic, 8 );
 	if ((std::string)magic != "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A")
 		printf("PNG bad magic!\n");
-	
+
 	int W=0, H=0;
 	while(!readHDR( is, W, H ) && !is.eof());
-	
+
 	std::vector< short > data;
-	while(!is.eof() && is.is_open()){
+	while(!is.eof() && is.is_open()) {
 		std::vector<char> r = readDat( is );
 		if(r.size()) {
 			size_t o = data.size();

@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -44,7 +44,7 @@ protected:
 	VectorXf weight_;
 	virtual float score( const ArrayXf & p ) const = 0;
 public:
-	LabeledSplit(){
+	LabeledSplit() {
 	}
 	LabeledSplit( const RMatrixXf & lbl, const VectorXf & weight ): weight_(weight) {
 		if( lbl.cols()!= 1 )
@@ -72,12 +72,12 @@ public:
 		for( int i=0; i<f.size(); i++ )
 			elements[i] = std::make_pair( f[i], i );
 		std::sort(elements.begin(), elements.end() );
-		
+
 		// And compute the probabilities and cirterion
 		ArrayXf wl = 1e-20*ArrayXf::Ones(N), wr = 1e-20*ArrayXf::Ones(N);
 		for( int i=0; i<lbl_.size(); i++ )
 			wr[ lbl_[i] ] += weight_[i];
-		
+
 		// Initialize the thresholds
 		float best_gain = 0, tbest = (elements.front().first+elements.back().first)/2, last_t = elements.front().first;
 		const float tot_s = score( wr/wr.sum() );
@@ -174,16 +174,16 @@ VectorXf project1D( const RMatrixXf & Y, int * rep_label=NULL ) {
 // 		for( int i=0; i<samples.size(); i++ )
 // 			sY.row(i) = dY.row( samples[i] );
 // 	}
-	
+
 	// ... and use (pc > 0)
 	VectorXf lbl = VectorXf::Zero( Y.rows() );
-	
+
 	// Find the largest PC of (dY.T * dY) and project onto it
 	if( very_fast ) {
 		// Find the largest PC using poweriterations
 		VectorXf U = VectorXf::Random( dY.cols() );
 		U = U.array() / U.norm()+std::numeric_limits<float>::min();
-		for( int it=0; it<20; it++ ){
+		for( int it=0; it<20; it++ ) {
 			// Normalize
 			VectorXf s = dY.transpose()*(dY*U);
 			s.array() /= s.norm()+std::numeric_limits<float>::min();
@@ -193,15 +193,13 @@ VectorXf project1D( const RMatrixXf & Y, int * rep_label=NULL ) {
 		}
 		// Project onto the PC
 		lbl = dY*U;
-	}
-	else if(fast) {
+	} else if(fast) {
 		// Compute the eigen values of the covariance (and project onto the largest eigenvector)
 		MatrixXf cov = dY.transpose()*dY;
 		SelfAdjointEigenSolver<MatrixXf> eigensolver(0.5*(cov+cov.transpose()));
 		MatrixXf ev = eigensolver.eigenvectors();
 		lbl = dY * ev.col( ev.cols()-1 );
-	}
-	else {
+	} else {
 		// Use the SVD
 		JacobiSVD<RMatrixXf> svd = dY.jacobiSvd(ComputeThinU | ComputeThinV );
 		// Project onto the largest PC
@@ -210,7 +208,7 @@ VectorXf project1D( const RMatrixXf & Y, int * rep_label=NULL ) {
 	// Find the representative label
 	if( rep_label )
 		dY.array().square().rowwise().sum().minCoeff( rep_label );
-	
+
 	return (lbl.array() < 0).cast<float>();
 }
 
@@ -219,7 +217,7 @@ protected:
 	int rep_label_;
 	int n_struc_samples_;
 public:
-	Structured( int n_struc_samples = 256 ):n_struc_samples_(n_struc_samples){}
+	Structured( int n_struc_samples = 256 ):n_struc_samples_(n_struc_samples) {}
 	Structured( const RMatrixXf & lbl, const VectorXf & weight, int n_struc_samples ): Split( project1D(pairwiseDistance(lbl,n_struc_samples),&rep_label_), weight ) {
 	}
 	virtual std::shared_ptr< SplitCriterion > create( const RMatrixXf & lbl, const VectorXf & weight ) const {

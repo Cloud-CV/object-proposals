@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -51,7 +51,7 @@ list loadCOCO( const std::string & name, int fold ) {
 	// Load the annotations
 	char buf[1024];
 	sprintf( buf, COCO_ANNOT.c_str(), name.c_str() );
-	
+
 	// Read the json file
 	Document doc;
 	std::ifstream t(buf);
@@ -62,7 +62,7 @@ list loadCOCO( const std::string & name, int fold ) {
 	std::string json_str = std::string(std::istreambuf_iterator<char>(t),std::istreambuf_iterator<char>());
 
 	doc.Parse( (char*)json_str.c_str() );
-	
+
 	// Go through all instance labels
 	std::unordered_map< uint64_t, std::vector<int> > categories;
 	std::unordered_map< uint64_t, std::vector<float> > areas;
@@ -73,30 +73,30 @@ list loadCOCO( const std::string & name, int fold ) {
 		Value::ConstMemberIterator cmi_iscrowd_id = i->FindMember("iscrowd");
 		if( cmi_iscrowd_id != i->MemberEnd() && cmi_iscrowd_id->value.GetInt())
 			continue;
-		
+
 		// Get the image id
 		Value::ConstMemberIterator cmi_image_id = i->FindMember("image_id");
 		eassert( cmi_image_id != i->MemberEnd() );
 		const int image_id = cmi_image_id->value.GetInt();
-		
+
 		// Get the category id
 		Value::ConstMemberIterator cmi_category_id = i->FindMember("category_id");
 		eassert( cmi_category_id != i->MemberEnd() );
 		const int category_id = cmi_category_id->value.GetInt();
-		
+
 		// Get the category id
 		Value::ConstMemberIterator cmi_area = i->FindMember("area");
 		eassert( cmi_area != i->MemberEnd() );
 		const float area = cmi_area->value.GetDouble();
-		
+
 		// Read the polygon
 		Value::ConstMemberIterator cmi_segmentation = i->FindMember("segmentation");
 		eassert( cmi_segmentation != i->MemberEnd() );
 		const Value & segmentations = cmi_segmentation->value;
-		
+
 		// For now just use the first segmentation for each object
 		Polygons polygons;
-		for( Value::ConstValueIterator segmentation = segmentations.Begin(); segmentation!=segmentations.End(); segmentation++ ){
+		for( Value::ConstValueIterator segmentation = segmentations.Begin(); segmentation!=segmentations.End(); segmentation++ ) {
 			Polygon polygon = RMatrixXf( segmentation->Size() / 2, 2 );
 			float * ppolygon = polygon.data();
 			for ( Value::ConstValueIterator j = segmentation->Begin(); j != segmentation->End(); j++ )
@@ -109,27 +109,27 @@ list loadCOCO( const std::string & name, int fold ) {
 			areas[ image_id ].push_back( area );
 		}
 	}
-	
+
 	// Load all images
 	Value::ConstValueIterator B = doc["images"].Begin(), E = doc["images"].End();
 	const int N = E-B;
 	std::mt19937 rand(0);
 	std::vector<int> ids_in_fold;
 	for( int i=0; i<N; i++ )
-		if ((rand()%N_FOLDS) == fold) 
+		if ((rand()%N_FOLDS) == fold)
 			ids_in_fold.push_back( i );
 	std::sort( ids_in_fold.begin(), ids_in_fold.end() );
-	
+
 #ifndef DONT_LOAD_IMAGE
 	std::vector< std::shared_ptr<Image8u> > images( ids_in_fold.size() );
-#pragma omp parallel for
+	#pragma omp parallel for
 	for ( int k=0; k<ids_in_fold.size(); k++ ) {
 		Value::ConstValueIterator i = B+ids_in_fold[k];
 		// Get the file name and path
 		Value::ConstMemberIterator cmi_file_name = i->FindMember("file_name");
 		eassert( cmi_file_name != i->MemberEnd() );
 		const std::string file_name = cmi_file_name->value.GetString();
-	
+
 		// Add the image entry
 		std::shared_ptr<Image8u> im = imreadShared( coco_dir+"/"+name+"/"+file_name );
 		if( im && im->C()==1 )
@@ -145,10 +145,10 @@ list loadCOCO( const std::string & name, int fold ) {
 		Value::ConstMemberIterator cmi_image_id = i->FindMember("id");
 		eassert( cmi_image_id != i->MemberEnd() );
 		const int image_id = cmi_image_id->value.GetInt();
-		
+
 		// Add the image entry
 		const int N = categories[ image_id ].size();
-		if( N > 0 ){
+		if( N > 0 ) {
 			dict entry;
 			entry["name"] = image_id;
 #ifndef DONT_LOAD_IMAGE
@@ -159,7 +159,7 @@ list loadCOCO( const std::string & name, int fold ) {
 			entry["segmentation"] = segments[ image_id ];
 			r.append( entry );
 		}
-// 		else 
+// 		else
 // 			printf("Image '%d' doesn't have any annotations!\n", image_id );
 	}
 

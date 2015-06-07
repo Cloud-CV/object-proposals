@@ -29,10 +29,10 @@ function proposals=calclpoForIm(input, lpoconfig )
     % Set a boundary detector by calling (before creating an OverSegmentation!):
     lpo_mex( 'setDetector', [detector '("'  datapath 'sf.dat")'] );
 
-    p = LpoProposal( 'model', model );
+    p = LpoProposal( 'model', model, 'box_nms', 'max_iou', max_iou );
     os = LpoOverSegmentation( im );
-    props = p.propose( os );
-    boxes = os.maskToBox( props );
+    [segs,props] = p.propose( os );
+    boxes = masksToBoxes( segs, props );
     if(isfield(lpoconfig.opts,'numProposals'))
         numProposals=lpoconfig.opts.numProposals;
         if(size(boxes,1)>=numProposals)

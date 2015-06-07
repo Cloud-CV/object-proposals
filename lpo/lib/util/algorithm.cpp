@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -149,8 +149,7 @@ VectorXi randomChoose( int M, int N ) {
 		int k = 0;
 		for( int i : sampled )
 			r[k++] = i;
-	}
-	else {
+	} else {
 		VectorXi vv = arange( M );
 		for( int i = 0; i < N; i++ ) {
 			int j = i + ( gen() % ( N - i ) );
@@ -166,7 +165,7 @@ VectorXi randomChoose( const VectorXf & p, int N ) {
 	csm[0] = p[0];
 	for( int i=1; i<p.size(); i++ )
 		csm[i] = csm[i-1] + p[i];
-	
+
 	VectorXb sampled = VectorXb::Zero( p.size() );
 	int n=0;
 	for( int i=0; n<N && i<2*p.size(); i++ ) {
@@ -189,13 +188,13 @@ RMatrixXf kmeans(const RMatrixXf &v, int K, int nit, int seed ) {
 	const int N = v.rows(), D = v.cols();
 	RMatrixXf r = RMatrixXf::Zero( K, D );
 	float best_e = 1e10;
-	
+
 	for( int it=0; it<nit; it++ ) {
 		ArrayXf d = 1e10*ArrayXf::Ones( N );
 		ArrayXi a = -ArrayXi::Ones( N );
-		
+
 		RMatrixXf means( K, D );
-		
+
 		// Find the initial seeds (K-means++)
 		for( int i=0; i<K; i++ ) {
 			ArrayXf p = d / d.maxCoeff();
@@ -214,7 +213,7 @@ RMatrixXf kmeans(const RMatrixXf &v, int K, int nit, int seed ) {
 			// Estimate the centers
 			for( int i=0; i<K; i++ )
 				means.row(i) = ((a==i).cast<float>().matrix().transpose()*v).array() / ((a==i).cast<float>().array().sum()+1e-10);
-			
+
 			// Estimate the assignment
 			d.setConstant( 1e10 );
 			for( int i=0; i<K; i++ ) {

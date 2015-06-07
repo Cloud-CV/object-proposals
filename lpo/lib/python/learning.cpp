@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,7 +35,7 @@ void defineLearning() {
 	ADD_MODULE(learning);
 
 	typedef std::vector< std::shared_ptr<Features> > FeaturesVec;
-	
+
 	class_<Features, std::shared_ptr<Features>, boost::noncopyable >("Features",no_init)
 	.def("nSamples",&Features::nSamples)
 	.def("featureSize",&Features::featureSize)
@@ -43,45 +43,45 @@ void defineLearning() {
 	.def("getFeatures",(RMatrixXf(Features::*)( const VectorXi & ) const)&Features::getFeatures)
 	.def("getFeatures",(RMatrixXf(Features::*)( const VectorXi &, const VectorXi & ) const)&Features::getFeatures)
 	.def("get",&Features::get);
-	
+
 	class_< FeaturesVec >("FeaturesVec")
 	.def( vector_indexing_suite< FeaturesVec, true >() );
-	
-	
+
+
 	class_< FeaturesMatrix, std::shared_ptr<FeaturesMatrix>, bases<Features> >("FeaturesMatrix",init<RMatrixXf>() );
 	implicitly_convertible< std::shared_ptr<FeaturesMatrix>, std::shared_ptr<Features> >();
 
 	class_< FeaturesVector, std::shared_ptr<FeaturesVector>, bases<Features> >("FeaturesVector", init< FeaturesVec, RMatrixXi >() )
 	.def(init< FeaturesVec, RMatrixXi, VectorXi >());
 	implicitly_convertible< std::shared_ptr<FeaturesVector>, std::shared_ptr<Features> >();
-	
-	
+
+
 	class_< BinaryTree >("BinaryTree")
 	.def("setFromMatlab",&BinaryTree::setFromMatlab )
 	.add_property("max_depth",&BinaryTree::maxDepth)
 	.add_property("average_depth",&BinaryTree::averageDepth);
-	
+
 	class_< BinaryForest >("BinaryForest")
 	.def("addTree",&BinaryForest::addTree )
 	.def("load",(void (BinaryForest::*)(std::string))&BinaryForest::load)
 	.def("save",(void (BinaryForest::*)(std::string) const)&BinaryForest::save)
 	.add_property("max_depth",&BinaryForest::maxDepth)
 	.add_property("average_depth",&BinaryForest::averageDepth);
-	
+
 // Tree and Forest settings
 	enum_<TreeSettings::Criterion>("Criterion")
 	.value("GINI", TreeSettings::GINI)
 	.value("ENTROPY", TreeSettings::ENTROPY)
 	.value("STRUCT_GINI", TreeSettings::STRUCT_GINI)
 	.value("STRUCT_ENTROPY", TreeSettings::STRUCT_ENTROPY);
-	
+
 	enum_<TreeSettings::MaxFeature>("MaxFeature")
 	.value("SQRT", TreeSettings::SQRT)
 	.value("LOG2", TreeSettings::LOG2)
 	.value("POW06", TreeSettings::POW06)
 	.value("POW07", TreeSettings::POW07)
 	.value("ALL", TreeSettings::ALL);
-	
+
 	class_< TreeSettings >("TreeSettings")
 	.def_readwrite("criterion",&TreeSettings::criterion )
 	.def_readwrite("max_feature",&TreeSettings::max_feature )
@@ -91,7 +91,7 @@ void defineLearning() {
 	.def_readwrite("n_structured_samples",&TreeSettings::n_structured_samples )
 	.def_readwrite("use_single_leaf_label",&TreeSettings::use_single_leaf_label)
 	.def_readwrite("extremely_random",&TreeSettings::extremely_random );
-	
+
 	class_< ForestSettings,bases<TreeSettings> >("ForestSettings")
 	.def_readwrite("n_trees",&ForestSettings::n_trees )
 	.def_readwrite("replacement",&ForestSettings::replacement );

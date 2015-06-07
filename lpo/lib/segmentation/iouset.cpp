@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -61,7 +61,7 @@ void IOUSet::init(const RMatrixXs &s ) {
 	// Compute the kd-tree
 	std::queue< std::tuple<int,int,int> > q;
 	q.push( std::make_tuple( 0, N, -1 ) );
-	
+
 	int nid = 2*N-1;
 	parent_.resize( nid, -1 );
 	left_.resize( nid, -1 );
@@ -70,7 +70,7 @@ void IOUSet::init(const RMatrixXs &s ) {
 		int a, b, pid;
 		std::tie(a,b,pid) = q.front();
 		q.pop();
-		
+
 		// Leaf node
 		if( a+1>=b ) {
 			parent_[pos[a][2]] = pid;
@@ -78,8 +78,7 @@ void IOUSet::init(const RMatrixXs &s ) {
 				left_[pid] = pos[a][2];
 			else if( right_[pid] == -1 )
 				right_[pid] = pos[a][2];
-		}
-		else {
+		} else {
 			// Build the graph [add the node]
 			int id = --nid;
 			if( id < N )
@@ -89,7 +88,7 @@ void IOUSet::init(const RMatrixXs &s ) {
 				left_[pid] = id;
 			else if( pid >=0 && right_[pid] == -1 )
 				right_[pid] = id;
-			
+
 			// Find a split point [x or y]
 			int best_d = 0;
 			float dist = 0, split=0;
@@ -143,7 +142,7 @@ VectorXu IOUSet::computeTree(const VectorXb & s) const {
 Vector4s IOUSet::computeBBox( const VectorXb & v ) const {
 	Vector4s box(1<<14,1<<14,0,0);
 	for( int i=0; i<spix_box_.size(); i++ )
-		if( v[i] ){
+		if( v[i] ) {
 			if( box[0] > spix_box_[i][0] ) box[0] = spix_box_[i][0];
 			if( box[1] > spix_box_[i][1] ) box[1] = spix_box_[i][1];
 			if( box[2] < spix_box_[i][2] ) box[2] = spix_box_[i][2];
@@ -166,7 +165,7 @@ bool IOUSet::intersectsTree(const VectorXu &v, const Vector4s & bbox, float max_
 	const unsigned int area = v[v.size()-1];
 	auto i0 = area_map_.lower_bound( area );
 	auto i1 = i0--;
-	
+
 #define IOU_BOUND( it ) ((it)->second==-1?0:((float)std::min(area,(it)->first)/(float)std::max(area,(it)->first)))
 	float iou0 = IOU_BOUND( i0 ), iou1 = IOU_BOUND( i1 );
 	while (iou0 >= max_iou || iou1 >= max_iou ) {
@@ -175,8 +174,7 @@ bool IOUSet::intersectsTree(const VectorXu &v, const Vector4s & bbox, float max_
 				return true;
 			i1++;
 			iou1 = IOU_BOUND(i1);
-		}
-		else {
+		} else {
 			if( ( spix_box_.size()==0 || boxIOUBound( bbox, bbox_[i0->second], area, set_[i0->second][v.size()-1] ) >= max_iou ) && cmpIOU(v,set_[i0->second],max_iou) )
 				return true;
 			i0--;

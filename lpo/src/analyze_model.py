@@ -25,6 +25,9 @@
 	 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
+
+from __future__ import print_function
+
 from pylab import *
 from lpo import *
 from util import *
@@ -44,6 +47,10 @@ parser.add_argument('-N', dest='N', type=int, default=-1,
 args = parser.parse_args()
 
 def evaluateDetailed( prop, over_segs, segmentations ):
+
+	print("Launching detailed evaluation, this might take a while...")
+	stdout.flush()
+
 	from time import time
 	BS = 100
 	names = prop.modelTypes
@@ -97,7 +104,10 @@ def evaluateDetailed( prop, over_segs, segmentations ):
 		bo[-1] = np.maximum( np.array(bo[m]), bo[-1] )
 		t[-1] += t[m]
 	ma[-1] /= ps[-1]
+
+	print( "name & pool size & % best & sqrt(median area) & time (see table 2 of paper)")
 	for m,n in enumerate(names):
+		assert len(ma[m]) > 0
 		print( names[m], '&', np.mean(ps[m]), '&', np.mean(bo[m]>=bbo)*100, '&', np.sqrt(np.mean(ma[m])), '&', t[m]/len(ma[m]) )
 	
 

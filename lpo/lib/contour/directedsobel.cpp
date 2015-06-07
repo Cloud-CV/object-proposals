@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -77,7 +77,7 @@ static RMatrixXf nms( const RMatrixXf & d ) {
 	const float T = 1.0;
 	const int W = d.cols(), H = d.rows();
 	for( int j=0; j<H; j++ )
-		for( int i=0; i<W; i++ ){
+		for( int i=0; i<W; i++ ) {
 			if( DY && j     && T*d(j,i) < d(j-1,i) )
 				r(j,i) = 0.1*d(j,i);
 			if( DY && j<H-1 && T*d(j,i) < d(j+1,i) )
@@ -98,7 +98,7 @@ std::tuple<RMatrixXf,RMatrixXf> DirectedSobel::detectXY(const Image8u & im, int 
 	const float w[] = {0.25,0.5,1};
 	const int NB = fast ? 1 : (sizeof(b)/sizeof(b[0]));
 	if( do_nms == -1 ) do_nms = do_nms_;
-	
+
 	// Convert the image to luv
 	const int W = im.W(), H = im.H();
 	const int C = 3, N = W*H;
@@ -107,7 +107,7 @@ std::tuple<RMatrixXf,RMatrixXf> DirectedSobel::detectXY(const Image8u & im, int 
 	bluv = luv;
 
 	RMatrixXf dx = RMatrixXf::Zero(H,W-1), dy = RMatrixXf::Zero(H-1,W), tdx, tdy;
-	
+
 	for (int i=0; i<NB; i++ ) {
 		if( b[i] > 0 )
 			tentFilter( bluv.data(), luv.data(), W, H, 3, 2*b[i] );
@@ -119,15 +119,14 @@ std::tuple<RMatrixXf,RMatrixXf> DirectedSobel::detectXY(const Image8u & im, int 
 		dx = nms<1,0>( dx );
 		dy = nms<0,1>( dy );
 	}
-	if( norm_rad > 0 ){
+	if( norm_rad > 0 ) {
 #ifdef NORM_INDIVIDUAL
 		{
 			RMatrixXf n(H,W-1), nn(H,W-1);
 			n = dx.array()*dx.array();
 			tentFilter( nn.data(), n.data(), W-1, H, 1, norm_rad );
 			dx.array() /= nn.array().sqrt()+norm_const;
-		}
-		{
+		} {
 			RMatrixXf n(H-1,W), nn(H-1,W);
 			n = dy.array()*dy.array();
 			tentFilter( nn.data(), n.data(), W, H-1, 1, norm_rad );
@@ -142,7 +141,7 @@ std::tuple<RMatrixXf,RMatrixXf> DirectedSobel::detectXY(const Image8u & im, int 
 		n = n.array()*n.array();
 		tentFilter( nn.data(), n.data(), W, H, 1, norm_rad );
 		n = nn.array().sqrt()+norm_const;
-		
+
 		dx.array() /= n.rightCols(W-1).array().max( n.leftCols(W-1).array() );
 		dy.array() /= n.bottomRows(H-1).array().max( n.topRows(H-1).array() );
 #endif
@@ -155,17 +154,16 @@ std::tuple<RMatrixXf,RMatrixXf> DirectedSobel::detectXY(const Image8u & im, int 
 RMatrixXf DirectedSobel::detect(const Image8u & im) const {
 	RMatrixXf dx, dy, d = RMatrixXf::Zero(im.H(),im.W());
 	std::tie( dx, dy ) = detectXY( im );
-	
+
 	d.leftCols(im.W()-1)  = dx.array().max( d.leftCols(im.W()-1).array() );
 	d.rightCols(im.W()-1) = dx.array().max( d.rightCols(im.W()-1).array() );
-	
+
 	d.topRows(im.H()-1)    = dy.array().max( d.topRows(im.H()-1).array() );
 	d.bottomRows(im.H()-1) = dy.array().max( d.bottomRows(im.H()-1).array() );
-	
+
 	return d;
 }
-DirectedSobel::DirectedSobel(bool do_nms) : do_nms_(do_nms)
-{
+DirectedSobel::DirectedSobel(bool do_nms) : do_nms_(do_nms) {
 }
 
 
@@ -179,13 +177,13 @@ RMatrixXf NormalizedSobel::detect( const Image8u & im ) const {
 	const int b[] = {2,4,8};
 	const float w[] = {0.25,0.5,1};
 	const int NB = fast ? 1 : (sizeof(b)/sizeof(b[0]));
-	
+
 	const int W = im.W(), H = im.H();
 	const int C = 3, N = W*H;
 	Image luv, bluv;
 	rgb2luv( luv, im );
 	bluv = luv;
-	
+
 	RMatrixXf r = RMatrixXf::Zero( H, W );
 	for (int i=0; i<NB; i++ ) {
 		if( b[i] > 0 )
