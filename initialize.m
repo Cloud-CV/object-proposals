@@ -26,10 +26,10 @@ configjson.edgeBoxes.params = setEdgeBoxesParamsFromConfig(configjson.edgeBoxes)
 %% configuring MCG  %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-addpath(genpath([pwd '/mcg']));
-mcg_path = [pwd '/mcg/MCG-Full/'];
+addpath(genpath([pwd '/mcg/MCG-pre-trained']));
+mcg_path = [pwd '/mcg/MCG-pre-trained'];
 %set root_dir for mcg
-configjson.mcg.root_dir = mcg_root_dir(mcg_path);
+configjson.mcg.root_dir = mcg_path;
 mcg_install(configjson.mcg.root_dir);
 %%%%%%%%%%%%%%%%%%%%%%%
 %% configuring Endres %%%%
