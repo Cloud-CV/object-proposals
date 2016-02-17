@@ -85,10 +85,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
 	fprintf('Compilation of MCG started\n ');
-	mcg_path = [pwd '/mcg/MCG-Full'];
-	addpath(genpath([pwd '/mcg']));
+	mcg_path = [pwd '/mcg/MCG-pre-trained'];
+	addpath(genpath([pwd '/mcg/MCG-pre-trained']));
 	%set root_dir for mcg
-	mcgRootDir = mcg_root_dir(mcg_path);
+	mcgRootDir = mcg_path;
         boostPath='/opt/local/include/';
 	%build and install
 	mcg_build(parDir, mcgRootDir, boostPath);
