@@ -69,7 +69,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
         sum_inside = 0;
         
     	if((objWidth<=0)||(objHeight<=0))
-      		mxErrMsgTxt("error xmax - xmin <=0 or ymax - ymin<=0");  
+      		mexErrMsgTxt("error xmax - xmin <=0 or ymax - ymin<=0");  
               
         maxmax = (int)(prodQuant*(xmax[w]*(height+1)+ymax[w]));
         minmin = (int)(prodQuant*((xmin[w]-1)*(height+1)+ymin[w]-1));
