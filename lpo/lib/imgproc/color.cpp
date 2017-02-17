@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -39,8 +39,12 @@ std::vector<float> initTable( F f, int N, float s ) {
 		r[i] = f(s*i);
 	return r;
 }
-static const std::vector<float> ltable = initTable( [](float y){ return (y > ((6.0/29)*(6.0/29)*(6.0/29)) ? 116*pow((double)y,1.0/3.0)-16 : y*((29.0/3)*(29.0/3)*(29.0/3)))/270.; }, 1025, 1.0 / 1024. );
-static const std::vector<float> stable = initTable( [](float v){ return (v < 0.04045f ? v / 12.92f : pow( (v+0.055f)/1.055f, 2.4f ) ); }, 1025, 1.0 / 1024. );
+static const std::vector<float> ltable = initTable( [](float y) {
+	return (y > ((6.0/29)*(6.0/29)*(6.0/29)) ? 116*pow((double)y,1.0/3.0)-16 : y*((29.0/3)*(29.0/3)*(29.0/3)))/270.;
+}, 1025, 1.0 / 1024. );
+static const std::vector<float> stable = initTable( [](float v) {
+	return (v < 0.04045f ? v / 12.92f : pow( (v+0.055f)/1.055f, 2.4f ) );
+}, 1025, 1.0 / 1024. );
 
 inline float mapTable( float v, const float * t, int N ) {
 	if( v < 0 )  v = 0;
@@ -108,9 +112,9 @@ template<typename T> void xyz2lab( T& l, T& a, T& b, T x, T y, T z ) {
 	a = c<T>(500.f/116.f)*(x-y);
 	b = c<T>(200.f/116.f)*(y-z);
 }
-enum ColorType{
-	LUV,
-	LAB
+enum ColorType {
+    LUV,
+    LAB
 };
 template<bool SRGB,ColorType type,typename T>
 static void convertRGB( T& c1, T& c2, T& c3, const T & R, const T & G, const T & B ) {
@@ -135,20 +139,20 @@ static void convertRGB( Image & luv, const Image & rgb ) {
 		__m128 r,g,b,l,u,v;
 		float * rr = (float*)&r, * gg = (float*)&g, * bb = (float*)&b;
 		float * ll = (float*)&l, * uu = (float*)&u, * vv = (float*)&v;
-		for( int k=0; k<4; k++ ){
+		for( int k=0; k<4; k++ ) {
 			rr[k] = rgb[3*(i+k)+0];
 			gg[k] = rgb[3*(i+k)+1];
 			bb[k] = rgb[3*(i+k)+2];
 		}
 		convertRGB<SRGB,type>( l, u, v, r, g, b );
-		for( int k=0; k<4; k++ ){
+		for( int k=0; k<4; k++ ) {
 			luv[3*(i+k)+0] = ll[k];
 			luv[3*(i+k)+1] = uu[k];
 			luv[3*(i+k)+2] = vv[k];
 		}
 	}
 	for( ; i<W*H; i++ )
-		convertRGB<SRGB,type>( luv[3*i+0],luv[3*i+1],luv[3*i+2], rgb[3*i+0],rgb[3*i+1],rgb[3*i+2] ); 
+		convertRGB<SRGB,type>( luv[3*i+0],luv[3*i+1],luv[3*i+2], rgb[3*i+0],rgb[3*i+1],rgb[3*i+2] );
 }
 void rgb2luv( Image & luv, const Image & rgb ) {
 	convertRGB<false,LUV>( luv, rgb );

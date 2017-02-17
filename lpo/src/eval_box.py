@@ -25,6 +25,9 @@
 	 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
+
+from __future__ import print_function
+
 from lpo import *
 from util import *
 from sys import argv,stdout
@@ -32,6 +35,10 @@ from pickle import dump
 import numpy as np
 
 def evaluateBox( prop, over_segs, boxes, name='', max_iou=0.9 ):
+
+	print("Launching evaluation, this might take a while...")
+	stdout.flush()
+
 	bos, pool_ss = [],[]
 	for i in range(0,len(over_segs),100):
 		props = prop.propose( over_segs[i:i+100], max_iou, True ) # Use box_nms
@@ -40,6 +47,8 @@ def evaluateBox( prop, over_segs, boxes, name='', max_iou=0.9 ):
 		pool_ss.append( pool_s )
 		bo,pool_s = np.hstack( bos ),np.hstack( pool_ss )
 		stdout.write('#prop = %0.3f  ABO = %0.3f  ARec = %0.3f\r'%(np.nanmean(pool_s),np.mean(bo),np.mean(2*np.maximum(bo-0.5,0))))
+
+	print("name & # prop. & ABO & 50%-recall & 70%-recall & 90%-recall & area recall (see table 3 of paper)")
 	print( "LPO %05s & %d & %0.3f & %0.3f & %0.3f & %0.3f & %0.3f \\\\"%(name,np.nanmean(pool_s),np.mean(bo),np.mean(bo>=0.5), np.mean(bo>=0.7), np.mean(bo>=0.9), np.mean(2*np.maximum(bo-0.5,0)) ) )
 	return bo,pool_s
 

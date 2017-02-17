@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -33,8 +33,7 @@
 #include "segmentation.h"
 #include "crf.h"
 
-BOOST_PYTHON_MODULE(lpo)
-{
+BOOST_PYTHON_MODULE(lpo) {
 	/************ Util *************/
 	defineUtil();
 #ifdef USE_DATASET
@@ -44,20 +43,20 @@ BOOST_PYTHON_MODULE(lpo)
 
 	/************ Imgproc *************/
 	defineImgProc();
-	
+
 	/************ Learning *************/
 	defineLearning(); // (depends on Imgproc)
-	
+
 	/************ Segmentation *************/
 	defineSegmentation();
-	
+
 	/************ Contour *************/
 	defineContour(); // (depends on Learning)
-	
+
 	/************ CRF *************/
 	defineCRF();
-	
+
 	/************ Proposals *************/
 	defineProposals();
-	
+
 }

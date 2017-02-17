@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,84 +35,83 @@
 #include "python/util.h"
 
 namespace EvalPrivate {
-	struct BipartiteMatch{
-	private:
-		bool bfs( int na, const std::vector< std::vector<int> > & nbr, std::vector<float> & dist ) {
-			const float inf = std::numeric_limits<float>::infinity();
-			std::queue<int> q;
-			dist[0] = inf;
-			for( int v=0; v <na; v++ ){
-				if( match_a[v]==-1 ) {
-					dist[v+1] = 0;
-					q.push( v );
-				}
-				else
-					dist[v+1] = inf;
-			}
-			while( !q.empty() ) {
-				int v = q.front();
-				q.pop();
-				if (dist[v+1] < dist[0])
-					for( int u: nbr[v] )
-						if (dist[ match_b[u]+1 ] == inf) {
-							dist[ match_b[u]+1 ] = dist[v+1] + 1;
-							q.push( match_b[u] );
-						}
-			}
-			return dist[0] < inf;
-		}
-		bool dfs( int v, const std::vector< std::vector<int> > & nbr, std::vector<float> & dist ) {
-			const float inf = std::numeric_limits<float>::infinity();
-			if( v>=0 ) {
-				if( dist[v+1] == inf )
-					return false;
-				
-				for( int u: nbr[v] ) {
-					if( dist[ match_b[u]+1 ] == dist[v+1] + 1 && dfs( match_b[u], nbr, dist ) ) {
-						match_b[u] = v;
-						match_a[v] = u;
-						return true;
-					}
-				}
+struct BipartiteMatch {
+private:
+	bool bfs( int na, const std::vector< std::vector<int> > & nbr, std::vector<float> & dist ) {
+		const float inf = std::numeric_limits<float>::infinity();
+		std::queue<int> q;
+		dist[0] = inf;
+		for( int v=0; v <na; v++ ) {
+			if( match_a[v]==-1 ) {
+				dist[v+1] = 0;
+				q.push( v );
+			} else
 				dist[v+1] = inf;
-				return false;
-			}
-			return true;
 		}
-	public:
-		struct Edge{
-			int a,b;
-			Edge( int a=0, int b=0 ):a(a),b(b){}
-		};
-		std::vector< int > match_a, match_b;
-		BipartiteMatch( int na, int nb, const std::vector< Edge > & edges ):match_a( na, -1 ), match_b( nb, -1 ){
-	// 		const float inf = std::numeric_limits<float>::infinity();
-			// Build the graph
-			std::vector< std::vector<int> > nbr( na );
-			for( Edge e: edges )
-				nbr[e.a].push_back( e.b );
-			
-			// Run Hopcroft-Karp
-			std::vector<float> dist( na+1, 0 );
-			while(1) {
-				// Run BFS
-				if( !bfs( na, nbr, dist ) )
-					break;
-				
-				// Start matching
-				for( int i=0; i<na; i++ )
-					if( match_a[i] == -1 ) {
-						// Run a DFS
-						dfs( i, nbr, dist );
+		while( !q.empty() ) {
+			int v = q.front();
+			q.pop();
+			if (dist[v+1] < dist[0])
+				for( int u: nbr[v] )
+					if (dist[ match_b[u]+1 ] == inf) {
+						dist[ match_b[u]+1 ] = dist[v+1] + 1;
+						q.push( match_b[u] );
 					}
-			}
 		}
+		return dist[0] < inf;
+	}
+	bool dfs( int v, const std::vector< std::vector<int> > & nbr, std::vector<float> & dist ) {
+		const float inf = std::numeric_limits<float>::infinity();
+		if( v>=0 ) {
+			if( dist[v+1] == inf )
+				return false;
+
+			for( int u: nbr[v] ) {
+				if( dist[ match_b[u]+1 ] == dist[v+1] + 1 && dfs( match_b[u], nbr, dist ) ) {
+					match_b[u] = v;
+					match_a[v] = u;
+					return true;
+				}
+			}
+			dist[v+1] = inf;
+			return false;
+		}
+		return true;
+	}
+public:
+	struct Edge {
+		int a,b;
+		Edge( int a=0, int b=0 ):a(a),b(b) {}
 	};
+	std::vector< int > match_a, match_b;
+	BipartiteMatch( int na, int nb, const std::vector< Edge > & edges ):match_a( na, -1 ), match_b( nb, -1 ) {
+		// 		const float inf = std::numeric_limits<float>::infinity();
+		// Build the graph
+		std::vector< std::vector<int> > nbr( na );
+		for( Edge e: edges )
+			nbr[e.a].push_back( e.b );
+
+		// Run Hopcroft-Karp
+		std::vector<float> dist( na+1, 0 );
+		while(1) {
+			// Run BFS
+			if( !bfs( na, nbr, dist ) )
+				break;
+
+			// Start matching
+			for( int i=0; i<na; i++ )
+				if( match_a[i] == -1 ) {
+					// Run a DFS
+					dfs( i, nbr, dist );
+				}
+		}
+	}
+};
 }
 //void matchAny( bool * pr, const bool * pa, const bool * pb, int W, int H, double max_r ) {
 //	memset( pr, 0, W*H*2*sizeof(bool) );
 //	float r2 = max_r*max_r*(W*W+H*H);
-//    const int rd = (int) ceil(sqrt(r2));	
+//    const int rd = (int) ceil(sqrt(r2));
 //	for( int j=0; j<H; j++ )
 //		for( int i=0; i<W; i++ )
 //			if( pa[j*W+i] )
@@ -137,7 +136,7 @@ std::tuple<RMatrixXb,RMatrixXb> matchAny( const RMatrixXb & a, const RMatrixXb &
 	const int W = a.cols(), H = a.rows();
 	eassert( W == b.cols() && H == b.rows() );
 	RMatrixXb ma = RMatrixXb::Zero( H, W ), mb = RMatrixXb::Zero( H, W );
-	
+
 	float r2 = max_r*max_r*(W*W+H*H);
 	const int rd = (int) ceil(sqrt(r2));
 	for( int j=0; j<H; j++ )
@@ -155,9 +154,9 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 	const int W = a.cols(), H = a.rows();
 	eassert( W == b.cols() && H == b.rows() );
 	RMatrixXb ma, mb;
-	
+
 	std::tie(ma,mb) = matchAny( a, b, max_r );
-	
+
 	float r2 = max_r*max_r*(W*W+H*H);
 	const int rd = (int) ceil(sqrt(r2));
 	// Compute the bipartite graph size
@@ -170,7 +169,7 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 			if( mb(j,i) )
 				ib[j*W+i] = cb++;
 		}
-	
+
 	std::vector< BipartiteMatch::Edge > edges;
 	for( int j=0; j<H; j++ )
 		for( int i=0; i<W; i++ )
@@ -180,7 +179,7 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 						if( (i-ii)*(i-ii)+(j-jj)*(j-jj) <= r2 )
 							if( ib[jj*W+ii]>=0 )
 								edges.push_back( BipartiteMatch::Edge(ia[j*W+i],ib[jj*W+ii]) );
-	
+
 	BipartiteMatch match( ca, cb, edges );
 	for( int j=0; j<H; j++ )
 		for( int i=0; i<W; i++ ) {
@@ -195,7 +194,7 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 //	using namespace EvalPrivate;
 //	matchAny( pr, pa, pb, W, H, max_r );
 //	float r2 = max_r*max_r*(W*W+H*H);
-//    const int rd = (int) ceil(sqrt(r2));	
+//    const int rd = (int) ceil(sqrt(r2));
 //	// Compute the bipartite graph size
 //	std::vector<int> ia(W*H,-1), ib(W*H,-1);
 //	int ca=0,cb=0;
@@ -206,7 +205,7 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 //			if( pr[j*W+i+W*H] )
 //				ib[j*W+i] = cb++;
 //		}
-//	
+//
 //	std::vector< BipartiteMatch::Edge > edges;
 //	for( int j=0; j<H; j++ )
 //		for( int i=0; i<W; i++ )
@@ -216,7 +215,7 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 //						if( (i-ii)*(i-ii)+(j-jj)*(j-jj) <= r2 )
 //							if( ib[jj*W+ii]>=0 )
 //								edges.push_back( BipartiteMatch::Edge(ia[j*W+i],ib[jj*W+ii]) );
-//	
+//
 //	BipartiteMatch match( ca, cb, edges );
 //	for( int j=0; j<H; j++ )
 //		for( int i=0; i<W; i++ ) {
@@ -239,14 +238,14 @@ std::tuple<RMatrixXb,RMatrixXb> matchBp( const RMatrixXb & a, const RMatrixXb & 
 Vector4i evalBoundaryBinary( const RMatrixXb & d, const std::vector<RMatrixXb> & bnd, double max_r, const RMatrixXb & mask ) {
 	const int W = d.cols(), H = d.rows(), D = bnd.size();
 	eassert( mask.cols() == W && mask.rows() == H );
-	
+
 	int sum_r=0, cnt_r=0;
 	RMatrixXb ma, mb, acc = RMatrixXb::Zero(H,W);
 	for( int k=0; k<D; k++ ) {
 		eassert( W == bnd[k].cols() && H == bnd[k].rows() );
-		
+
 		std::tie(ma,mb) = matchBp( d, bnd[k], max_r );
-		
+
 		acc = acc.array() || (ma.array() && mask.array());
 		sum_r += (bnd[k].array() && mask.array()).cast<int>().sum();
 		cnt_r += (mb.array() && mask.array()).cast<int>().sum();
@@ -277,9 +276,9 @@ RMatrixXf evalBoundary( const RMatrixXf & d, const std::vector<RMatrixXb> & bnd,
 std::vector<RMatrixXf> evalBoundaryAll( const std::vector<RMatrixXf> &ds, const std::vector< std::vector<RMatrixXb> > &bnds, int nthres, double max_r ) {
 	eassert( ds.size() == bnds.size() );
 	const int N = ds.size();
-	
+
 	std::vector<RMatrixXf> res( N );
-#pragma omp parallel for ordered schedule(dynamic)
+	#pragma omp parallel for ordered schedule(dynamic)
 	for( int i=0; i<N; i++ )
 		res[i] = evalBoundary( ds[i], bnds[i], nthres, max_r );
 	return res;
@@ -288,9 +287,9 @@ std::vector<RMatrixXf> evalBoundaryAll( const std::vector<RMatrixXf> &ds, const 
 std::vector<RMatrixXf> evalSegmentBoundaryAll( const std::vector<RMatrixXf> &ds, const std::vector<RMatrixXs> &segs, int nthres, double max_r ) {
 	eassert( ds.size() == segs.size() );
 	const int N = ds.size();
-	
+
 	std::vector<RMatrixXf> res( N );
-#pragma omp parallel for ordered schedule(dynamic)
+	#pragma omp parallel for ordered schedule(dynamic)
 	for( int i=0; i<N; i++ ) {
 		const int W = segs[i].cols(), H = segs[i].rows();
 		RMatrixXb mask = RMatrixXb::Ones( H, W ), bnd = RMatrixXb::Zero( H, W );
@@ -312,11 +311,11 @@ std::vector<RMatrixXf> evalSegmentBoundaryAll( const std::vector<RMatrixXf> &ds,
 							if( rr*rr+cc*cc <= r2 )
 								mask(r+rr,c+cc) = 1;
 				}
-		
+
 		thinningGuoHall( bnd );
-		
+
 		res[i] = evalBoundary( ds[i], std::vector<RMatrixXb>(1,bnd), nthres, max_r, mask );
 	}
-	
+
 	return res;
 }

@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,24 +27,24 @@
 #include "util.h"
 #include <chrono>
 
-double getTime(){
+double getTime() {
 	static auto t0 = std::chrono::system_clock::now();
 	return std::chrono::duration_cast< std::chrono::duration<double> >(std::chrono::system_clock::now()-t0).count() * 1000.;
 }
 static double tic_time = 0;
-void tic(){
+void tic() {
 	tic_time = getTime();
 }
-double toc(){
+double toc() {
 	return getTime() - tic_time;
 }
-double toc( const char * str ){
+double toc( const char * str ) {
 	double t = toc();
 	printf( str, t );
 	return t;
 }
 Clock::Clock():tic_time( getTime() ) {
-	
+
 }
 void Clock::tic() {
 	tic_time = getTime();

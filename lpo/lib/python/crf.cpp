@@ -25,7 +25,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include "crf/crf.h"
-#include "crf/features.h"
+#include "crf/crffeatures.h"
 #include "crf/loss.h"
 #include "segmentation/segmentation.h"
 #include "util.h"

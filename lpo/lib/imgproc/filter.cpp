@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -56,24 +56,48 @@ void strideOp( int N, SSE_F sf, F f ) {
 	for( ; i<N; i++ ) f( i );
 }
 static void strideAddSSE( float * r, const float * a, int N ) {
-	strideOp( N, [r,a](int i){ *(__m128*)(r+i) += _mm_loadu_ps( a+i ); }, [r,a](int i){ r[i] += a[i]; } );
+	strideOp( N, [r,a](int i) {
+		*(__m128*)(r+i) += _mm_loadu_ps( a+i );
+	}, [r,a](int i) {
+		r[i] += a[i];
+	} );
 }
 static void strideSubSSE( float * r, const float * a, int N ) {
-	strideOp( N, [r,a](int i){ *(__m128*)(r+i) -= _mm_loadu_ps( a+i ); }, [r,a](int i){ r[i] -= a[i]; } );
+	strideOp( N, [r,a](int i) {
+		*(__m128*)(r+i) -= _mm_loadu_ps( a+i );
+	}, [r,a](int i) {
+		r[i] -= a[i];
+	} );
 }
 static void strideAddSubSSE( float * r, const float * a, const float * b, int N ) {
-	strideOp( N, [r,a,b](int i){ *(__m128*)(r+i) += (_mm_loadu_ps( a+i ) - _mm_loadu_ps( b+i )); }, [r,a,b](int i){ r[i] += a[i] - b[i]; } );
+	strideOp( N, [r,a,b](int i) {
+		*(__m128*)(r+i) += (_mm_loadu_ps( a+i ) - _mm_loadu_ps( b+i ));
+	}, [r,a,b](int i) {
+		r[i] += a[i] - b[i];
+	} );
 }
 static void strideMulSSE( float * r, const float * a, float f, int N ) {
 	__m128 sf = _mm_set1_ps( f );
-	strideOp( N, [r,a,sf](int i){ *(__m128*)(r+i) = *(__m128*)(a+i) * sf; }, [r,a,f](int i){ r[i] = a[i]*f; } );
+	strideOp( N, [r,a,sf](int i) {
+		*(__m128*)(r+i) = *(__m128*)(a+i) * sf;
+	}, [r,a,f](int i) {
+		r[i] = a[i]*f;
+	} );
 }
 static void strideAddAddSSE( float * r1, float * r2, const float * a, int N ) {
-	strideOp( N, [r1,r2,a](int i){ *(__m128*)(r1+i) += *(__m128*)(r2+i) += _mm_loadu_ps(a+i); }, [r1,r2,a](int i){ r1[i] += r2[i] += a[i]; } );
+	strideOp( N, [r1,r2,a](int i) {
+		*(__m128*)(r1+i) += *(__m128*)(r2+i) += _mm_loadu_ps(a+i);
+	}, [r1,r2,a](int i) {
+		r1[i] += r2[i] += a[i];
+	} );
 }
 static void strideAddAddDiffSSE( float * r1, float * r2, const float * a, const float * b, const float * c, int N ) {
 	__m128 two = _mm_set1_ps( 2.0 );
-	strideOp( N, [two,r1,r2,a,b,c](int i){ *(__m128*)(r1+i) += *(__m128*)(r2+i) += _mm_loadu_ps(a+i) + _mm_loadu_ps(b+i) - two*_mm_loadu_ps(c+i); }, [r1,r2,a,b,c](int i){ r1[i] += r2[i] += a[i] + b[i] - 2*c[i]; } );
+	strideOp( N, [two,r1,r2,a,b,c](int i) {
+		*(__m128*)(r1+i) += *(__m128*)(r2+i) += _mm_loadu_ps(a+i) + _mm_loadu_ps(b+i) - two*_mm_loadu_ps(c+i);
+	}, [r1,r2,a,b,c](int i) {
+		r1[i] += r2[i] += a[i] + b[i] - 2*c[i];
+	} );
 }
 template<int C>
 void bx( float *r, const float *a, int W, int r2, float f ) {
@@ -105,12 +129,12 @@ void boxFilter( float * r, const float * im, int W, int H, int C, int r2 ) {
 	BxFuntion bx = bx_array[C-1];
 	float * sm = (float*)_mm_malloc( (W*C+16)*sizeof(float), 16 );
 	memset( sm, 0, (W*C+16)*sizeof(float) );
-	
+
 	for( int j=0; j<H && j<=r2; j++ )
 		strideAddSSE( sm, im+j*W*C, W*C );
 	strideMulSSE( sm, sm, 2.0, W*C );
 	strideSubSSE( sm, im+r2*W*C, W*C );
-	
+
 	for( int j=0; j<H; j++ ) {
 		bx( r+j*W*C, sm, W, r2, nm );
 		strideAddSubSSE( sm, im+(2*H-1-abs(2*H-2*(j+r2+1)-1))/2*W*C, im+abs(2*(j-r2)+1)/2*W*C, W*C );
@@ -141,7 +165,7 @@ void tx( float *r, const float *a, int W, int r2, float f ) {
 			sm2[c] += sm[c] += a[k-o]+a[k+o]-2*a[k];
 		}
 	for(; j<W-1; j++)
-		for(int c=0; c<C; c++,k++){
+		for(int c=0; c<C; c++,k++) {
 			r[k] = f*sm2[c];
 			sm2[c] += sm[c] += a[k-o]+a[(2*W-r2-j-2)*C+c]-2*a[k];
 		}
@@ -158,7 +182,7 @@ void tx1( float *r, const float *a, int W, int C, float w, float s ) {
 	for( int c=0; c<C; c++ )
 		r[c] = (a[c]*(w+1)+a[C+c]) * s;
 	int i=C;
-	
+
 	// Main block SSE
 	for( ; i<4 && i+C<W*C; i++ )
 		r[i] = (a[i]*w+a[i-C]+a[i+C]) * s;
@@ -166,7 +190,7 @@ void tx1( float *r, const float *a, int W, int C, float w, float s ) {
 		_mm_storeu_ps( r+i, (ww*_mm_loadu_ps( a+i )+_mm_loadu_ps( a+i-C )+_mm_loadu_ps( a+i+C ))*ss );
 	for( ; i+C<W*C; i++ )
 		r[i] = (a[i]*w+a[i-C]+a[i+C]) * s;
-	
+
 	// Last element
 	for( ; i<W*C; i++ )
 		r[i] = (a[i]*(w+1)+a[i-C]) * s;
@@ -175,10 +199,10 @@ void tx1( float *r, const float *a, int W, int C, float w, float s ) {
 static void tentFilter1( float * r, const float * im, int W, int H, int C, float w ) {
 	if( C<1 || C>20 )
 		throw std::invalid_argument( "Unsupported number of channels! C not in 1..20." );
-	
+
 	const __m128 ww = _mm_set1_ps( w );
 	const float nm = 1.0 / ((2+w)*(2+w));
-	
+
 	float * tmp = (float*)_mm_malloc( (W*C+16)*sizeof(float), 16 );
 	for( int j=0; j<H; j++ ) {
 		int i=0;
@@ -202,13 +226,13 @@ void tentFilter( float * r, const float * im, int W, int H, int C, float r2 ) {
 	float * sm = (float*)_mm_malloc( (W*C+16)*sizeof(float), 16 ), *sm2 = (float*)_mm_malloc( (W*C+16)*sizeof(float), 16 );
 	memset( sm, 0, (W*C+16)*sizeof(float) );
 	memset( sm2, 0, (W*C+16)*sizeof(float) );
-	
+
 	for( int j=0; j<H && j<=r2; j++ )
 		strideAddAddSSE( sm2, sm, im+j*W*C, W*C );
 	strideMulSSE( sm2, sm2, 2.0, W*C );
 	strideSubSSE( sm2, sm, W*C );
 	memset( sm, 0, (W*C+16)*sizeof(float) );
-	
+
 	for( int j=0; j<H; j++ ) {
 		tx( r+j*W*C, sm2, W, r2, nm );
 		strideAddAddDiffSSE( sm2, sm, im+(2*H-1-abs(2*H-2*(j+r2+1)-1))/2*W*C, im+abs(2*(j-r2-1)+1)/2*W*C, im+j*W*C, W*C );
@@ -217,14 +241,13 @@ void tentFilter( float * r, const float * im, int W, int H, int C, float r2 ) {
 	_mm_free( sm2 );
 }
 
-Vector4f YvVCoef(float sigma)
-{
-    /* the recipe in the Young-van Vliet paper:
-     * I.T. Young, L.J. van Vliet, M. van Ginkel, Recursive Gabor filtering.
-     * IEEE Trans. Sig. Proc., vol. 50, pp. 2799-2805, 2002.
-     *
-     * (this is an improvement over Young-Van Vliet, Sig. Proc. 44, 1995)
-     */
+Vector4f YvVCoef(float sigma) {
+	/* the recipe in the Young-van Vliet paper:
+	 * I.T. Young, L.J. van Vliet, M. van Ginkel, Recursive Gabor filtering.
+	 * IEEE Trans. Sig. Proc., vol. 50, pp. 2799-2805, 2002.
+	 *
+	 * (this is an improvement over Young-Van Vliet, Sig. Proc. 44, 1995)
+	 */
 
 	/* initial values */
 	float m0 = 1.16680, m1 = 1.10783, m2 = 1.40586;
@@ -240,7 +263,7 @@ Vector4f YvVCoef(float sigma)
 
 	/* calculate scale, and b[0,1,2,3] */
 	float scale = (m0 + q) * (m1sq + m2sq + 2*m1*q + qsq);
-	
+
 	Vector4f r;
 	/* calculate B */
 	r[0] = (m0 * (m1sq + m2sq))/scale;
@@ -248,16 +271,15 @@ Vector4f YvVCoef(float sigma)
 	r[1] = q * (2*m0*m1 + m1sq + m2sq + (2*m0 + 4*m1) * q + 3*qsq) / scale;
 	r[2] = - qsq * (m0 + 2*m1 + 3*q) / scale;
 	r[3] = qsq * q / scale;
-	
-    return r;
+
+	return r;
 }
 
-Matrix3f TriggsM(const Vector4f & b)
-{
+Matrix3f TriggsM(const Vector4f & b) {
 	float a1 = b[1];
 	float a2 = b[2];
 	float a3 = b[3];
-	
+
 	float scale = 1.0/((1.0+a1-a2+a3)*(1.0-a1-a2-a3)*(1.0+a2+(a1-a3)*a3));
 	Matrix3f M;
 	M(0,0) = scale*(-a3*a1+1.0-a3*a3-a2);
@@ -275,19 +297,19 @@ static void rgy( float * r, const float * im, int W, int H, int C, const VectorX
 	Matrix3f M = TriggsM( b );
 	float smsq = b[0];
 	float sm = b[0]*b[0];
-	
+
 	Matrix<float,Dynamic,4> p( W*C, 4 );
 	Map<const MatrixXf> pim(im,W*C,H);
 	Map<MatrixXf> pr(r,W*C,H);
 	p.col(0) = p.col(1) = p.col(2) = p.col(3) = pim.col(0) / smsq;
-	
+
 	VectorXf iplus = pim.col(H-1);
 	for( int i=0; i<H; i++ )
 		pr.col(i) = p.col(i&3) = pim.col(i) + b[1]*p.col((i+3)&3) + b[2]*p.col((i+2)&3) + b[3]*p.col((i+1)&3);
-		
+
 	VectorXf uplus = iplus.array() / (1.-b[1]-b[2]-b[3]);
 	VectorXf vplus = uplus.array() / (1.-b[1]-b[2]-b[3]);
-		
+
 	Matrix<float,Dynamic,3> pp( W*C, 3 );
 	pp.col(0) = p.col((H-1)&3) - uplus;
 	pp.col(1) = p.col((H-2)&3) - uplus;
@@ -296,7 +318,7 @@ static void rgy( float * r, const float * im, int W, int H, int C, const VectorX
 	p.col((H-1)&3) = sm*(pp.col(0) + vplus);
 	p.col((H  )&3) = sm*(pp.col(1) + vplus);
 	p.col((H+1)&3) = sm*(pp.col(2) + vplus);
-		
+
 	pr.col(H-1) = p.col((H-1)&3);
 	for( int i=H-2; i>=0; i-- )
 		pr.col(i) = p.col(i&3) = sm*pr.col(i) + b[1]*p.col((i+1)&3) + b[2]*p.col((i+2)&3) + b[3]*p.col((i+3)&3);
@@ -316,7 +338,7 @@ void egx( Matrix4Xf & r, const Matrix4Xf & im, int W, int H, const VectorXf & f 
 	std::vector<__m128> sf(R);
 	for( int i=0; i<R; i++ )
 		sf[i] = _mm_set1_ps( f[i] );
-	
+
 	for( int j=0; j<H; j++ ) {
 		const __m128 * pim = ((const __m128 *) im.data())+j*W;
 		__m128 * pr = ((__m128 *) r.data())+j*W;
@@ -338,7 +360,7 @@ void egx( Matrix4Xf & r, const Matrix4Xf & im, int W, int H, const VectorXf & f 
 void egy( Matrix4Xf & r, const Matrix4Xf & im, int W, int H, const VectorXf & f ) {
 	const __m128 * pim = (const __m128*)im.data();
 	__m128 * pr  = (__m128*)r.data();
-	
+
 	__m128 zero = _mm_set1_ps( 0.f );
 	int R = f.size();
 	std::vector<__m128> sf(R);
@@ -374,13 +396,13 @@ void exactGaussianFilter( float * r, const float * im, int W, int H, int C, floa
 	// Load the image
 	Matrix4Xf mim = MatrixXf::Zero( 4, W*H ), tmp = MatrixXf::Zero( 4, W*H );
 	mim.topRows(C) = Map<const MatrixXf>( im, C, W*H );
-	
+
 	// Compute the filter
 	VectorXf f = gaussFactor( sigma, R );
-	
+
 	egx( tmp, mim, W, H, f );
 	egy( mim, tmp, W, H, f );
-	
+
 	Map<MatrixXf>( r, C, W*H ) = mim.topRows(C);
 }
 template<typename F, int C>
@@ -453,31 +475,51 @@ void prefixFilter( float * r, const float * im, int W, int H, F f, int rad, floa
 }
 template<typename F>
 void prefixFilter( float * r, const float * im, int W, int H, int C, F f, int rad, float init=0 ) {
-	switch(C){
-	case 1: return prefixFilter<F,1>( r, im, W, H, f, rad, init );
-	case 2: return prefixFilter<F,2>( r, im, W, H, f, rad, init );
-	case 3: return prefixFilter<F,3>( r, im, W, H, f, rad, init );
-	case 4: return prefixFilter<F,4>( r, im, W, H, f, rad, init );
-	case 5: return prefixFilter<F,5>( r, im, W, H, f, rad, init );
-	case 6: return prefixFilter<F,6>( r, im, W, H, f, rad, init );
-	case 7: return prefixFilter<F,7>( r, im, W, H, f, rad, init );
-	case 8: return prefixFilter<F,8>( r, im, W, H, f, rad, init );
-	case 9: return prefixFilter<F,9>( r, im, W, H, f, rad, init );
-	case 10: return prefixFilter<F,10>( r, im, W, H, f, rad, init );
-	case 11: return prefixFilter<F,11>( r, im, W, H, f, rad, init );
-	case 12: return prefixFilter<F,12>( r, im, W, H, f, rad, init );
-	case 13: return prefixFilter<F,13>( r, im, W, H, f, rad, init );
-	case 14: return prefixFilter<F,14>( r, im, W, H, f, rad, init );
-	case 15: return prefixFilter<F,15>( r, im, W, H, f, rad, init );
-	default: throw std::invalid_argument("Only C<16 supported");
+	switch(C) {
+	case 1:
+		return prefixFilter<F,1>( r, im, W, H, f, rad, init );
+	case 2:
+		return prefixFilter<F,2>( r, im, W, H, f, rad, init );
+	case 3:
+		return prefixFilter<F,3>( r, im, W, H, f, rad, init );
+	case 4:
+		return prefixFilter<F,4>( r, im, W, H, f, rad, init );
+	case 5:
+		return prefixFilter<F,5>( r, im, W, H, f, rad, init );
+	case 6:
+		return prefixFilter<F,6>( r, im, W, H, f, rad, init );
+	case 7:
+		return prefixFilter<F,7>( r, im, W, H, f, rad, init );
+	case 8:
+		return prefixFilter<F,8>( r, im, W, H, f, rad, init );
+	case 9:
+		return prefixFilter<F,9>( r, im, W, H, f, rad, init );
+	case 10:
+		return prefixFilter<F,10>( r, im, W, H, f, rad, init );
+	case 11:
+		return prefixFilter<F,11>( r, im, W, H, f, rad, init );
+	case 12:
+		return prefixFilter<F,12>( r, im, W, H, f, rad, init );
+	case 13:
+		return prefixFilter<F,13>( r, im, W, H, f, rad, init );
+	case 14:
+		return prefixFilter<F,14>( r, im, W, H, f, rad, init );
+	case 15:
+		return prefixFilter<F,15>( r, im, W, H, f, rad, init );
+	default:
+		throw std::invalid_argument("Only C<16 supported");
 	}
 }
 
 void minFilter( float * r, const float * im, int W, int H, int C, int rad ) {
-	prefixFilter( r, im, W, H, C, [](float a, float b){ return a<b?a:b; }, rad, 1e10 );
+	prefixFilter( r, im, W, H, C, [](float a, float b) {
+		return a<b?a:b;
+	}, rad, 1e10 );
 }
 void maxFilter( float * r, const float * im, int W, int H, int C, int rad ) {
-	prefixFilter( r, im, W, H, C, [](float a, float b){ return a>b?a:b; }, rad );
+	prefixFilter( r, im, W, H, C, [](float a, float b) {
+		return a>b?a:b;
+	}, rad );
 }
 void percentileFilter( float *r, const float *im, int W, int H, int C, int rad, float p ) {
 	if( p < 1e-5 ) return minFilter( r, im, W, H, C, rad );

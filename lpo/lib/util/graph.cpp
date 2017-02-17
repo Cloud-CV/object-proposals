@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -46,14 +46,12 @@ int getN(const Edges &graph) {
 		N = std::max( N, std::max(e.a, e.b)+1 );
 	return N;
 }
-void saveEdges(std::ostream &s, const Edges &e)
-{
+void saveEdges(std::ostream &s, const Edges &e) {
 	unsigned int ne = e.size();
 	s.write((char *)&ne, sizeof(ne));
 	s.write((char *)e.data(), ne * sizeof(Edge));
 }
-void loadEdges(std::istream &s, Edges &e)
-{
+void loadEdges(std::istream &s, Edges &e) {
 	unsigned int ne;
 	s.read((char *)&ne, sizeof(ne));
 	e.resize(ne);

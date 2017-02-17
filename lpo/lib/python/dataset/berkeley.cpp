@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -47,7 +47,7 @@ static std::vector< std::string > listDir(const std::string &dirname) {
 			r.push_back( d->d_name );
 	return r;
 }
-static int mkdir( const std::string & pathname ){ 
+static int mkdir( const std::string & pathname ) {
 	return mkdir( pathname.c_str(), 0777 );
 }
 
@@ -57,8 +57,7 @@ static std::tuple< std::vector<RMatrixXs>, std::vector<RMatrixXb> > readMat( con
 	std::vector<RMatrixXs> seg;
 	std::vector<RMatriXb> bnd;
 	mat_t * mat = Mat_Open(name.c_str(),MAT_ACC_RDONLY);
-	if(mat)
-	{
+	if(mat) {
 		matvar_t * gt = Mat_VarRead( mat, (char*)"groundTruth" );
 		if(!gt)
 			return std::make_tuple(seg,bnd);
@@ -74,7 +73,7 @@ static std::tuple< std::vector<RMatrixXs>, std::vector<RMatrixXb> > readMat( con
 				int W = arr->dims[1], H = arr->dims[0];
 				if( arr->data_type != types[it] )
 					printf("Unexpected %s type! Continuing in denial ...\n",names[it]);
-				
+
 				if(it==0)
 					seg.push_back( MatrixXus::Map((const uint16_t*)arr->data,H,W)-1 );
 				else
@@ -101,14 +100,14 @@ static dict loadEntry( std::string name ) {
 	mkdir( cs_dir );
 	for (std::string s: sets)
 		mkdir( cs_dir+s );
-	
+
 	dict r;
 	for (std::string s: sets) {
 		std::string im_name = s+"/"+name+".jpg";
 		std::shared_ptr<Image8u> im = imreadShared( im_dir + "/" + im_name );
 		if( im && !im->empty() ) {
 			std::string sname = s+"/"+name+".png", bname = s+"/"+name+"_bnd.png", mname = s+"/"+name+".mat";
-			
+
 			std::vector<RMatrixXs> seg;
 			{
 				std::vector<RMatrixXu8> tmp = readAPNG( cs_dir + "/" + sname );
@@ -121,7 +120,7 @@ static dict loadEntry( std::string name ) {
 				for( auto i: tmp )
 					bnd.push_back( i.cast<bool>() );
 			}
-			
+
 			if( seg.size()==0 || bnd.size()==0 ) {
 				std::tie(seg,bnd) = readMat( gt_dir + "/" + mname );
 				{
@@ -158,7 +157,7 @@ static void loadBSD300( list & r, const std::string & type ) {
 	mkdir( cs_dir );
 	for (std::string s: sets)
 		mkdir( cs_dir+s );
-	
+
 	while(is.is_open() && !is.eof()) {
 		std::string l;
 		std::getline(is,l);
@@ -181,11 +180,11 @@ static void loadBSD500( list & r, const std::string & type, int max_entry=1<<30 
 	std::string sets[] = {"train","val","test"};
 	std::string cs_dir = berkeley_dir+"/cache/";
 	std::string im_dir = berkeley_dir+"/images/"+type+"/";
-	
+
 	mkdir( cs_dir );
 	for (std::string s: sets)
 		mkdir( cs_dir+s );
-	
+
 	std::vector<std::string> files = listDir( im_dir );
 	std::sort( files.begin(), files.end() );
 	int n = 0;

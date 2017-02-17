@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -43,7 +43,7 @@ RMatrixXf ori( const RMatrixXf & im, int rad=4 ) {
 			float dy = 2*bim(j,i)-bim(j1,i)-bim(j0,i);
 			if( bim(j0,i0)+bim(j1,i1)-bim(j1,i0)-bim(j0,i1) > 0 )
 				dy = -dy;
-			
+
 			float a = atan2(dy,dx);
 			if( a < 0 )
 				a += M_PI;
@@ -64,7 +64,7 @@ const float lerp( const RMatrixXf & im, float x, float y ) {
 	if( y0 >= im.rows() ) y0 = im.rows()-1;
 	if( y1 >= im.rows() ) y1 = im.rows()-1;
 	return    wx  * ( wy * im(y0,x0) + (1-wy) * im(y1,x0) ) +
-	       (1-wx) * ( wy * im(y0,x1) + (1-wy) * im(y1,x1) );
+	          (1-wx) * ( wy * im(y0,x1) + (1-wy) * im(y1,x1) );
 }
 RMatrixXf nms( const RMatrixXf & im, int R ) {
 	RMatrixXf o = ori( im );
@@ -72,7 +72,7 @@ RMatrixXf nms( const RMatrixXf & im, int R ) {
 	RMatrixXf res = im;
 	for( int j=0; j<im.rows(); j++ )
 		for( int i=0; i<im.cols(); i++ )
-			for( int r=-R; r<=R; r++ ) 
+			for( int r=-R; r<=R; r++ )
 				if(r!=0) {
 					float x = i+r*dx(j,i), y = j+r*dy(j,i);
 					if( 1.01*im(j,i) < lerp(im,x,y) )

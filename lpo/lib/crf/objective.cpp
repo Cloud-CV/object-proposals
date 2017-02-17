@@ -32,7 +32,7 @@
 static const int verbose = 0;
 static const bool pairwise_positive = true;
 
-OneSlackObjective::OneSlackObjective( const float C ):C_(C){
+OneSlackObjective::OneSlackObjective( const float C ):C_(C) {
 }
 
 std::tuple<VectorXf,VectorXf> OneSlackObjective::optimize( const std::vector<ParameterConstraint> & constraints, float * objective_value ) const {
@@ -62,7 +62,7 @@ std::tuple<VectorXf,VectorXf> OneSlackObjective::optimize( const std::vector<Par
 	RMatrixX<T> A = RMatrixX<T>::Zero( Nc, N );
 	VectorX<T> b = VectorX<T>::Zero( Nc );
 	int nc = 0;
-	for( auto c: constraints ){
+	for( auto c: constraints ) {
 		A.row(nc).head(Nu)       = c.du.cast<T>();
 		A.row(nc).segment(Nu,Np) = c.dp.cast<T>();
 		A(nc,N-1) = -1.0 / SQRT_EPS;
@@ -95,7 +95,7 @@ std::tuple<VectorXf,VectorXf> OneSlackObjective::optimize( const std::vector< st
 }
 
 
-NSlackObjective::NSlackObjective( const float C ):C_(C){
+NSlackObjective::NSlackObjective( const float C ):C_(C) {
 }
 std::tuple<VectorXf,VectorXf> NSlackObjective::optimize( const std::vector< std::vector<ParameterConstraint> >& constraints, float * objective_value ) const {
 	// Unless I find time to code up an interior point QP solver

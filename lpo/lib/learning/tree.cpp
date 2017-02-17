@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -51,7 +51,7 @@ static float pickRandom( const VectorXf & f, int min_leaf ) {
 // For debugging purposes only
 struct LeafStats {
 	std::atomic<int> n_, n0_, n_zero_, n_pure_, n_pure0_, n_r_;
-	LeafStats():n_(0),n0_(0),n_zero_(0),n_pure_(0),n_pure0_(0),n_r_(0){
+	LeafStats():n_(0),n0_(0),n_zero_(0),n_pure_(0),n_pure0_(0),n_r_(0) {
 	}
 	void add( const RMatrixXf & lbl, int rep ) {
 		RMatrixXf dlbl = (lbl.colwise() - lbl.col(0)).array().abs();
@@ -84,7 +84,7 @@ struct LeafStats {
 struct FitData {
 	VectorXi ids;
 	int d, node_id;
-	FitData( const VectorXi & ids=VectorXi(), int d=0, int node_id=0 ):ids(ids),d(d),node_id(node_id){}
+	FitData( const VectorXi & ids=VectorXi(), int d=0, int node_id=0 ):ids(ids),d(d),node_id(node_id) {}
 	std::tuple<FitData,FitData> split( const VectorXb & is_left, int node_id ) const {
 		const int n_left = is_left.cast<float>().array().sum(), n_right = ids.size() - n_left;
 		VectorXi left( n_left ), right( n_right );
@@ -93,7 +93,7 @@ struct FitData {
 				left[li++] = ids[i];
 			else
 				right[ri++] = ids[i];
-		return std::make_tuple( FitData{left,d+1,node_id}, FitData{right,d+1,node_id+1} );
+		return std::make_tuple( FitData {left,d+1,node_id}, FitData {right,d+1,node_id+1} );
 	}
 };
 void BaseTree::remapFid( const VectorXi & fid ) {
@@ -136,7 +136,7 @@ std::shared_ptr<SplitCriterion> makeSplit( TreeSettings settings ) {
 }
 void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf & lbl, const VectorXf & weight, const TreeSettings &settings, const void * data ) {
 	std::shared_ptr<SplitCriterion> split = makeSplit( settings );
-	
+
 	// Train the tree
 	nodes_.resize(2*ids.size()-1);
 	std::atomic<int> n_nodes(1);
@@ -148,19 +148,19 @@ void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf &
 #define TIC
 #define TOC(x)
 #endif
-	
+
 #ifdef SHOW_PROGRESS
 	UpdateProgressPrint progress("  * training tree ...   ", ids.size() );
 #endif
 	std::mutex m;
 // 	LeafStats stat;
-	auto fit_function = [&](ThreadedQueue<FitData>::Queue * queue, FitData d ){
+	auto fit_function = [&](ThreadedQueue<FitData>::Queue * queue, FitData d ) {
 		TIC;
 		// Train the current node
 		TreeNode & current_node = nodes_[d.node_id];
 		const int N = (int)d.ids.size();
 		TOC("init");
-		
+
 		// Collect the data
 		RMatrixXf d_lbl( N, lbl.cols() );
 		VectorXf d_weight( N );
@@ -170,7 +170,7 @@ void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf &
 		}
 		std::shared_ptr<SplitCriterion> csplit = split->create( d_lbl, d_weight );
 		TOC("split");
-		
+
 		float best_gain = 0;
 		VectorXb best_split;
 		int best_f=-1;
@@ -180,7 +180,7 @@ void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf &
 			// Randomly sample features
 			VectorXi fids = sampleFeatures( f.featureSize(), settings.max_feature );
 			TOC("fid");
-			
+
 			// Evaluate those features and find the best split
 // 			for( int fi: fids )
 // #pragma omp parallel for
@@ -190,26 +190,25 @@ void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf &
 				VectorXf fv( N );
 				for( int j=0; j<N; j++ )
 					fv[j] = f.get(d.ids[j],fi);
-				
+
 				// This feature wont work
 				if( fv.maxCoeff() - fv.minCoeff() < 1e-4 )
 					continue;
-				
+
 				float t, g;
 				if( settings.extremely_random ) {
 					t = pickRandom( fv, settings.min_samples_leaf );
 					g = csplit->gain( fv.array() < t );
-				}
-				else
+				} else
 					t = csplit->bestThreshold( fv, &g );
 // #pragma omp critical(best_update)
 // 				{
-					if( g > best_gain ) {
-						best_gain = g;
-						best_f = fi;
-						best_t = t;
-						best_split = fv.array() < t;
-					}
+				if( g > best_gain ) {
+					best_gain = g;
+					best_f = fi;
+					best_t = t;
+					best_split = fv.array() < t;
+				}
 // 				}
 			}
 			TOC("find best");
@@ -218,17 +217,17 @@ void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf &
 		if( best_gain > 0 && best_f >= 0 ) {
 			const int n_left = best_split.cast<int>().sum();
 			const int n_right = best_split.size() - n_left;
-			
+
 			if( n_left >= settings.min_samples_leaf && n_right >= settings.min_samples_leaf ) {
 				int id = n_nodes.fetch_add(2);
-				
+
 				FitData left, right;
 				std::tie(left,right) = d.split( best_split, id );
-				
+
 				current_node.fid = best_f;
 				current_node.t = best_t;
 				current_node.left_child = id;
-				
+
 				queue->push( left );
 				queue->push( right );
 			}
@@ -259,13 +258,13 @@ void BaseTree::fitMT( const Features &f, const VectorXi & ids, const RMatrixXf &
 
 void BaseTree::fit( const Features &f, const VectorXi & ids, const RMatrixXf & lbl, const VectorXf & weight, const TreeSettings &settings, const void * data ) {
 	std::shared_ptr<SplitCriterion> split = makeSplit( settings );
-	
+
 	// Train the tree
 	nodes_.resize(2*ids.size()-1);
 	int n_nodes=1;
 	std::vector<FitData> queue;
 	queue.push_back( {ids,1,0} );
-	
+
 #ifdef TIME
 	Timer t;
 #define TIC t.tic()
@@ -274,20 +273,20 @@ void BaseTree::fit( const Features &f, const VectorXi & ids, const RMatrixXf & l
 #define TIC
 #define TOC(x)
 #endif
-	
+
 #ifdef SHOW_PROGRESS
 	UpdateProgressPrint progress("  * Training Tree ... ", ids.size() );
 #endif
 	while(!queue.empty()) {
 		TIC;
-		
+
 		// Train the current node
 		FitData d = queue.back();
 		queue.pop_back();
 		TreeNode & current_node = nodes_[d.node_id];
 		const int N = (int)d.ids.size();
 		TOC("init");
-		
+
 		// Collect the data
 		RMatrixXf d_lbl( N, lbl.cols() );
 		VectorXf d_weight( N );
@@ -297,7 +296,7 @@ void BaseTree::fit( const Features &f, const VectorXi & ids, const RMatrixXf & l
 		}
 		std::shared_ptr<SplitCriterion> csplit = split->create( d_lbl, d_weight );
 		TOC("split");
-		
+
 		float best_gain = 0;
 		VectorXb best_split;
 		int best_f=-1;
@@ -309,26 +308,25 @@ void BaseTree::fit( const Features &f, const VectorXi & ids, const RMatrixXf & l
 			TOC("fid");
 
 			// Evaluate those features and find the best split
-#pragma omp parallel for
+			#pragma omp parallel for
 			for( int i=0; i<(int)fids.size(); i++ ) {
 				// Extract the feature
 				int fi = fids[i];
 				VectorXf fv( N );
 				for( int j=0; j<N; j++ )
 					fv[j] = f.get(d.ids[j],fi);
-				
+
 				// This feature wont work
 				if( fv.maxCoeff() - fv.minCoeff() < 1e-4 )
 					continue;
-				
+
 				float t, g;
 				if( settings.extremely_random ) {
 					t = pickRandom( fv, settings.min_samples_leaf );
 					g = csplit->gain( fv.array() < t );
-				}
-				else
+				} else
 					t = csplit->bestThreshold( fv, &g );
-#pragma omp critical(best_update)
+				#pragma omp critical(best_update)
 				{
 					if( g > best_gain ) {
 						best_gain = g;
@@ -344,18 +342,18 @@ void BaseTree::fit( const Features &f, const VectorXi & ids, const RMatrixXf & l
 		if( best_gain > 0 && best_f >= 0 ) {
 			const int n_left = best_split.cast<int>().sum();
 			const int n_right = best_split.size() - n_left;
-			
+
 			if( n_left >= settings.min_samples_leaf && n_right >= settings.min_samples_leaf ) {
 				int id = n_nodes;
 				n_nodes += 2;
-				
+
 				FitData left, right;
 				std::tie(left,right) = d.split( best_split, id );
-				
+
 				current_node.fid = best_f;
 				current_node.t = best_t;
 				current_node.left_child = id;
-				
+
 				queue.push_back( left );
 				queue.push_back( right );
 			}
@@ -380,32 +378,32 @@ void BaseTree::fit( const Features &f, const VectorXi & ids, const RMatrixXf & l
 }
 void BaseTree::refit( const Features &f, const VectorXi & ids, const RMatrixXf & lbl, const VectorXf & weight, const TreeSettings &settings, const void * data ) {
 	std::shared_ptr<SplitCriterion> split = makeSplit( settings );
-	
+
 	// Retrain the tree
-	
+
 // #ifdef SHOW_PROGRESS
 // 	UpdateProgressPrint progress("  * Retraining Tree ... ", ids.size() );
 // #endif
 	VectorXi id( ids.rows() );
-#pragma omp parallel for
+	#pragma omp parallel for
 	for( int i=0; i<ids.rows(); i++ )
 		id[i] = predict( f, ids[i] );
-	
+
 	// Compute which leaf each piece of data ends up in
 	int n_leaf = 0;
 	for( TreeNode n: nodes_ )
 		if(n.fid==-1 && n_leaf <= n.left_child)
 			n_leaf = n.left_child+1;
-	
+
 	std::vector< std::vector< int > > l_ids( n_leaf );
 	for( int i=0; i<id.size(); i++ )
 		l_ids[ id[i] ].push_back( i );
-	
+
 	// Find the leaf elements
 	// TODO: This works only for rep labels!!!
 	std::vector<VectorXi> leaf_ids( n_leaf );
 	std::vector<VectorXf> leaf_weight( n_leaf );
-#pragma omp parallel for
+	#pragma omp parallel for
 	for( int i=0; i<l_ids.size(); i++ ) {
 		const int N = l_ids[i].size();
 		if( N>0 ) {
@@ -420,17 +418,16 @@ void BaseTree::refit( const Features &f, const VectorXi & ids, const RMatrixXf &
 				std::shared_ptr<SplitCriterion> csplit = split->create( d_lbl, d_weight );
 				leaf_ids[i] = VectorXi::Constant(1,l_ids[i][csplit->repLabel()]);
 				leaf_weight[i] = VectorXf::Constant(1,1.0f);
-			}
-			else {
+			} else {
 				leaf_ids[i] = VectorXi::Map( l_ids[i].data(), l_ids[i].size() );
 				leaf_weight[i] = d_weight;
 			}
 		}
 	}
-	
+
 	// Clear all the leaf data
 	clearLeafData();
-	
+
 	// Merge leafs with no data
 	for( int i=nodes_.size()-1; i>=0; i-- ) {
 		if( nodes_[i].fid==-1 ) {
@@ -438,8 +435,7 @@ void BaseTree::refit( const Features &f, const VectorXi & ids, const RMatrixXf &
 				nodes_[i].left_child = -1;
 			else
 				nodes_[i].left_child = addLeaf( leaf_ids[ nodes_[i].left_child ], leaf_weight[ nodes_[i].left_child ], data );
-		}
-		else {
+		} else {
 			const int l = nodes_[i].left_child;
 			for ( int k=0; k<2; k++ )
 				if( nodes_[l+k].left_child == -1 ) {
@@ -481,8 +477,7 @@ float BaseTree::averageDepth() const {
 		if( nodes_[i].fid != -1 ) {
 			s.push_back( std::make_tuple(nodes_[i].left_child+0,d+1));
 			s.push_back( std::make_tuple(nodes_[i].left_child+1,d+1));
-		}
-		else {
+		} else {
 			sum_d += d;
 			cnt += 1;
 		}

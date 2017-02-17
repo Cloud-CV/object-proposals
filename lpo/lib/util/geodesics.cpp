@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -73,7 +73,7 @@ void GeodesicDistance::updatePQ( VectorXf & d, GeodesicDistance::PQ &q ) const {
 	while( !q.empty() ) {
 		Node n = q.top();
 		q.pop();
-		
+
 		if( d[ n.to ] <= n.w )
 			continue;
 
@@ -135,13 +135,13 @@ VectorXf GeodesicDistance::backPropGradientPQ( PQ2 & q, const VectorXf &g ) cons
 	while( !q.empty() ) {
 		Node2 n = q.top();
 		q.pop();
-		
+
 		if( p[n.to] != -1 )
 			continue;
-		
+
 		p[ n.to ] = n.from;
 		d[ n.to ] = n.w;
-		
+
 		for ( const Node & i: adj_list_[ n.to ] ) {
 			float w = n.w + i.w;
 			if( w < d[i.to] ) {

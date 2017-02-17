@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -87,14 +87,14 @@ RMatrixXs GBS::compute(float c, int min_size) const {
 			size[m] = size[a]+size[b];
 		}
 	}
-	
+
 	int tot_size = 0;
 	RMatrixXs r( H_, W_ );
 	VectorXi unique_id = -VectorXi::Ones( W_*H_ );
 	for( int j=0,k=0,n=0; j<H_; j++ )
 		for( int i=0; i<W_; i++,k++ ) {
 			int id = uf.find(k);
-			if( unique_id[id] == -1 ){
+			if( unique_id[id] == -1 ) {
 				unique_id[id] = n++;
 				tot_size += size[id];
 			}

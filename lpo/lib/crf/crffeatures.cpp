@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-
+	
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-
+	
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -24,7 +24,7 @@
 	 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "crf_features.h"
+#include "crffeatures.h"
 #include "imgproc/color.h"
 #include "segmentation/segmentation.h"
 #include "util/util.h"
@@ -44,7 +44,7 @@ int unaryDim( unsigned int which ) {
 	if( which & COLOR_DF ) d += 3;
 	if( which & COLOR_SQ ) d += 3;
 	if( which & GEO_BND )  d += 4;
-
+	
 	if( which & SEED_INDICATOR) d += 1;
 	if( which & GEO_SEED      ) d += 4;
 	if( which & COLOR_SEED    ) d += 3;
@@ -54,7 +54,7 @@ int unaryDim( unsigned int which ) {
 }
 
 StaticBinaryCRFFeatures::StaticBinaryCRFFeatures( const RMatrixXf & unary, const Edges & graph, const RMatrixXf & pairwise, int which ):graph_(graph),unary_(unary),pairwise_(pairwise),which_(which) {
-
+	
 }
 StaticBinaryCRFFeatures::StaticBinaryCRFFeatures( const ImageOverSegmentation & ios, int which ):graph_(ios.edges()),which_(which) {
 	makeUnary( ios );
@@ -90,13 +90,13 @@ void StaticBinaryCRFFeatures::makeUnary( const ImageOverSegmentation & ios ) {
 		RMatrixXf py = VectorXf::LinSpaced(s.rows(),0,1)*RowVectorXf::Ones(s.cols());
 		unary_.col(k++) = projectMean( px.data(), s.data(), s.rows()*s.cols(), 1, ios.Ns() );
 		unary_.col(k++) = projectMean( py.data(), s.data(), s.rows()*s.cols(), 1, ios.Ns() );
-
+		
 		// Mean x^2 and y&2
 		RMatrixXf px2 = px.array()*px.array();
 		RMatrixXf py2 = py.array()*py.array();
 		unary_.col(k++) = projectMean( px2.data(), s.data(), s.rows()*s.cols(), 1, ios.Ns() );
 		unary_.col(k++) = projectMean( py2.data(), s.data(), s.rows()*s.cols(), 1, ios.Ns() );
-
+		
 		// Mean xy
 		RMatrixXf pxy = px.array()*py.array();
 		unary_.col(k++) = projectMean( pxy.data(), s.data(), s.rows()*s.cols(), 1, ios.Ns() );
@@ -131,7 +131,7 @@ void StaticBinaryCRFFeatures::makeUnary( const ImageOverSegmentation & ios ) {
 			boundary_mask[ s(i,0) ] = boundary_mask[ s(i,s.cols()-1) ] = 0;
 		for( int i=0; i<s.cols(); i++ )
 			boundary_mask[ s(0,i) ] = boundary_mask[ s(s.rows()-1,i) ] = 0;
-
+		
 		for( int p=0; p<4; p++ ) {
 			GeodesicDistance gdist( ios.edges(), ios.edgeWeights().array().pow(p) + 1e-3 );
 			unary_.col(k++) = gdist.compute(boundary_mask);
@@ -158,7 +158,7 @@ const Edges & StaticBinaryCRFFeatures::graph() const {
 }
 
 SeedBinaryCRFFeatures::SeedBinaryCRFFeatures( const ImageOverSegmentation & ios, int which ):StaticBinaryCRFFeatures( ios, which ) {
-
+	
 	if( which_ & GEO_SEED ) {
 		const Edges & e = ios.edges();
 		gdist0_ = std::make_shared<GeodesicDistance>( e, ios.edgeWeights().array().pow(0)+1e-3 );

@@ -37,11 +37,11 @@ float Floc::energy( const VectorXf & f, const RMatrixXf & C, const VectorXb & x 
 	return xf.dot(f) + RowVectorXf((C.colwise()+(1.f-xf.array()).matrix()*1e10).colwise().minCoeff()).array().sum();
 }
 
-namespace flocprivate{
+namespace flocprivate {
 struct Nd {
 	float w;
 	int i;
-	Nd( float w, int i ):w(w),i(i){}
+	Nd( float w, int i ):w(w),i(i) {}
 	bool operator<(const Nd & o) const {
 		if (w == o.w)
 			return i < o.i;
@@ -93,7 +93,7 @@ VectorXb Floc::greedy( const VectorXf & f, const RMatrixXf & C ) {
 struct QE {
 	float w;
 	int i;
-	QE( float w, int i ):w(w),i(i){}
+	QE( float w, int i ):w(w),i(i) {}
 	bool operator<( const QE & o ) const {
 		return w < o.w;
 	}

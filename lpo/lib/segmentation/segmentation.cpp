@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -41,7 +41,7 @@ Edges computeEdges( const RMatrixXs & seg ) {
 		for( int i=0; i<seg.cols(); i++ ) {
 			if( i && seg(j,i-1) != seg(j,i) )
 				edges.insert( Edge( seg(j,i-1), seg(j,i) ) );
-			if( j && seg(j-1,i) != seg(j,i) ) 
+			if( j && seg(j-1,i) != seg(j,i) )
 				edges.insert( Edge( seg(j-1,i), seg(j,i) ) );
 		}
 	return Edges( edges.begin(), edges.end() );
@@ -86,7 +86,7 @@ void floodFill( const RMatrixXs & id, F1 start, F2 visit, F3 end ) {
 				end( cid );
 			}
 }
-struct Point{
+struct Point {
 	int x, y;
 };
 static Point reseed( const Point & p, const PlanarGeodesicDistanceBase & dist, int W, int H, int R=2, float w = 1e-2 ) {
@@ -96,7 +96,7 @@ static Point reseed( const Point & p, const PlanarGeodesicDistanceBase & dist, i
 	for( int j=std::max(0,y-R); j<H && j<=y+R; j++ )
 		for( int i=std::max(0,x-R); i<W && i<=x+R; i++ ) {
 			float bb = dist.sumDist( i, j )+w*sqrt((x-i)*(x-i)+(y-j)*(y-j));
-			if( bb < b ){
+			if( bb < b ) {
 				b = bb;
 				bx = i;
 				by = j;
@@ -107,14 +107,14 @@ static Point reseed( const Point & p, const PlanarGeodesicDistanceBase & dist, i
 static RMatrixXs runKMeans( const PlanarGeodesicDistanceBase & dist, int W, int H, int approx_N, int NIT ) {
 	RMatrixXf d = RMatrixXf::Zero( H, W );
 	RMatrixXs id = RMatrixXs::Zero( H, W );
-	
+
 	// Fill the initial lattice structured centers
 	int nx = ceil( sqrt( approx_N*W*sqrt(3.) / (2*H) ) );
 	int ny = ceil( 1.0*approx_N / nx );
 	std::vector< Point > centers;
 	for( int j=0; j<ny; j++ )
 		for( int i=0; i<nx; i++ )
-			centers.push_back( reseed({(4*i+1+2*(j&1))*W / (4*nx), (2*j+1)*H / (2*ny) }, dist, W, H, 2 ) );
+			centers.push_back( reseed( {(4*i+1+2*(j&1))*W / (4*nx), (2*j+1)*H / (2*ny) }, dist, W, H, 2 ) );
 	for(int it=0; it<NIT; it++ ) {
 		if( it ) {
 			// Recompute the centers
@@ -127,7 +127,7 @@ static RMatrixXs runKMeans( const PlanarGeodesicDistanceBase & dist, int W, int 
 				}
 			for( int i=0; i<nx*ny; i++ ) {
 				if( sm[i] > 0 )
-					centers[i] = reseed({(int)round(sm_x[i]/sm[i]), (int)round(sm_y[i]/sm[i])}, dist, W, H, 2);
+					centers[i] = reseed( {(int)round(sm_x[i]/sm[i]), (int)round(sm_y[i]/sm[i])}, dist, W, H, 2);
 // 				else
 // 					printf("[%d] Superpixel collapsed! %d  %f\n", it, i, sm[i]);
 			}
@@ -146,7 +146,16 @@ static RMatrixXs runKMeans( const PlanarGeodesicDistanceBase & dist, int W, int 
 	RMatrixXs new_id( H, W );
 	std::vector< int > new_cnt,max_cnt(nx*ny,0);
 	int cnt=0, nid=0;
-	floodFill( id, [&]( int ){cnt=0;}, [&]( int,int x, int y ){cnt++;new_id(y,x)=nid;}, [&]( int id ){new_cnt.push_back(cnt);max_cnt[id]=std::max(max_cnt[id],cnt);nid++;} );
+	floodFill( id, [&]( int ) {
+		cnt=0;
+	}, [&]( int,int x, int y ) {
+		cnt++;
+		new_id(y,x)=nid;
+	}, [&]( int id ) {
+		new_cnt.push_back(cnt);
+		max_cnt[id]=std::max(max_cnt[id],cnt);
+		nid++;
+	} );
 	for( int j=0; j<H; j++ )
 		for( int i=0; i<W; i++ ) {
 			int old_id = id(j,i);
@@ -175,7 +184,7 @@ protected:
 	int W, H;
 	const RMatrixXf & dx, & dy;
 public:
-	PlanarGeodesicDistance( const RMatrixXf & dx, const RMatrixXf & dy ):dx(dx),dy(dy){
+	PlanarGeodesicDistance( const RMatrixXf & dx, const RMatrixXf & dy ):dx(dx),dy(dy) {
 		W = dy.cols();
 		H = dx.rows();
 		if( W != dx.cols()+1 || H != dy.rows()+1 )
@@ -209,7 +218,7 @@ static RMatrixXs geodesicKMeans( const RMatrixXf & dx, const RMatrixXf & dy, int
 }
 
 /************ Over Segmentation ************/
-OverSegmentation::OverSegmentation():Ns_(0){
+OverSegmentation::OverSegmentation():Ns_(0) {
 }
 OverSegmentation::OverSegmentation( const Edges & e ):edges_(e),edge_weights_(VectorXf::Zero(e.size())) {
 	Ns_ = getN( e );
@@ -217,7 +226,7 @@ OverSegmentation::OverSegmentation( const Edges & e ):edges_(e),edge_weights_(Ve
 OverSegmentation::OverSegmentation( const Edges & e, const VectorXf & w ):edges_(e),edge_weights_(w) {
 	Ns_ = getN( e );
 }
-OverSegmentation::~OverSegmentation(){
+OverSegmentation::~OverSegmentation() {
 }
 int OverSegmentation::Ns() const {
 	return Ns_;
@@ -231,11 +240,11 @@ const VectorXf &OverSegmentation::edgeWeights() const {
 void OverSegmentation::setEdgeWeights(const VectorXf &w) {
 	edge_weights_ = w;
 }
-ImageOverSegmentation::ImageOverSegmentation(const Image8u & rgb_im, const RMatrixXs &s) : OverSegmentation(computeEdges(s)), rgb_im_(rgb_im), s_(s){
+ImageOverSegmentation::ImageOverSegmentation(const Image8u & rgb_im, const RMatrixXs &s) : OverSegmentation(computeEdges(s)), rgb_im_(rgb_im), s_(s) {
 	if( s_.rows()!=rgb_im.H() || s_.cols() != rgb_im.W() )
 		throw std::invalid_argument("Image and segmentation shape do not match!");
 }
-ImageOverSegmentation::ImageOverSegmentation(){
+ImageOverSegmentation::ImageOverSegmentation() {
 }
 ImageOverSegmentation::ImageOverSegmentation( const RMatrixXs& s ) : OverSegmentation(computeEdges(s)), s_( s ) {
 }
@@ -249,7 +258,7 @@ RMatrixXf ImageOverSegmentation::boundaryMap(bool thin) const {
 	std::unordered_map< Edge, int > edge_id;
 	for( int i=0; i<edges_.size(); i++ )
 		edge_id[ edges_[i] ] = i+1;
-	
+
 	RMatrixXf r = RMatrixXf::Zero( s_.rows(), s_.cols() );
 	for( int j=0; j<s_.rows(); j++ )
 		for( int i=0; i<s_.cols(); i++ ) {
@@ -261,7 +270,7 @@ RMatrixXf ImageOverSegmentation::boundaryMap(bool thin) const {
 						r(j,i-1) = std::max( r(j,i-1), edge_weights_[id] );
 				}
 			}
-			if( j && s_(j,i) != s_(j-1,i) ){
+			if( j && s_(j,i) != s_(j-1,i) ) {
 				int id = edge_id[ Edge(s_(j,i),s_(j-1,i)) ]-1;
 				if( id >= 0 ) {
 					r(j  ,i) = std::max( r(j  ,i), edge_weights_[id] );
@@ -280,12 +289,12 @@ std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const
 }
 std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const BoundaryDetector & detector, int approx_N, int NIT ) {
 	RMatrixXf thin_bnd = detector.detectAndFilter( im );
-	
+
 	const int W = im.W(), H = im.H();
 	RMatrixXf dx = thin_bnd.leftCols(W-1).array().max( thin_bnd.rightCols(W-1).array() ) + 1e-2;
 	RMatrixXf dy = thin_bnd.topRows(H-1).array().max( thin_bnd.bottomRows(H-1).array() ) + 1e-2;
 	std::shared_ptr<ImageOverSegmentation> r = computeGeodesicKMeans(im, dx, dy, approx_N, NIT);
-	
+
 	percentileFilter( thin_bnd.data(), thin_bnd.data(), W, H, 1, 1, 1 );
 	r->setEdgeWeights( r->projectBoundary( thin_bnd, "p65" ) );
 	return r;
@@ -297,16 +306,16 @@ std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const
 	RMatrixXf thick_bnd = detector.detect( im );
 	// Filter without suppression
 	RMatrixXf thin_bnd = detector.filter( thick_bnd, 0 );
-	
+
 	RMatrixXf os_bnd = thin_bnd.array() + 1e-2*thick_bnd.array() + 1e-2;
-	
+
 	const int W = im.W(), H = im.H();
 	RMatrixXf dx = os_bnd.leftCols(W-1).array().max( os_bnd.rightCols(W-1).array() );
 	RMatrixXf dy = os_bnd.topRows(H-1).array().max( os_bnd.bottomRows(H-1).array() );
 
 	std::shared_ptr<ImageOverSegmentation> r = computeGeodesicKMeans(im, dx, dy, approx_N, NIT);
 	r->setEdgeWeights( r->projectBoundary( thick_bnd, "p25" ) );
-	
+
 	return r;
 }
 std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const RMatrixXf & thick_bnd, const RMatrixXf & thin_bnd, int approx_N ) {
@@ -314,11 +323,11 @@ std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const
 }
 std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const RMatrixXf & thick_bnd, const RMatrixXf & thin_bnd, int approx_N, int NIT ) {
 	RMatrixXf os_bnd = thin_bnd.array() + 1e-2*thick_bnd.array() + 1e-2;
-	
+
 	const int W = im.W(), H = im.H();
 	RMatrixXf dx = os_bnd.leftCols(W-1).array().max( os_bnd.rightCols(W-1).array() );
 	RMatrixXf dy = os_bnd.topRows(H-1).array().max( os_bnd.bottomRows(H-1).array() );
-	
+
 	std::shared_ptr<ImageOverSegmentation> r = computeGeodesicKMeans(im, dx, dy, approx_N, NIT);
 	r->setEdgeWeights( r->projectBoundary( thick_bnd, "p25" ) );
 	return r;
@@ -329,11 +338,11 @@ std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const
 std::shared_ptr<ImageOverSegmentation> geodesicKMeans( const Image8u & im, const DirectedSobel & detector, int approx_N, int NIT ) {
 	RMatrixXf dx, dy;
 	std::tie( dx, dy ) = detector.detectXY( im, false, true );
-	
+
 	// Let a spix grow approx 20x average size until we hit a spatial penalty of 1
 	const float sx = 0.05*sqrt(1.0*approx_N/(im.W()*im.H()));
 	std::shared_ptr<ImageOverSegmentation> r = computeGeodesicKMeans(im, dx.array()+sx, dy.array()+sx, approx_N, NIT);
-	
+
 	std::tie( dx, dy ) = detector.detectXY( im, false, false );
 	r->setEdgeWeights( r->projectBoundary( dx, dy, "med" ).array().pow(0.8).matrix() );
 	return r;
@@ -360,9 +369,9 @@ void ImageOverSegmentation::load(std::istream &s) {
 VectorXs ImageOverSegmentation::projectSegmentation(const RMatrixXs &seg, bool conservative) const {
 	if( s_.rows() != seg.rows() || s_.cols() != seg.cols() )
 		throw std::invalid_argument( "Image and segmentation size do not match!" );
-	
+
 	const int N = seg.rows()*seg.cols();
-	
+
 	VectorXs r = -VectorXs::Ones( Ns_ );
 	int nseg = seg.maxCoeff()+1;
 	// Start voting
@@ -373,7 +382,7 @@ VectorXs ImageOverSegmentation::projectSegmentation(const RMatrixXs &seg, bool c
 			vote( s_.data()[i], seg.data()[i] ) += 1;
 		else if (s_.data()[i] >= 0)
 			neg( s_.data()[i] ) = 1;
-		
+
 	// Return the highest voted segment
 	for( int i=0; i<Ns_; i++ ) {
 		int m;
@@ -387,12 +396,12 @@ VectorXs ImageOverSegmentation::projectSegmentation(const RMatrixXs &seg, bool c
 }
 VectorXf ImageOverSegmentation::project(const RMatrixXf &data, const std::string &type) const {
 	eassert( s_.cols() == data.cols() && s_.rows() == data.rows() );
-	
+
 	std::vector< std::shared_ptr<AggregationFunction> > accum_buf( Ns_ );
 	accum_buf[0] = AggregationFunction::create( type );
 	for( int i=1; i<Ns_; i++ )
 		accum_buf[i] = accum_buf[0]->clone();
-	
+
 	for( int i=0; i<s_.rows()*s_.cols(); i++ )
 		accum_buf[ s_.data()[i] ]->add( data.data()[i] );
 	VectorXf r( Ns_ );
@@ -407,7 +416,7 @@ RMatrixXf ImageOverSegmentation::project(const Image &data, const std::string &t
 	accum_buf[0] = AggregationFunction::create( type );
 	for( int i=1; i<Ns_*C; i++ )
 		accum_buf[i] = accum_buf[0]->clone();
-	
+
 	for( int j=0; j<s_.rows(); j++ )
 		for( int i=0; i<s_.cols(); i++ )
 			for( int k=0; k<C; k++ )
@@ -420,18 +429,18 @@ RMatrixXf ImageOverSegmentation::project(const Image &data, const std::string &t
 VectorXf ImageOverSegmentation::projectBoundary( const RMatrixXf & im, const std::string & type ) const {
 	if( (s_.cols() != im.cols() || s_.rows() != im.rows() ) )
 		throw std::invalid_argument( "Segmentation and image shape need to match!" );
-	
+
 	// Assign them an id
 	std::unordered_map<Edge,int> edge_id;
 	for( int i=0; i<edges_.size(); i++ )
 		edge_id[ edges_[i] ] = i+1;
-	
+
 	// Upsample the edges
 	std::vector< std::shared_ptr<AggregationFunction> > accum_buf( edges_.size() );
 	accum_buf[0] = AggregationFunction::create( type );
 	for( int i=1; i<edges_.size(); i++ )
 		accum_buf[i] = accum_buf[0]->clone();
-	
+
 	for( int j=0; j<s_.rows(); j++ )
 		for( int i=0; i<s_.cols(); i++ ) {
 			if( i && s_(j,i) != s_(j,i-1) ) {
@@ -449,7 +458,7 @@ VectorXf ImageOverSegmentation::projectBoundary( const RMatrixXf & im, const std
 				}
 			}
 		}
-	
+
 	// Create the result
 	VectorXf r( edges_.size() );
 	for( int i=0; i<edges_.size(); i++ )
@@ -459,18 +468,18 @@ VectorXf ImageOverSegmentation::projectBoundary( const RMatrixXf & im, const std
 VectorXf ImageOverSegmentation::projectBoundary( const RMatrixXf & dx, const RMatrixXf & dy, const std::string & type ) const {
 	if( s_.cols() != dx.cols()+1 || s_.rows() != dx.rows() || s_.cols() != dy.cols() || s_.rows() != dy.rows()+1 )
 		throw std::invalid_argument( "Segmentation and image shape need to match!" );
-	
+
 	// Assign them an id
 	std::unordered_map<Edge,int> edge_id;
 	for( int i=0; i<edges_.size(); i++ )
 		edge_id[ edges_[i] ] = i+1;
-	
+
 	// Upsample the edges
 	std::vector< std::shared_ptr<AggregationFunction> > accum_buf( edges_.size() );
 	accum_buf[0] = AggregationFunction::create( type );
 	for( int i=1; i<edges_.size(); i++ )
 		accum_buf[i] = accum_buf[0]->clone();
-	
+
 	for( int j=0; j<s_.rows(); j++ )
 		for( int i=0; i<s_.cols(); i++ ) {
 			if( i && s_(j,i) != s_(j,i-1) ) {
@@ -484,7 +493,7 @@ VectorXf ImageOverSegmentation::projectBoundary( const RMatrixXf & dx, const RMa
 					accum_buf[id]->add( dy(j-1,i) );
 			}
 		}
-	
+
 	// Create the result
 	VectorXf r( edges_.size() );
 	for( int i=0; i<edges_.size(); i++ )
@@ -498,7 +507,7 @@ RMatrixXi maskToBox( const RMatrixXs &s, const RMatrixXb &masks ) {
 	const int Ns = s.maxCoeff()+1;
 	if ( masks.cols() != Ns )
 		throw std::invalid_argument( "Mask and segmentation have different size!" );
-	
+
 	RMatrixXi seg_box( Ns, 4 );
 	for( int i=0; i<Ns; i++ ) {
 		seg_box(i,0) = seg_box(i,1) = std::max(s.cols(), s.rows());
@@ -514,18 +523,20 @@ RMatrixXi maskToBox( const RMatrixXs &s, const RMatrixXb &masks ) {
 				seg_box(l,3) = std::max( j, seg_box(l,3) );
 			}
 		}
-	
+
 	RMatrixXi boxes(masks.rows(),4);
 	for( int i=0; i<masks.rows(); i++ ) {
 		boxes(i,0) = boxes(i,1) = std::max(s.cols(), s.rows());
 		boxes(i,2) = boxes(i,3) = 0;
-		for( int j=0; j<Ns; j++ ) 
-			if( masks(i,j) ){
+		for( int j=0; j<Ns; j++ )
+			if( masks(i,j) ) {
 				boxes(i,0) = std::min( seg_box(j,0), boxes(i,0) );
 				boxes(i,1) = std::min( seg_box(j,1), boxes(i,1) );
 				boxes(i,2) = std::max( seg_box(j,2), boxes(i,2) );
 				boxes(i,3) = std::max( seg_box(j,3), boxes(i,3) );
 			}
+		if( !masks.row(i).any() )
+			boxes(i,0) = boxes(i,1) = boxes(i,2) = boxes(i,3) = 0;
 	}
 	return boxes;
 }
@@ -535,7 +546,7 @@ SegmentationOverlap::SegmentationOverlap() {
 SegmentationOverlap::SegmentationOverlap(const RMatrixXs& s, const RMatrixXs& gt) {
 	const int Ns = s.maxCoeff()+1, No = gt.maxCoeff()+1;
 	eassert( s.cols() == gt.cols() && s.rows() == gt.rows() );
-	
+
 	VectorXs prgt = ImageOverSegmentation(s).projectSegmentation( gt.array()+1 ).array()-1;
 	pgt_ = RMatrixXb::Zero( No, Ns );
 	inside_  = RMatrixXf::Zero( No, Ns );
@@ -543,7 +554,7 @@ SegmentationOverlap::SegmentationOverlap(const RMatrixXs& s, const RMatrixXs& gt
 	if (No > 0 && Ns > 0) {
 		for( int i=0; i<No; i++ )
 			pgt_.row(i) = prgt.array() == i;
-		
+
 		const short * pgt = gt.data();
 		const short * ps = s.data();
 		const int N = s.cols()*s.rows();
@@ -560,20 +571,25 @@ SegmentationOverlap::SegmentationOverlap(const RMatrixXs& s, const RMatrixXs& gt
 }
 SegmentationOverlap::SegmentationOverlap(const RMatrixXs& s, const std::vector< Polygons >& regions, const int BOUNDARY) {
 	const int Ns = s.maxCoeff()+1, No = regions.size();
-	
+
 	VectorXf s_area = VectorXf::Zero( Ns );
 	for( int i=0; i<s.cols()*s.rows(); i++ ) {
 		eassert( s.data()[i] >= 0 );
 		s_area[ s.data()[i] ] += 1;
 	}
-	
+
 	inside_  = RMatrixXf::Zero( No, Ns );
 	outside_ = RMatrixXf::Zero( No, Ns );
-	
+
 	std::vector< VectorXb > psegs;
 	for( int i=0; i<No; i++ ) {
 		VectorXf inside = VectorXf::Zero( Ns ), outside = s_area;
-		rasterize( [&](int x, int y, int l){ if(0<=x&&x<s.cols() && 0<=y&&y<s.rows()){ if( l==INSIDE ) inside[s(y,x)]+=1; if( l!=OUTSIDE) outside[s(y,x)]-=1;} }, regions[i], BOUNDARY );
+		rasterize( [&](int x, int y, int l) {
+			if(0<=x&&x<s.cols() && 0<=y&&y<s.rows()) {
+				if( l==INSIDE ) inside[s(y,x)]+=1;
+				if( l!=OUTSIDE) outside[s(y,x)]-=1;
+			}
+		}, regions[i], BOUNDARY );
 		inside_.row(i) = inside;
 		outside_.row(i) = outside;
 	}
@@ -600,7 +616,7 @@ VectorXf SegmentationOverlap::iou(const VectorXb& prop) const {
 	if( spix_box_.size() ) {
 		Vector4i box(1<<14,1<<14,0,0);
 		for( int i=0; i<spix_box_.size(); i++ )
-			if( prop[i] ){
+			if( prop[i] ) {
 				if( box[0] > spix_box_[i][0] ) box[0] = spix_box_[i][0];
 				if( box[1] > spix_box_[i][1] ) box[1] = spix_box_[i][1];
 				if( box[2] < spix_box_[i][2] ) box[2] = spix_box_[i][2];
@@ -610,8 +626,7 @@ VectorXf SegmentationOverlap::iou(const VectorXb& prop) const {
 		for( int i=0; i<boxes_.rows(); i++ )
 			r[i] = boxIou( box, boxes_.row(i) );
 		return r;
-	}
-	else {
+	} else {
 		// Use segment overlap
 		VectorXf in = inside_*prop.cast<float>();
 		VectorXf un = outside_*prop.cast<float>();
@@ -623,10 +638,10 @@ VectorXb SegmentationOverlap::project( int n ) const {
 	return pgt_.row(n);
 }
 int SegmentationOverlap::nObjects() const {
-    return pgt_.rows();
+	return pgt_.rows();
 }
 int SegmentationOverlap::Ns() const {
-    return pgt_.cols();
+	return pgt_.cols();
 }
 RMatrixXi mergeOverSegmentations( const std::vector<RMatrixXs> & segs ) {
 	if( segs.size() == 0 ) return RMatrixXi(0,0);
@@ -637,7 +652,7 @@ RMatrixXi mergeOverSegmentations( const std::vector<RMatrixXs> & segs ) {
 		cx = cx && (s.leftCols(W-1).array() == s.rightCols(W-1).array());
 		cy = cy && (s.topRows(H-1).array() == s.bottomRows(H-1).array());
 	}
-	RMatrixXi r = -RMatrixXi::Ones(H,W);	
+	RMatrixXi r = -RMatrixXi::Ones(H,W);
 	std::vector< std::pair<int,int> > q;
 	for( int j=0,k=0; j<H; j++ )
 		for( int i=0; i<W; i++ )

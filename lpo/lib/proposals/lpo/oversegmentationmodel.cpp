@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -46,13 +46,11 @@ Image OverSegmentationModel::convertColorSpace( const Image & im ) const {
 		rgb2lab( r, im );
 		// Undo Piotrs weird scaling (used in StructredForests)
 		r.scale( 270. / 170. );
-	}
-	else if( color_space_ == "luv" ) {
+	} else if( color_space_ == "luv" ) {
 		rgb2luv( r, im );
 		// Undo Piotrs weird scaling (used in StructredForests)
 		r.scale( 270. / 170. );
-	}
-	else if (color_space_ == "normrgb")
+	} else if (color_space_ == "normrgb")
 		rgb2normrgb( r, im );
 	else
 		throw std::invalid_argument( "Invalid color space!" );
@@ -60,12 +58,12 @@ Image OverSegmentationModel::convertColorSpace( const Image & im ) const {
 	gaussianFilter( br.data(), r.data(), r.W(), r.H(), r.C(), 1.0 );
 	return br;
 }
-void OverSegmentationModel::load(std::istream& is){
+void OverSegmentationModel::load(std::istream& is) {
 	is.read( (char*)&max_size_, sizeof(max_size_) );
 	color_space_ = loadString( is );
 	ExhaustiveLPOModel::load(is);
 }
-void OverSegmentationModel::save(std::ostream& os) const{
+void OverSegmentationModel::save(std::ostream& os) const {
 	os.write( (const char*)&max_size_, sizeof(max_size_) );
 	saveString( os, color_space_ );
 	ExhaustiveLPOModel::save(os);
@@ -76,18 +74,18 @@ std::vector<Proposals> GBSModel::generateProposals( const ImageOverSegmentation 
 	for( int i=0; i<params.size(); i++ ) {
 		// Create the over-segmentation
 		RMatrixXs s = gbs.compute( params[i][0]/255., params[i][0] );
-		
+
 		// Find all valid segments
 		const int Ns = s.maxCoeff()+1;
 		VectorXi cnt = bincount( s );
 		VectorXb valid = (cnt.array()>0 && cnt.array() < max_size_);
-		
+
 		// Create the proposal mask
 		RMatrixXb p = RMatrixXb::Zero(valid.cast<int>().sum(),Ns);
 		for( int k=0,kk=0; k<cnt.size(); k++ )
 			if( valid[k] )
 				p( kk++, k ) = 1;
-		
+
 		r[i].s = s;
 		r[i].p = p;
 	}

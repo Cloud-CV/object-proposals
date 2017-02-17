@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -34,22 +34,22 @@ const int BOUNDARY_WITH = 3;
 
 VectorXf bestOverlap( const std::vector<Polygons> & regions, const RMatrixXs &over_seg, const RMatrixXb &segments, VectorXf * area = NULL ) {
 	const int N_sp = over_seg.maxCoeff()+1, N_gt = regions.size();
-	
+
 	// Compute the sparse proposal matrix
 	SparseMatrix<int> props( segments.rows(), segments.cols() );
 	std::vector< Triplet<int> > t;
 	for( int j=0; j<props.rows(); j++ )
-		for( int i=0; i<props.cols(); i++ ) 
+		for( int i=0; i<props.cols(); i++ )
 			if( segments(j,i) )
 				t.push_back( Triplet<int>(j,i,1) );
 	props.setFromTriplets( t.begin(), t.end() );
-	
+
 	// Compute the superpixel areas
 	VectorXi sp_area = VectorXi::Zero( N_sp );
 	for( int j=0; j<over_seg.rows(); j++ )
 		for( int i=0; i<over_seg.cols(); i++ )
 			sp_area[ over_seg(j,i) ]++;
-		
+
 	if(area)
 		*area = VectorXf::Zero( N_gt );
 	VectorXf r( N_gt );
@@ -60,7 +60,7 @@ VectorXf bestOverlap( const std::vector<Polygons> & regions, const RMatrixXs &ov
 		VectorXi cur_sp_area = sp_area;
 		SparseVector<int> intersection( N_sp );
 		int mnx=over_seg.cols(), mny=over_seg.rows(), mxx=0, mxy=0;
-		rasterize( [&](int x,int y,RasterType t){
+		rasterize( [&](int x,int y,RasterType t) {
 			if (0<=x && x<over_seg.cols() && 0<=y && y<over_seg.rows() && !rasterized(y,x)) {
 				if( x < mnx ) mnx = x;
 				if( y < mny ) mny = y;
@@ -68,7 +68,7 @@ VectorXf bestOverlap( const std::vector<Polygons> & regions, const RMatrixXs &ov
 				if( y >= mxy ) mxy = y+1;
 				rasterized(y,x) = 1; // avoid double counting if we have multiple segments
 				const int s = over_seg(y,x);
-				if( t==INSIDE ){
+				if( t==INSIDE ) {
 					gt_area += 1;
 					intersection.coeffRef( s ) += 1;
 				}
@@ -79,10 +79,10 @@ VectorXf bestOverlap( const std::vector<Polygons> & regions, const RMatrixXs &ov
 		}, regions[i], BOUNDARY_WITH );
 		// Resize the rasterized array
 		rasterized.block( mny, mnx, mxy-mny, mxx-mnx ).setZero();
-		
+
 		VectorXi prop_area = props * cur_sp_area;
 		SparseVector<int> prop_intersection = props * intersection;
-		
+
 		float bo = 0;
 		for( SparseVector<int>::InnerIterator it(prop_intersection); it; ++it )
 			bo = std::max( bo, (float)it.value() / (gt_area + prop_area[it.row()] - it.value()) );
@@ -98,12 +98,12 @@ VectorXf bestOverlap( const short * gt_seg, int W, int H, int D, const RMatrixXs
 		throw std::invalid_argument("Ground truth and over segmentation shape does not match!");
 	Map<const VectorXs> sp( (const short*)over_seg.data(), W*H );
 	Map<const RMatrixXs> gt( gt_seg, D, W*H );
-	
+
 	VectorXs N_sgt = gt.array().rowwise().maxCoeff()+1;
 	const int N_gt = N_sgt.array().sum(), N_sp = sp.maxCoeff()+1;
 	if( N_sp != segments.cols() )
 		throw std::invalid_argument("Number of superpixels does not match segment size!");
-	
+
 	VectorXi gt_area = VectorXi::Zero( N_gt ), sp_area = VectorXi::Zero( N_sp );
 	SparseMatrix<int> intersection( N_gt, N_sp );
 	for( int i=0; i<W*H; i++ ) {
@@ -111,7 +111,7 @@ VectorXf bestOverlap( const short * gt_seg, int W, int H, int D, const RMatrixXs
 		bool cnt_area = false;
 		for( int d=0,o=0; d<D; o+=N_sgt[d++] ) {
 			cnt_area |= (gt(d,i)>=-1);
-			if( gt(d,i)>=0 ){
+			if( gt(d,i)>=0 ) {
 				const int t = o+gt(d,i);
 				gt_area[t]++;
 				if( s >= 0 ) {
@@ -123,11 +123,11 @@ VectorXf bestOverlap( const short * gt_seg, int W, int H, int D, const RMatrixXs
 			sp_area[s]++;
 	}
 	intersection.makeCompressed();
-	
+
 	SparseMatrix<int> props( segments.rows(), segments.cols() );
 	std::vector< Triplet<int> > t;
 	for( int j=0; j<props.rows(); j++ )
-		for( int i=0; i<props.cols(); i++ ) 
+		for( int i=0; i<props.cols(); i++ )
 			if( segments(j,i) )
 				t.push_back( Triplet<int>(j,i,1) );
 	props.setFromTriplets( t.begin(), t.end() );
@@ -147,7 +147,7 @@ ProposalEvaluation::ProposalEvaluation(const std::vector<Polygons> & regions, co
 		throw std::invalid_argument("Different number of over segmentations and proposals!");
 	if( over_seg.size() < 1 )
 		throw std::invalid_argument("At least one proposal required!");
-	
+
 	VectorXf area, bo;
 	pool_size_ = 0;
 	for( int k=0; k <over_seg.size(); k++ ) {
@@ -168,7 +168,7 @@ ProposalEvaluation::ProposalEvaluation(const short int *gt_seg, int W, int H, in
 		throw std::invalid_argument("Different number of over segmentations and proposals!");
 	if( over_seg.size() < 1 )
 		throw std::invalid_argument("At least one proposal required!");
-	
+
 	VectorXf area, bo;
 	pool_size_ = 0;
 	for( int k=0; k <over_seg.size(); k++ ) {
@@ -187,13 +187,13 @@ ProposalEvaluation::ProposalEvaluation( const short int *gt_seg, int W, int H, i
 ProposalBoxEvaluation::ProposalBoxEvaluation(const RMatrixXi &bbox, const std::vector<RMatrixXi> & prop_boxes) {
 	if( prop_boxes.size() < 1 )
 		throw std::invalid_argument("At least one proposal required!");
-	
+
 	if (bbox.rows() == 0) {
 		bo_ = VectorXf::Zero(0);
 		pool_size_ = NAN;
 		return;
 	}
-	
+
 	VectorXf bo = VectorXf::Zero( bbox.rows() );
 	pool_size_ = 0;
 	for( int k=0; k<prop_boxes.size(); k++ ) {
@@ -209,7 +209,7 @@ ProposalBoxEvaluation::ProposalBoxEvaluation(const RMatrixXi &bbox, const std::v
 				pool_size_++;
 			}
 		}
-		
+
 		for( int i=0; i<bo.size(); i++ )
 			for( int j=0; j<nProp; j++ )
 				bo[i] = std::max( bo[i], boxIou( prop_boxes[k].row(j), bbox.row(i) ) );

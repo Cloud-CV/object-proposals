@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,44 +32,44 @@
 
 EnergyFunction::~EnergyFunction() {
 }
-namespace optimizePrivate{
-	static int _progress( void *instance, const lbfgsfloatval_t *x, const lbfgsfloatval_t *g, const lbfgsfloatval_t fx, const lbfgsfloatval_t xnorm, const lbfgsfloatval_t gnorm, const lbfgsfloatval_t step, int n, int k, int ls ) {
-		printf("Iteration %d:\n", k);
-		printf("  fx = %f, xnorm = %f, gnorm = %f, step = %f\n", fx, xnorm, gnorm, step );
-		std::cout<<"  x = "<<VectorXf::Map(x,n).transpose()<<std::endl;
-		std::cout<<"  g = "<<VectorXf::Map(g,n).transpose()<<std::endl;
+namespace optimizePrivate {
+static int _progress( void *instance, const lbfgsfloatval_t *x, const lbfgsfloatval_t *g, const lbfgsfloatval_t fx, const lbfgsfloatval_t xnorm, const lbfgsfloatval_t gnorm, const lbfgsfloatval_t step, int n, int k, int ls ) {
+	printf("Iteration %d:\n", k);
+	printf("  fx = %f, xnorm = %f, gnorm = %f, step = %f\n", fx, xnorm, gnorm, step );
+	std::cout<<"  x = "<<VectorXf::Map(x,n).transpose()<<std::endl;
+	std::cout<<"  g = "<<VectorXf::Map(g,n).transpose()<<std::endl;
+	return 0;
+}
+static lbfgsfloatval_t _evaluate( void *instance, const lbfgsfloatval_t *x, lbfgsfloatval_t *g, const int n, const lbfgsfloatval_t step ) {
+	const EnergyFunction * efun = static_cast<EnergyFunction*>(instance);
+	if(!efun) {
+		printf("No energy function to optimize! Giving up.\n");
+		VectorXf::Map(g,n) = 0*VectorXf::Map(x,n);
 		return 0;
 	}
-	static lbfgsfloatval_t _evaluate( void *instance, const lbfgsfloatval_t *x, lbfgsfloatval_t *g, const int n, const lbfgsfloatval_t step ) {
-		const EnergyFunction * efun = static_cast<EnergyFunction*>(instance);
-		if(!efun) {
-			printf("No energy function to optimize! Giving up.\n");
-			VectorXf::Map(g,n) = 0*VectorXf::Map(x,n);
-			return 0;
-		}
-		float r=0;
-		VectorXf::Map(g,n) = efun->gradient( VectorXf::Map(x,n), r );
-		return r;
-	}
+	float r=0;
+	VectorXf::Map(g,n) = efun->gradient( VectorXf::Map(x,n), r );
+	return r;
+}
 }
 
 VectorXf minimizeLBFGS(const EnergyFunction &f, float & e, int verbose ) {
 	using namespace optimizePrivate;
-	
+
 	VectorXf r = f.initialGuess();
 	const int N = r.size();
-	
+
 	lbfgsfloatval_t fx;
 	lbfgsfloatval_t *m_x = lbfgs_malloc(N);
-	
+
 	std::copy( r.data(), r.data()+N, m_x );
-	
+
 	lbfgs_parameter_t param;
 	lbfgs_parameter_init( &param );
 	param.max_iterations = 100;
-	
+
 	int ret = lbfgs(N, m_x, &fx, _evaluate, (verbose>1)?_progress:NULL, const_cast<EnergyFunction*>(&f), &param);
-	
+
 	/* Report the result. */
 	if( verbose>0 ) {
 		printf("L-BFGS optimization terminated with status code = %d\n", ret);
@@ -88,14 +88,14 @@ VectorXf minimizeLBFGS( const EnergyFunction & f, int verbose ) {
 }
 float gradCheck( const EnergyFunction &f, const VectorXf &x, int verbose ) {
 	const float EPS = 1e-3;
-	
+
 	float e;
 	VectorXf g = f.gradient( x, e );
 	VectorXf gg = 1*g;
 	for( int i=0; i<x.size(); i++ ) {
 		VectorXf d = VectorXf::Zero( x.size() );
 		d[i] = 1;
-		
+
 		float e1 = 0, e2 = 0;
 		f.gradient( x+EPS*d, e1 );
 		f.gradient( x-EPS*d, e2 );

@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -57,21 +57,21 @@ static dict loadEntry( std::string name ) {
 	dict r;
 	if( name.length()<=4 || name.substr(name.length()-4) != ".jpg" )
 		return r;
-	
+
 	std::shared_ptr<Image8u> im = imreadShared( im_dir + "/" + name );
 	std::shared_ptr<Image8u> gt = imreadShared( gt_dir + "/" + name );
 	if( im && gt && !im->empty() && !gt->empty() ) {
 		std::string s_name = name.substr(0,name.length()-4);
-		
+
 		// some images are too large, so we should resize them
 		if( im->W() != gt->W() || im->H() != im->W() )
 			im = std::make_shared<Image8u>( resize( *im, gt->W(), gt->H() ) );
-		
+
 		RMatrixXs seg( gt->H(), gt->W() );
 		for( int j=0; j<im->H(); j++ )
 			for( int i=0; i<im->W(); i++ )
 				seg(j,i) = ( (float)(*gt)(j,i,0)+(*gt)(j,i,1)+(*gt)(j,i,2) > 127*3 );
-		
+
 		r["image"] = im;
 		r["segmentation"] = seg;
 		r["name"] = s_name;
@@ -81,11 +81,11 @@ static dict loadEntry( std::string name ) {
 list loadWeizmann( bool train, bool test, int n_train ) {
 	std::vector< std::string > file_names = listDir( weizmann_dir+"/rgb/" );
 	std::sort( file_names.begin(), file_names.end() );
-	
+
 	std::mt19937 rand;
 	for( int i=1; i<(int)file_names.size(); i++ )
 		std::swap( file_names[i], file_names[rand()%(i+1)] );
-	
+
 	list r;
 	for( int i=train?0:n_train; (test || i<n_train) && i<file_names.size(); i++ ) {
 		dict d = loadEntry( file_names[i] );

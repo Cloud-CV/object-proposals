@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -38,9 +38,9 @@ LPOModelTrainer::~LPOModelTrainer() {
 
 // Loading and saving functions
 enum ModelID {
-	GLOBAL_CRF_MODEL=0,
-	SEED_CRF_MODEL=1,
-	GBS_MODEL=2,
+    GLOBAL_CRF_MODEL=0,
+    SEED_CRF_MODEL=1,
+    GBS_MODEL=2,
 };
 
 std::vector< std::shared_ptr<ModelRegister> > & getModelRegistry() {
@@ -139,13 +139,13 @@ public:
 		return name_;
 	}
 };
-static int no( const RMatrixXs & gt ){
+static int no( const RMatrixXs & gt ) {
 	return gt.maxCoeff()+1;
 }
-static int no( const RMatrixXi & gt ){
+static int no( const RMatrixXi & gt ) {
 	return gt.rows();
 }
-static int no( const std::vector< Polygons > & gt ){
+static int no( const std::vector< Polygons > & gt ) {
 	return gt.size();
 }
 #ifdef __GNUG__
@@ -155,8 +155,8 @@ template<typename T> std::string typeStr( const T & s ) {
 #ifdef __GNUG__
 	int status = -1;
 	std::unique_ptr<char, void(*)(void*)> res {
-	  abi::__cxa_demangle(typeid(s).name(), NULL, NULL, &status),
-	  std::free
+		abi::__cxa_demangle(typeid(s).name(), NULL, NULL, &status),
+		std::free
 	};
 	if( status == 0 )
 		return res.get();
@@ -166,21 +166,21 @@ template<typename T> std::string typeStr( const T & s ) {
 template<typename T>
 std::shared_ptr< ExhaustiveLPOModelTrainer > makeExhaustiveTrainer( const ExhaustiveLPOModel & that, const std::vector< std::shared_ptr< ImageOverSegmentation > >& ios, const std::vector< T >& gt ) {
 	std::string name = typeStr(that);
-	
+
 	std::vector< VectorXf > params = that.all_params_;
 	const int N = ios.size(), M = params.size();
 	std::vector<int> oid( gt.size()+1 );
 	std::transform( gt.begin(), gt.end(), oid.data()+1, static_cast<int(*)(const T&)>(&no) );
 	std::partial_sum( oid.begin(), oid.end(), oid.begin() );
-	
+
 	std::vector< float > avg_prop( params.size(), 0. );
 	std::vector< std::vector< float > > iou( params.size(), std::vector< float >(oid.back(),0.f) );
-#pragma omp parallel for
+	#pragma omp parallel for
 	for( int i=0; i<N; i++ ) {
 		std::vector<Proposals> s = that.generateProposals( *ios[i], params );
 		for( int j=0; j<M; j++ ) {
 			Proposals p = s[j];
-			
+
 			SegmentationOverlap o(p.s, gt[i]);
 			const int no = o.nObjects();
 			eassert( oid[i]+no == oid[i+1] );
@@ -189,8 +189,8 @@ std::shared_ptr< ExhaustiveLPOModelTrainer > makeExhaustiveTrainer( const Exhaus
 			int n = p.p.rows();
 			for( int k=0; k<n; k++ )
 				best_iou = best_iou.array().max( o.iou( p.p.row(k) ).array() );
-			
-#pragma omp atomic
+
+			#pragma omp atomic
 			avg_prop[j] += 1.0 * n / N;
 		}
 	}
@@ -198,11 +198,11 @@ std::shared_ptr< ExhaustiveLPOModelTrainer > makeExhaustiveTrainer( const Exhaus
 }
 ExhaustiveLPOModel::ExhaustiveLPOModel(const std::vector< VectorXf >& all_params):all_params_(all_params) {
 }
-void ExhaustiveLPOModel::load(std::istream& is){
+void ExhaustiveLPOModel::load(std::istream& is) {
 	params_ = loadVector<VectorXf>( is );
 	all_params_ = loadVector<VectorXf>( is );
 }
-void ExhaustiveLPOModel::save(std::ostream& os) const{
+void ExhaustiveLPOModel::save(std::ostream& os) const {
 	saveVector<VectorXf>( os, params_ );
 	saveVector<VectorXf>( os, all_params_ );
 }

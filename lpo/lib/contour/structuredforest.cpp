@@ -1,7 +1,7 @@
 /*
     Copyright (c) 2015, Philipp Krähenbühl
     All rights reserved.
-	
+
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
         * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
         * Neither the name of the Stanford University nor the
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
-	
+
     THIS SOFTWARE IS PROVIDED BY Philipp Krähenbühl ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -76,7 +76,7 @@ void filterOutSmallSegments( RMatrixXs & seg, int min_size=5 ) {
 			seg(j,i) = remap[ seg(j,i) ];
 }
 
-StructuredForestSettings::StructuredForestSettings( int stride, int shrink, int out_patch_size, int feature_patch_size, int patch_smooth, int sim_smooth, int sim_cells ):stride(stride),shrink(shrink),out_patch_size(out_patch_size),feature_patch_size(feature_patch_size),patch_smooth(patch_smooth),sim_smooth(sim_smooth),sim_cells(sim_cells){
+StructuredForestSettings::StructuredForestSettings( int stride, int shrink, int out_patch_size, int feature_patch_size, int patch_smooth, int sim_smooth, int sim_cells ):stride(stride),shrink(shrink),out_patch_size(out_patch_size),feature_patch_size(feature_patch_size),patch_smooth(patch_smooth),sim_smooth(sim_smooth),sim_cells(sim_cells) {
 }
 StructuredForest::StructuredForest(int nms, int suppress, const StructuredForestSettings & s):nms_(nms),suppress_(suppress),settings_(s) {
 }
@@ -85,15 +85,15 @@ StructuredForest::StructuredForest(const StructuredForestSettings & s):nms_(1),s
 RMatrixXf StructuredForest::detect(const Image8u & rgb_im) const {
 	const int Rp = settings_.out_patch_size/2; // Patch radius
 	const int pW = rgb_im.W()+2*Rp, pH = rgb_im.H()+2*Rp;
-	
+
 	std::vector<int> os;
 	for( int j=0; j<2*Rp; j++ )
 		for( int i=0; i<2*Rp; i++ )
 			os.push_back( i+j*pW );
-	
-	
+
+
 	RMatrixXf r = RMatrixXf::Zero( pH, pW );
-	
+
 	SFFeatures f( rgb_im );
 	int s = f.x_[1] - f.x_[0];
 	float v = 1.5*s*s / (1.0*Rp*Rp*forest_.nTrees()/2);
@@ -102,8 +102,7 @@ RMatrixXf StructuredForest::detect(const Image8u & rgb_im) const {
 	for( int t=0; t<forest_.nTrees(); t++ ) {
 		for( int i=0; i<f.id_.size(); i++ ) {
 			const int x = f.x_[i], y = f.y_[i];
-			if( (((x+y)/s)&1) == (t&1) )
-			{
+			if( (((x+y)/s)&1) == (t&1) ) {
 				RangeData rng = forest_.tree(t).predictData( f, i );
 				float * pr = r.data() + (x + y*pW);
 				for( int b=rng.begin; b < rng.end; b++ )
@@ -119,7 +118,7 @@ RMatrixXf StructuredForest::detect(const Image8u & rgb_im) const {
 RMatrixXf StructuredForest::filter(const RMatrixXf &detection, int suppress, int nms) const {
 	if( suppress==-1 ) suppress = suppress_;
 	if( nms==-1 ) nms = nms_;
-	
+
 	RMatrixXf r = detection;
 	if( nms > 0 )
 		r = ::nms( r, nms );
@@ -165,7 +164,7 @@ void StructuredForest::fitAndAddTree( const Features & f, const std::vector<RMat
 	eassert( N == lbl.size() );
 	const int PS = settings_.out_patch_size;
 	const int M = PS*PS;
-	
+
 	// Flatten the paches into labels
 	RMatrixXf tree_lbl( N, M );
 	for( int i=0; i<N; i++ ) {
@@ -175,25 +174,25 @@ void StructuredForest::fitAndAddTree( const Features & f, const std::vector<RMat
 		for( int j=0; j<M; j++ )
 			pt[j] = pl[j];
 	}
-	
+
 	// Fit the tree (to dummy data)
 	RangeTree t;
 	std::vector<RangeData> tree_data( N );
 	for( int i=0; i<N; i++ )
 		tree_data[i].begin = tree_data[i].end = i;
-	
+
 	// Train the tree
 	t.fit( f, arange(N), tree_lbl, VectorXf::Ones(N), tree_data, mt, settings );
 	// Remap the features ids
 	t.remapFid( fid );
-	
+
 	// Create the corresponding data
 	std::vector<RMatrixXb> patch_data( N );
 	for( int i=0; i<N; i++ ) {
 		RMatrixXs seg = lbl[i];
 		filterOutSmallSegments( seg, 5 );
 		const int H = seg.rows(), W = seg.cols();
-		
+
 		patch_data[i] = RMatrixXb::Zero( H, W );
 		RArrayXXb dx = seg.leftCols( W-1 ).array() != seg.rightCols( W-1 ).array();
 		RArrayXXb dy = seg.topRows( H-1 ).array() != seg.bottomRows( H-1 ).array();
@@ -202,16 +201,16 @@ void StructuredForest::fitAndAddTree( const Features & f, const std::vector<RMat
 		patch_data[i].topRows( H-1 ).array()    = patch_data[i].topRows( H-1 ).array()    || dy;
 		patch_data[i].bottomRows( H-1 ).array() = patch_data[i].bottomRows( H-1 ).array() || dy;
 	}
-	
+
 	// Compute the new patch size
 	int data_size = 0;
 	for( const RangeData & d: t.data() )
 		data_size += patch_data[d.begin].cast<int>().sum();
-	
+
 	// Allocate the new patch data
 	int o = patch_ids_.size();
 	patch_ids_.conservativeResize( o+data_size );
-	
+
 	// Add the new patch data
 	for( RangeData & d: t.data() ) {
 		VectorXb r = VectorXb::Map( patch_data[d.begin].data(), M );
@@ -222,7 +221,7 @@ void StructuredForest::fitAndAddTree( const Features & f, const std::vector<RMat
 				patch_ids_[o++] = i;
 		d.end = o;
 	}
-	
+
 	forest_.addTree( t );
 }
 void StructuredForest::compress() {
@@ -232,7 +231,7 @@ void StructuredForest::compress() {
 	for( int t=0; t<forest_.nTrees(); t++ ) {
 		std::vector<RangeData> & data = forest_.tree(t).data();
 		for( RangeData & d: data )
-			if( d.begin<d.end ){
+			if( d.begin<d.end ) {
 				VectorXus p = patch_ids_.segment( d.begin, d.end-d.begin );
 				std::string hp( (char*)p.data(), sizeof(p[0])*p.size() );
 				if( patches.count( hp ) )
@@ -275,8 +274,7 @@ RMatrixXf MultiScaleStructuredForest::detect( const Image8u & rgb_im ) const {
 	return r.array() / 3.;
 }
 
-SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s)
-{
+SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s) {
 	// Define some magic constants
 	const int chns_smooth = s.patch_smooth / s.shrink;
 	const int sim_smooth =  s.sim_smooth / s.shrink;
@@ -285,7 +283,7 @@ SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s)
 	const int nCells = s.sim_cells;
 	const int norm_rad = 4;
 	const float norm_const = 0.01;
-	
+
 	/***** Compute the Patch Features *****/
 	const int W = im.W(), H = im.H();
 	const int pW = W+2*R, pH = H+2*R;
@@ -293,33 +291,33 @@ SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s)
 	Image luv;
 	rgb2luv( luv, im );
 	Image pluv = padIm( luv, R );
-	
+
 	// Downsample
 	Image dluv = downsample( pluv, dW, dH );
-	
+
 	/* Create the features */
 	const int Nf = 13;
 	RMatrixXf features( dH*dW, Nf );
-	
+
 	// Luv color feature
 	int o=0;
-	
+
 	features.block( 0, 0, dW*dH, 3 ) = RMatrixXf::Map( dluv.data(), dW*dH, 3 );
 	o += 3;
-	
+
 	// Full resulution oriented gradient
 	{
 		RMatrixXf gm(pH,pW), go(pH,pW);
 		gradientMagAndOri( gm, go, pluv, norm_rad, norm_const );
-		
+
 		// Add the gradient magnitude
 		RMatrixXf dgm = downsample( gm, dW, dH );
 		features.col(o++) = Map<VectorXf>( dgm.data(), dW*dH, 1 );
-		
+
 		// Add the gradient histogram
 		Image h;
 		gradientHist( h, gm, go, 4, shrink );
-		
+
 		features.block( 0, o, dW*dH, 4 ) = RMatrixXf::Map( h.data(), dW*dH, 4 );
 		o += 4;
 	}
@@ -327,14 +325,14 @@ SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s)
 	{
 		RMatrixXf gm(dH,dW), go(dH,dW);
 		gradientMagAndOri( gm, go, dluv, norm_rad, norm_const );
-		
+
 		// Add the gradient magnitude
 		features.col(o++) = Map<VectorXf>( gm.data(), dW*dH, 1 );
-		
+
 		// Add the gradient histogram
 		Image h;
 		gradientHist( h, gm, go, 4, 1 );
-		
+
 		features.block( 0, o, dW*dH, 4 ) = RMatrixXf::Map( h.data(), dW*dH, 4 );
 		o += 4;
 	}
@@ -345,13 +343,13 @@ SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s)
 	/***** Compute the ssim features *****/
 	ssim_features_ = 1*features;
 	tentFilter( ssim_features_.data(), features.data(), dW, dH, Nf, sim_smooth );
-	
+
 	// Patch features offsets
 	for( int i=0; i<2*Rs; i++ )
 		for( int j=0; j<2*Rs; j++ )
 			for( int f=0; f<Nf; f++ )
 				did_.push_back( (i+j*dW)*Nf+f );
-	
+
 	// ssim features offsets
 	std::vector<int> locs;
 	int Rp = (int)(1.0*Rs/nCells+0.5); // Patch radius in px
@@ -362,11 +360,11 @@ SFFeatures::SFFeatures(const Image8u & im, const StructuredForestSettings & s)
 			for( int i2=0,k2=0; i2 < nCells; i2++ )
 				for( int j2=0; j2 < nCells; j2++,k2++ )
 					if( k1 < k2 )
-						for( int f=0; f<Nf; f++ ){
+						for( int f=0; f<Nf; f++ ) {
 							did1_.push_back( (locs[j1]*dW+locs[i1])*Nf+f );
 							did2_.push_back( (locs[j2]*dW+locs[i2])*Nf+f );
 						}
-	
+
 	n_patch_feature_ = did_.size();
 	n_ssim_feature_ = did1_.size();
 	n_feature_ = n_patch_feature_ + n_ssim_feature_;
@@ -387,11 +385,11 @@ const VectorXi& SFFeatures::x() const {
 const VectorXi& SFFeatures::y() const {
 	return y_;
 }
-const RMatrixXf& SFFeatures::patchFeatures() const{
-  return patch_features_;
+const RMatrixXf& SFFeatures::patchFeatures() const {
+	return patch_features_;
 }
-const RMatrixXf& SFFeatures::ssimFeatures() const{
-  return ssim_features_;
+const RMatrixXf& SFFeatures::ssimFeatures() const {
+	return ssim_features_;
 }
 int SFFeatures::nSamples() const {
 	return id_.size();
